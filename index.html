@@ -273,6 +273,58 @@
     #toTop{right:18px;bottom:90px}
   }
 
+  /* ---------------- ABOUT & VISION ---------------- */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:58px;align-items:start}
+  .about-copy p{color:var(--mist);font-size:1.04rem;margin-top:18px;max-width:44ch}
+  .about-copy p:first-child{margin-top:0}
+  .principles{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+  .principles span{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.03em;color:var(--gold-bright);border:1px solid var(--line);border-radius:100px;padding:7px 13px}
+  .vision{position:relative;border:1px solid var(--line);border-radius:4px;padding:38px 34px;background:var(--raise);transition:background-color .55s var(--e)}
+  .vision::before{content:"";position:absolute;left:0;top:22px;bottom:22px;width:2px;background:var(--gold)}
+  .vision .vlabel{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+  .vision h3{font-family:"Fraunces",serif;font-weight:500;font-style:italic;font-size:clamp(1.55rem,3vw,2.15rem);line-height:1.16;margin-top:16px}
+  .vision h3 em{font-style:normal;color:var(--gold)}
+  .vision p{color:var(--mist);margin-top:18px;font-size:.98rem}
+  @media(max-width:840px){.about-grid{grid-template-columns:1fr;gap:36px}}
+
+  /* ---------------- SHARE ---------------- */
+  .foot-share{border-top:1px solid var(--line-soft);padding-top:30px;margin-top:2px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .foot-share .lab{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+  .share-btns{display:flex;gap:10px;flex-wrap:wrap}
+  .sbtn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--mist);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.28s var(--e)}
+  .sbtn:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+  .sbtn svg{width:18px;height:18px}
+  .sbtn.copied{border-color:var(--gold);color:var(--gold)}
+
+  /* ---------------- VISITOR COUNTER ---------------- */
+  .visitor{margin-top:38px;padding-top:30px;border-top:1px solid var(--line-soft);display:flex;align-items:center;justify-content:center;gap:15px;text-align:center;flex-wrap:wrap}
+  .visitor .vic{color:var(--gold);flex:none}
+  .visitor .num{font-family:"JetBrains Mono",monospace;font-weight:500;font-size:1.5rem;letter-spacing:.18em;color:var(--paper)}
+  .visitor .cap{font-family:"JetBrains Mono",monospace;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);display:block;margin-top:5px}
+
+  /* ---------------- LEGAL LINKS ---------------- */
+  .fbar .legal{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  .fbar .legal a{color:var(--dim);transition:color .25s}
+  .fbar .legal a:hover{color:var(--gold)}
+
+  /* ---------------- MODAL ---------------- */
+  .modal-back{position:fixed;inset:0;z-index:90;background:rgba(3,5,12,.74);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .3s var(--e)}
+  .modal-back.open{opacity:1;pointer-events:auto}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:10px;max-width:660px;width:100%;max-height:84vh;overflow-y:auto;box-shadow:0 40px 90px -30px rgba(0,0,0,.72);transform:translateY(18px) scale(.99);transition:transform .3s var(--e)}
+  .modal-back.open .modal{transform:none}
+  .modal-head{position:sticky;top:0;background:var(--raise);border-bottom:1px solid var(--line);padding:20px 26px;display:flex;align-items:center;justify-content:space-between}
+  .modal-head h3{font-family:"Fraunces",serif;font-weight:600;font-size:1.42rem}
+  .modal-head .x{background:none;border:none;color:var(--mist);cursor:pointer;padding:4px}
+  .modal-head .x:hover{color:var(--paper)}
+  .modal-body{padding:26px}
+  .modal-body p{color:var(--mist);font-size:.94rem;margin-bottom:14px}
+  .modal-body h4{font-family:"Fraunces",serif;font-weight:600;font-size:1.04rem;color:var(--paper);margin:22px 0 8px}
+  .modal-body .upd{font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;margin-bottom:18px}
+  .modal-body a{color:var(--gold-bright);font-weight:600}
+  .modal-body ul{margin:0 0 14px 18px;color:var(--mist);font-size:.94rem}
+  .modal-body li{margin-bottom:7px}
+  .modal-body b{color:var(--paper);font-weight:600}
+
   /* ---------------- RESPONSIVE ---------------- */
   @media(max-width:940px){
     .hero .wrap{grid-template-columns:1fr;gap:18px}
@@ -324,6 +376,7 @@
   <nav class="links" id="links">
     <a href="#atlas">The Atlas</a>
     <a href="#horizon">Horizon</a>
+    <a href="#about">About</a>
     <a href="#mission">Mission</a>
     <a class="cta" href="https://dishacareerlab.com" target="_blank" rel="noopener">Try DISHA →</a>
   </nav>
@@ -397,6 +450,31 @@
       <p>Deferred by choice, not capacity. Every idea below sharpens once the daily habit and the audience are already in place.</p>
     </div>
     <div class="gaz" id="gazHorizon"></div>
+  </div>
+</section>
+
+<!-- =============== ABOUT & VISION =============== -->
+<section class="band" id="about" style="padding-top:0">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <span class="eyebrow">About Us · the cartographers</span>
+      <h2>A small studio drawing a bigger map of who gets to use AI.</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-copy reveal">
+        <p>planetAI LLP is a Bengaluru-based studio building practical, ethical AI for the people the revolution keeps skipping. World of AI is our ecosystem — one connected planet of products for India's students, parents, and everyday citizens.</p>
+        <p>We pair two decades of enterprise AI delivery with the speed of a team that ships in public. Every beacon here was built, deployed, and put in front of real students on our own capital — three live today, three more rising.</p>
+        <p>Our rule is simple: keep the core free and privacy-first, and charge a fraction of what the market asks — so a family never has to choose between guidance and groceries.</p>
+        <div class="principles">
+          <span>Accessible by design</span><span>Privacy-first architecture</span><span>Built in public</span>
+        </div>
+      </div>
+      <aside class="vision reveal">
+        <div class="vlabel">Our Vision</div>
+        <h3 class="serif">A world where intelligence is a <em>birthright</em>, not a privilege.</h3>
+        <p>We're building the daily AI habit for the next billion learners — from Bharat's classrooms to the Gulf diaspora and outward — so the future of AI is shaped by everyone, not just the few.</p>
+      </aside>
+    </div>
   </div>
 </section>
 
@@ -486,18 +564,71 @@
       </div>
       <div class="fc">
         <h4>planetAI LLP</h4>
+        <a href="#about">About Us</a>
         <a href="#mission">Mission</a>
         <a href="https://world-of-ai.co.in" target="_blank" rel="noopener">World of AI</a>
         <a href="mailto:maheshwari1382@gmail.com">Get in touch</a>
         <a href="https://github.com/pawanmaheshwari" target="_blank" rel="noopener">GitHub</a>
       </div>
     </div>
+    <div class="foot-share reveal">
+      <span class="lab">Share the world</span>
+      <div class="share-btns" id="shareBtns">
+        <button class="sbtn" data-share="native" aria-label="Share" title="Share" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11M12 3l-4 4M12 3l4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+        </button>
+        <button class="sbtn" data-share="whatsapp" aria-label="Share on WhatsApp" title="WhatsApp">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2.5a9.5 9.5 0 0 0-8.2 14.3L2.5 21.5l4.8-1.3A9.5 9.5 0 1 0 12 2.5z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8.6 7.6c-.2 0-.5.1-.7.3-.3.3-.9.8-.9 2s.9 2.3 1 2.5c.1.2 1.7 2.7 4.2 3.7 2.1.8 2.5.7 3 .6.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.5-.3-1.4-.7c-.2-.1-.4-.1-.5.1l-.6.7c-.1.2-.3.2-.5.1-.7-.3-1.3-.5-2-1.4-.3-.4 0-.6.1-.8.1-.1.3-.4.4-.5l.1-.5-.6-1.5c-.2-.4-.3-.4-.5-.4z" fill="currentColor"/></svg>
+        </button>
+        <button class="sbtn" data-share="x" aria-label="Share on X" title="X">
+          <svg viewBox="0 0 24 24"><path d="M4 3h3.3l4.2 5.7L16.6 3H20l-6 7.7L20.5 21H17l-4.6-6.2L7 21H3.5l6.4-8L4 3z" fill="currentColor"/></svg>
+        </button>
+        <button class="sbtn" data-share="linkedin" aria-label="Share on LinkedIn" title="LinkedIn">
+          <svg viewBox="0 0 24 24"><path d="M4.5 3.4A1.6 1.6 0 1 1 3 5a1.6 1.6 0 0 1 1.5-1.6zM3.5 8.5h2v9h-2zM8 8.5h1.9v1.3h.1c.3-.6 1.1-1.4 2.4-1.4 2.5 0 3 1.6 3 3.8v5.3h-2v-4.7c0-1.2 0-2.7-1.6-2.7s-1.9 1.2-1.9 2.5v4.9H8z" fill="currentColor"/></svg>
+        </button>
+        <button class="sbtn" data-share="facebook" aria-label="Share on Facebook" title="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M13.5 21v-7h2.3l.4-2.7h-2.7V9.5c0-.8.2-1.3 1.4-1.3h1.4V5.8c-.7-.1-1.4-.1-2-.1-2.1 0-3.5 1.2-3.5 3.5v2.1H8.6V14h2.3v7z" fill="currentColor"/></svg>
+        </button>
+        <button class="sbtn" data-share="telegram" aria-label="Share on Telegram" title="Telegram">
+          <svg viewBox="0 0 24 24"><path d="M21 4.6 2.9 11.4c-.9.3-.9 1.6.1 1.8l4.5 1.4 1.7 5.1c.2.6 1 .8 1.5.3l2.4-2.3 4.6 3.3c.6.4 1.4.1 1.5-.6L22.7 5.9c.2-1-.7-1.7-1.7-1.3zM9.9 14.4l-.3 3.4-1.1-3.4 8-5.1z" fill="currentColor"/></svg>
+        </button>
+        <button class="sbtn" data-share="copy" id="copyBtn" aria-label="Copy link" title="Copy link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 14.5l5-5M8 12l-1.8 1.8a3.1 3.1 0 0 0 4.4 4.4L12.5 16M15.5 12l1.8-1.8a3.1 3.1 0 0 0-4.4-4.4L11 7.6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="visitor reveal">
+      <svg class="vic" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"/></svg>
+      <div>
+        <span class="num" id="visCount">000000</span>
+        <span class="cap">Explorers of this world</span>
+      </div>
+    </div>
+
     <div class="fbar">
-      <span>© 2026 planetAI LLP · Bengaluru, India</span>
+      <span>© 2026 planetAI LLP · All rights reserved.</span>
+      <div class="legal">
+        <a href="#" data-modal="privacy">Privacy Policy</a>
+        <a href="#" data-modal="cookies">Cookies Policy</a>
+      </div>
       <span>AI FOR EVERY PLANET</span>
     </div>
   </div>
 </footer>
+
+<!-- =============== POLICY MODAL =============== -->
+<div class="modal-back" id="modalBack">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h3 id="modalTitle" class="serif">Policy</h3>
+      <button class="x" id="modalClose" aria-label="Close">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
 
 <script>
 /* ---------------- DATA ---------------- */
@@ -836,6 +967,101 @@ function closeBot(){botPanel.classList.remove("open");botFab.classList.remove("o
 botFab.addEventListener("click",()=>botPanel.classList.contains("open")?closeBot():openBot());
 document.getElementById("botClose").addEventListener("click",closeBot);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&botPanel.classList.contains("open"))closeBot();});
+
+/* ---------------- SHARE ---------------- */
+const SHARE_URL=location.href.split("#")[0];
+const SHARE_TEXT="Explore the World of AI by planetAI — practical, ethical AI for the next billion.";
+function copyLink(){
+  const b=document.getElementById("copyBtn");
+  const done=()=>{b.classList.add("copied");b.title="Link copied!";setTimeout(()=>{b.classList.remove("copied");b.title="Copy link";},1800);};
+  const fb=()=>{try{const ta=document.createElement("textarea");ta.value=SHARE_URL;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();done();}catch(e){}};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(SHARE_URL).then(done).catch(fb);}else fb();
+}
+function doShare(type){
+  const u=encodeURIComponent(SHARE_URL),t=encodeURIComponent(SHARE_TEXT);let link="";
+  switch(type){
+    case "native": if(navigator.share){navigator.share({title:"World of AI",text:SHARE_TEXT,url:SHARE_URL}).catch(()=>{});}else copyLink(); return;
+    case "copy": copyLink(); return;
+    case "whatsapp": link=`https://wa.me/?text=${t}%20${u}`;break;
+    case "x": link=`https://twitter.com/intent/tweet?text=${t}&url=${u}`;break;
+    case "linkedin": link=`https://www.linkedin.com/sharing/share-offsite/?url=${u}`;break;
+    case "facebook": link=`https://www.facebook.com/sharer/sharer.php?u=${u}`;break;
+    case "telegram": link=`https://t.me/share/url?url=${u}&text=${t}`;break;
+  }
+  window.open(link,"_blank","noopener,noreferrer,width=640,height=560");
+}
+document.getElementById("shareBtns").addEventListener("click",e=>{const b=e.target.closest("[data-share]");if(b)doShare(b.dataset.share);});
+if(navigator.share){const nb=document.querySelector('[data-share="native"]');if(nb)nb.style.display="flex";}
+
+/* ---------------- VISITOR COUNTER ---------------- */
+/* Global tally via a keyless counter service, with a graceful local fallback.
+   To guarantee accuracy long-term, point COUNTER at your own namespace or a
+   service like GoatCounter. */
+const COUNTER={base:"https://abacus.jasoncameron.dev",ns:"world-of-ai",key:"planetai-visits"};
+function fmtCount(n){let s=String(Math.max(0,Math.floor(n)));if(s.length<6)s=s.padStart(6,"0");return s.replace(/\B(?=(\d{3})+(?!\d))/g,",");}
+function animateCount(el,target){
+  const dur=1300,start=performance.now();
+  (function step(now){const p=Math.min(1,(now-start)/dur);const e=1-Math.pow(1-p,3);
+    el.textContent=fmtCount(target*e);if(p<1)requestAnimationFrame(step);})(start);
+}
+async function initVisitors(){
+  const el=document.getElementById("visCount");if(!el)return;
+  let counted=false;try{counted=sessionStorage.getItem("woa-counted")==="1";}catch(e){}
+  const path=(counted?"/get/":"/hit/")+COUNTER.ns+"/"+COUNTER.key;
+  let n=null;
+  try{
+    const r=await fetch(COUNTER.base+path,{cache:"no-store"});
+    if(r.ok){const d=await r.json();n=(d&&d.value!=null)?d.value:(d&&d.count!=null?d.count:null);}
+    if(!counted){try{sessionStorage.setItem("woa-counted","1");}catch(e){}}
+  }catch(e){}
+  if(n==null){ // fallback: per-browser tally so the readout still reflects real visits
+    try{let lv=parseInt(localStorage.getItem("woa-visits")||"0",10);
+      if(!counted){lv+=1;localStorage.setItem("woa-visits",String(lv));try{sessionStorage.setItem("woa-counted","1");}catch(e){}}
+      n=lv||1;
+    }catch(e){n=1;}
+  }
+  animateCount(el,n);
+}
+initVisitors();
+
+/* ---------------- POLICY MODALS ---------------- */
+const MODALS={
+  privacy:{title:"Privacy Policy",body:`
+    <p class="upd">Last updated · 2026 · planetAI LLP</p>
+    <p>World of AI is built privacy-first. This page is a portal — it needs no account, no login, and collects no personal information about you.</p>
+    <h4>What stays on your device</h4>
+    <ul>
+      <li>Your theme choice (day or night) is saved in your browser only.</li>
+      <li>The visitor counter records an anonymous visit once per session — no cookies that identify you, no cross-site tracking.</li>
+    </ul>
+    <h4>Our products</h4>
+    <p>DISHA Career Lab runs its assessment entirely on your device — a student's answers and results never leave the browser. AIShorts and AI University follow the same principle. Each product links out to its own site; please review the notice there.</p>
+    <h4>If you contact us</h4>
+    <p>When you email us, we use your message only to reply. We never sell or rent data — to anyone, ever.</p>
+    <h4>Your rights</h4>
+    <p>We follow the principles of India's Digital Personal Data Protection Act, 2023. To ask a privacy question or request deletion of anything you've shared with us, write to <a href="mailto:maheshwari1382@gmail.com">maheshwari1382@gmail.com</a>.</p>
+    <p style="font-size:.82rem;color:var(--dim)">This is a plain-language summary offered for transparency, and may be updated as our products evolve.</p>`},
+  cookies:{title:"Cookies Policy",body:`
+    <p class="upd">Last updated · 2026 · planetAI LLP</p>
+    <p>We keep this simple: World of AI uses no advertising cookies and no third-party trackers.</p>
+    <h4>What we do use</h4>
+    <ul>
+      <li><b>Local storage</b> — remembers your day / night theme so the site opens the way you left it.</li>
+      <li><b>Session storage</b> — lets the visitor counter count you once per visit instead of on every refresh.</li>
+      <li><b>Anonymous visit count</b> — an aggregate tally of visits, with no personal identifier attached.</li>
+    </ul>
+    <h4>Managing it</h4>
+    <p>You can clear this storage anytime through your browser settings — the site will simply forget your theme and count your next visit fresh. Nothing here follows you across other websites.</p>
+    <p>Links to our products (AIShorts, DISHA, AI University) open external sites that keep their own cookie notices.</p>
+    <p style="font-size:.82rem;color:var(--dim)">Questions? <a href="mailto:maheshwari1382@gmail.com">maheshwari1382@gmail.com</a></p>`}
+};
+const mBack=document.getElementById("modalBack"),mTitle=document.getElementById("modalTitle"),mBody=document.getElementById("modalBody");
+function openModal(k){const m=MODALS[k];if(!m)return;mTitle.textContent=m.title;mBody.innerHTML=m.body;mBack.classList.add("open");document.body.style.overflow="hidden";}
+function closeModal(){mBack.classList.remove("open");document.body.style.overflow="";}
+document.querySelectorAll("[data-modal]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();openModal(a.dataset.modal);}));
+document.getElementById("modalClose").addEventListener("click",closeModal);
+mBack.addEventListener("click",e=>{if(e.target===mBack)closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mBack.classList.contains("open"))closeModal();});
 </script>
 </body>
 </html>
