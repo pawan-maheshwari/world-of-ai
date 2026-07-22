@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>World of AI — an atlas of accessible intelligence, by planetAI LLP</title>
+<meta name="description" content="World of AI by planetAI LLP — spin the planet to explore an ecosystem making practical, ethical AI accessible to India's next billion. Daily AI news, 5-D career guidance, and open AI education." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --void:#05070F;
+    --deep:#080C1A;
+    --panel:#0C1122;
+    --raise:#121A31;
+    --line:#212B45;
+    --line-soft:#18213A;
+    --gold:#E8B85C;
+    --gold-bright:#F7D799;
+    --gold-deep:#B8863A;
+    --ice:#A8C4EC;
+    --ice-dim:#4C6491;
+    --paper:#F2EFE6;   /* warm star-chart white */
+    --mist:#9AA6C2;
+    --dim:#5A688B;
+    --maxw:1240px;
+    --e:cubic-bezier(.2,.7,.3,1);
+    --glass:rgba(5,7,15,.82);
+    color-scheme:dark;
+  }
+  html[data-theme="light"]{
+    --void:#EFE9DA; --deep:#E7DFCB; --panel:#F5F0E2; --raise:#FCF8ED;
+    --line:#D9CEB2; --line-soft:#E6DDC7;
+    --gold:#A9721E; --gold-bright:#7E560F; --gold-deep:#C7A968;
+    --ice:#3B5A86; --ice-dim:#8097BB;
+    --paper:#20242F; --mist:#585E74; --dim:#8A8368;
+    --glass:rgba(244,240,226,.86);
+    color-scheme:light;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--void);color:var(--paper);
+    font-family:"Inter",system-ui,sans-serif;line-height:1.62;
+    overflow-x:hidden;-webkit-font-smoothing:antialiased;
+    transition:background-color .55s var(--e),color .55s var(--e);
+    background-image:radial-gradient(1100px 700px at 78% -5%,rgba(232,184,92,.06),transparent 60%),
+                     radial-gradient(900px 600px at 8% 110%,rgba(168,196,236,.05),transparent 60%);
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--gold);color:var(--raise)}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 30px}
+  .serif{font-family:"Fraunces",Georgia,serif}
+  .mono{font-family:"JetBrains Mono",monospace}
+
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.34em;
+    text-transform:uppercase;color:var(--gold);display:inline-flex;align-items:center;gap:12px;
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold-deep);display:inline-block}
+
+  /* hairline gilt frame accents */
+  .rule{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+
+  /* ---------------- NAV ---------------- */
+  header.nav{
+    position:fixed;inset:0 0 auto 0;z-index:60;display:flex;align-items:center;justify-content:space-between;
+    padding:18px 30px;transition:background .5s var(--e),border-color .5s var(--e),padding .4s var(--e);
+    border-bottom:1px solid transparent;
+  }
+  header.nav.scrolled{background:var(--glass);backdrop-filter:blur(16px);border-bottom:1px solid var(--line-soft);padding:12px 30px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand svg{width:36px;height:36px;flex:none}
+  .brand .wm{font-family:"Fraunces",serif;font-weight:600;font-size:1.14rem;line-height:1;letter-spacing:.005em}
+  .brand .wm b{font-weight:600}
+  .brand .wm i{color:var(--gold);font-style:italic}
+  .brand .llp{display:block;font-family:"JetBrains Mono",monospace;font-size:.54rem;letter-spacing:.44em;color:var(--dim);margin-top:4px}
+  nav.links{display:flex;align-items:center;gap:32px}
+  nav.links a{font-size:.9rem;color:var(--mist);transition:color .25s}
+  nav.links a:hover{color:var(--paper)}
+  nav.links a.cta{
+    font-family:"JetBrains Mono",monospace;font-size:.76rem;letter-spacing:.06em;color:var(--gold-bright);
+    border:1px solid var(--gold-deep);padding:9px 16px;border-radius:2px;transition:.3s var(--e);
+  }
+  nav.links a.cta:hover{background:rgba(232,184,92,.12);border-color:var(--gold)}
+  .menu-btn{display:none;background:none;border:none;color:var(--paper);cursor:pointer}
+
+  /* ---------------- HERO / PLANET ---------------- */
+  .hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:96px 0 40px}
+  .hero .wrap{width:100%;display:grid;grid-template-columns:1fr 1.05fr;gap:24px;align-items:center}
+
+  .intro{max-width:34rem;position:relative;z-index:3}
+  .intro .eyebrow{opacity:0;animation:rise .9s var(--e) .1s forwards}
+  .intro h1{
+    font-family:"Fraunces",serif;font-weight:600;letter-spacing:-.015em;line-height:.98;
+    font-size:clamp(3.1rem,6.6vw,5.4rem);margin:22px 0 0;
+  }
+  .intro h1 .a{display:block;opacity:0;animation:rise .9s var(--e) .24s forwards}
+  .intro h1 .b{display:block;opacity:0;animation:rise .9s var(--e) .36s forwards}
+  .intro h1 em{font-style:italic;color:var(--gold);position:relative}
+  .intro p.lead{color:var(--mist);font-size:1.1rem;margin-top:26px;max-width:31rem;opacity:0;animation:rise .9s var(--e) .5s forwards}
+  .intro .instr{
+    margin-top:34px;display:flex;align-items:center;gap:14px;
+    font-family:"JetBrains Mono",monospace;font-size:.76rem;letter-spacing:.05em;color:var(--dim);
+    opacity:0;animation:rise .9s var(--e) .66s forwards;
+  }
+  .intro .instr .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px var(--gold);animation:beat 2s infinite}
+  @keyframes beat{0%,100%{opacity:.5;transform:scale(.8)}50%{opacity:1;transform:scale(1.25)}}
+  .intro .by{margin-top:40px;font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.14em;color:var(--dim);opacity:0;animation:rise .9s var(--e) .8s forwards}
+  .intro .by b{color:var(--mist);font-weight:500}
+  @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+  /* planet column */
+  .planet-col{position:relative;z-index:2}
+  .stage{position:relative;width:100%;aspect-ratio:1;max-width:560px;margin-left:auto}
+  #globe{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:none}
+  #globe:active{cursor:grabbing}
+  .hud{
+    position:absolute;left:0;bottom:2%;font-family:"JetBrains Mono",monospace;font-size:.68rem;
+    letter-spacing:.12em;color:var(--dim);pointer-events:none;line-height:1.9;
+  }
+  .hud b{color:var(--ice)}
+  .compass{position:absolute;right:2%;top:3%;width:52px;height:52px;opacity:.5;pointer-events:none}
+
+  /* selected beacon panel */
+  .beacon-panel{
+    position:relative;z-index:3;margin-top:6px;min-height:150px;max-width:560px;margin-left:auto;
+    background:var(--raise);
+    border:1px solid var(--line);border-radius:3px;padding:22px 24px;backdrop-filter:blur(8px);
+    transition:border-color .4s var(--e),background-color .55s var(--e);
+  }
+  .beacon-panel::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:2px;background:var(--accent,var(--gold))}
+  .bp-top{display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .bp-coord{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.1em;color:var(--dim)}
+  .bp-status{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;padding:4px 9px;border-radius:2px}
+  .bp-status.live{color:#1a1206;background:var(--gold)}
+  .bp-status.rising{color:var(--ice);border:1px solid var(--ice-dim)}
+  .bp-name{font-family:"Fraunces",serif;font-weight:600;font-size:1.7rem;margin-top:14px;line-height:1.05}
+  .bp-dom{font-family:"JetBrains Mono",monospace;font-size:.78rem;color:var(--accent,var(--gold));margin-top:4px}
+  .bp-desc{color:var(--mist);font-size:.95rem;margin-top:12px}
+  .bp-foot{margin-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .bp-link{font-family:"Fraunces",serif;font-weight:600;font-size:1rem;color:var(--paper);display:inline-flex;align-items:center;gap:9px;transition:gap .3s var(--e)}
+  .bp-link:hover{gap:14px}.bp-link .ar{color:var(--accent,var(--gold))}
+  .bp-tags{display:flex;gap:7px;flex-wrap:wrap}
+  .bp-tags span{font-family:"JetBrains Mono",monospace;font-size:.62rem;color:var(--mist);border:1px solid var(--line);border-radius:2px;padding:3px 8px}
+
+  /* ---------------- SECTION SHELL ---------------- */
+  section{position:relative;z-index:2}
+  .band{padding:120px 0}
+  .band-head{margin-bottom:56px}
+  .band-head h2{font-family:"Fraunces",serif;font-weight:600;letter-spacing:-.02em;font-size:clamp(2rem,4.4vw,3.1rem);line-height:1.04;margin-top:16px;max-width:20ch}
+  .band-head p{color:var(--mist);max-width:48ch;margin-top:16px;font-size:1.02rem}
+
+  /* ---------------- GAZETTEER (the atlas index) ---------------- */
+  .gaz{border-top:1px solid var(--line)}
+  .row{
+    display:grid;grid-template-columns:74px 1.4fr 2fr auto;gap:26px;align-items:center;
+    padding:28px 4px;border-bottom:1px solid var(--line-soft);position:relative;
+    transition:background .4s var(--e);
+  }
+  .row::after{content:"";position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,rgba(232,184,92,.07),transparent);transition:width .5s var(--e)}
+  .row.live:hover{background:rgba(232,184,92,.03)}
+  .row.live:hover::after{width:100%}
+  .r-idx{font-family:"JetBrains Mono",monospace;font-size:.78rem;color:var(--dim);letter-spacing:.08em}
+  .r-idx b{display:block;color:var(--gold);font-size:1.4rem;font-weight:500;letter-spacing:0;margin-bottom:3px}
+  .row.rising .r-idx b{color:var(--ice-dim)}
+  .r-name{font-family:"Fraunces",serif;font-weight:600;font-size:1.42rem;line-height:1.1}
+  .r-dom{font-family:"JetBrains Mono",monospace;font-size:.74rem;color:var(--mist);margin-top:5px}
+  .row.rising .r-dom{color:var(--dim)}
+  .r-desc{color:var(--mist);font-size:.94rem}
+  .row.rising .r-desc{color:var(--dim)}
+  .r-act{justify-self:end;text-align:right}
+  .r-stat{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;padding:4px 10px;border-radius:2px;white-space:nowrap}
+  .r-stat.live{color:#1a1206;background:var(--gold)}
+  .r-stat.rising{color:var(--ice);border:1px solid var(--ice-dim)}
+  .r-go{display:inline-flex;align-items:center;gap:7px;margin-top:12px;font-family:"Fraunces",serif;font-weight:600;font-size:.95rem;color:var(--paper);transition:gap .3s var(--e)}
+  .row.live:hover .r-go{gap:12px}
+  .r-go .ar{color:var(--gold)}
+  .r-soon{margin-top:12px;font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--dim)}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--e),transform .8s var(--e)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------------- MISSION PLATE ---------------- */
+  .plate{position:relative;padding:130px 0;text-align:center;overflow:hidden}
+  .plate::before,.plate::after{content:"";position:absolute;left:50%;transform:translateX(-50%);width:min(760px,84%);height:1px;background:linear-gradient(90deg,transparent,var(--gold-deep),transparent)}
+  .plate::before{top:60px}.plate::after{bottom:60px}
+  .plate .wrap{position:relative}
+  .plate .rose{margin:0 auto 26px;width:46px;height:46px;opacity:.7}
+  .plate h2{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(2.1rem,5.2vw,3.7rem);line-height:1.12;letter-spacing:-.01em;max-width:18ch;margin:14px auto 0}
+  .plate h2 em{font-style:italic;color:var(--gold)}
+  .plate .sub{color:var(--mist);max-width:46ch;margin:26px auto 0}
+  .figs{display:flex;justify-content:center;flex-wrap:wrap;gap:0;margin-top:60px}
+  .fig{padding:0 42px;position:relative}
+  .fig+.fig::before{content:"";position:absolute;left:0;top:14%;bottom:14%;width:1px;background:var(--line)}
+  .fig .n{font-family:"Fraunces",serif;font-weight:600;font-size:2.7rem;line-height:1}
+  .fig .n em{font-style:normal;color:var(--gold)}
+  .fig .k{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-top:10px}
+
+  /* ---------------- FOOTER ---------------- */
+  footer{border-top:1px solid var(--line);padding:70px 0 42px;background:var(--deep)}
+  .fg{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:44px;margin-bottom:48px}
+  .fg p{color:var(--mist);font-size:.92rem;max-width:32ch;margin-top:18px}
+  .fc h4{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:16px}
+  .fc a{display:block;color:var(--mist);font-size:.92rem;padding:6px 0;transition:color .25s}
+  .fc a:hover{color:var(--gold-bright)}
+  .fbar{border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.06em;color:var(--dim)}
+
+  /* ---------------- THEME TOGGLE ---------------- */
+  .icon-btn{background:none;border:1px solid var(--line);color:var(--paper);width:38px;height:38px;border-radius:2px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.3s var(--e)}
+  .icon-btn:hover{border-color:var(--gold);color:var(--gold)}
+  .icon-btn svg{width:18px;height:18px}
+  .icon-btn .moon{display:none}
+  html[data-theme="light"] .icon-btn .sun{display:none}
+  html[data-theme="light"] .icon-btn .moon{display:inline-flex}
+
+  /* ---------------- FLOATING ACTIONS ---------------- */
+  .fab{position:fixed;right:24px;z-index:70;border:none;cursor:pointer;transition:.35s var(--e)}
+  #toTop{bottom:100px;width:46px;height:46px;border-radius:50%;background:var(--raise);border:1px solid var(--line);color:var(--gold);display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(14px) scale(.9);pointer-events:none;box-shadow:0 12px 30px -14px rgba(0,0,0,.55)}
+  #toTop.show{opacity:1;transform:none;pointer-events:auto}
+  #toTop:hover{border-color:var(--gold);background:var(--gold);color:var(--void)}
+
+  #botFab{bottom:24px;width:60px;height:60px;border-radius:50%;
+    background:radial-gradient(circle at 34% 30%,var(--gold-bright),var(--gold) 52%,var(--gold-deep));
+    display:flex;align-items:center;justify-content:center;color:var(--void);
+    box-shadow:0 14px 36px -10px rgba(232,184,92,.55)}
+  #botFab:hover{transform:translateY(-2px)}
+  #botFab svg{width:28px;height:28px}
+  #botFab .close-i{display:none}
+  #botFab.open .open-i{display:none}
+  #botFab.open .close-i{display:block}
+
+  .bot-panel{position:fixed;right:24px;bottom:96px;z-index:71;width:372px;max-width:calc(100vw - 32px);
+    height:530px;max-height:calc(100vh - 132px);background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 34px 80px -26px rgba(0,0,0,.62);opacity:0;transform:translateY(18px) scale(.98);
+    pointer-events:none;transition:opacity .3s var(--e),transform .3s var(--e)}
+  .bot-panel.open{opacity:1;transform:none;pointer-events:auto}
+  .bot-head{display:flex;align-items:center;gap:12px;padding:15px 16px;border-bottom:1px solid var(--line);background:var(--raise)}
+  .bot-head .av{width:40px;height:40px;flex:none}
+  .bot-head .who{font-family:"Fraunces",serif;font-weight:600;font-size:1.04rem;line-height:1.05}
+  .bot-head .st{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.12em;color:var(--gold-bright);display:flex;align-items:center;gap:6px;margin-top:4px}
+  .bot-head .st::before{content:"";width:6px;height:6px;border-radius:50%;background:#3ecf8e;box-shadow:0 0 8px #3ecf8e}
+  .bot-head .x{margin-left:auto;background:none;border:none;color:var(--mist);cursor:pointer;padding:4px;border-radius:4px}
+  .bot-head .x:hover{color:var(--paper)}
+  .bot-body{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+  .msg{display:flex;gap:9px;max-width:90%;align-items:flex-end}
+  .msg .b{padding:11px 14px;font-size:.9rem;line-height:1.5}
+  .msg.bot .av{width:26px;height:26px;flex:none;margin-bottom:2px}
+  .msg.bot .b{background:var(--raise);border:1px solid var(--line);border-radius:13px;border-bottom-left-radius:3px;color:var(--paper)}
+  .msg.me{align-self:flex-end}
+  .msg.me .b{background:var(--gold);color:#1a1206;border-radius:13px;border-bottom-right-radius:3px}
+  .msg .b a{color:var(--gold-bright);font-weight:600}
+  .msg.me .b a{color:#1a1206}
+  .msg .b b{font-weight:600}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;padding:2px 16px 6px}
+  .chip{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--gold-bright);border:1px solid var(--line);background:none;border-radius:100px;padding:6px 11px;cursor:pointer;transition:.25s var(--e);text-align:left}
+  .chip:hover{border-color:var(--gold);background:rgba(232,184,92,.1)}
+  .bot-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:var(--raise)}
+  .bot-input input{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:11px 13px;color:var(--paper);font-family:inherit;font-size:.9rem;outline:none;transition:border-color .25s}
+  .bot-input input:focus{border-color:var(--gold)}
+  .bot-input button{background:var(--gold);border:none;border-radius:9px;width:42px;color:#1a1206;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
+  .bot-input button:hover{background:var(--gold-bright);color:#fff}
+  .typing .b{display:flex;gap:4px;align-items:center;padding:13px 15px}
+  .typing i{width:6px;height:6px;border-radius:50%;background:var(--mist);animation:blink 1.2s infinite}
+  .typing i:nth-child(2){animation-delay:.18s}.typing i:nth-child(3){animation-delay:.36s}
+  @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+
+  @media(max-width:600px){
+    .bot-panel{right:12px;left:12px;width:auto;bottom:88px;height:min(70vh,520px)}
+    #botFab{right:18px;bottom:18px}
+    #toTop{right:18px;bottom:90px}
+  }
+
+  /* ---------------- RESPONSIVE ---------------- */
+  @media(max-width:940px){
+    .hero .wrap{grid-template-columns:1fr;gap:18px}
+    .intro{order:2;max-width:none}
+    .planet-col{order:1}
+    .stage{max-width:420px;margin:0 auto}
+    .beacon-panel{margin:0 auto}
+    .row{grid-template-columns:60px 1fr auto;gap:18px}
+    .r-desc{display:none}
+    .fg{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:600px){
+    .wrap{padding:0 20px}
+    nav.links{display:none}
+    nav.links.open{display:flex;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:flex-start;gap:16px;padding:22px 24px;background:var(--raise);border-bottom:1px solid var(--line);backdrop-filter:blur(16px)}
+    .menu-btn{display:block}
+    .band{padding:78px 0}
+    .row{grid-template-columns:44px 1fr;gap:14px}
+    .r-act{grid-column:2;justify-self:start;text-align:left;margin-top:6px}
+    .fig{padding:0 26px;margin-bottom:8px}
+    .fg{grid-template-columns:1fr}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation-duration:.001s!important;transition-duration:.001s!important}
+    .reveal{opacity:1;transform:none}
+    .intro .eyebrow,.intro h1 .a,.intro h1 .b,.intro p.lead,.intro .instr,.intro .by{opacity:1}
+  }
+</style>
+</head>
+<body>
+<script>(function(){try{var t=localStorage.getItem('woa-theme');if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();</script>
+
+<!-- =============== NAV =============== -->
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="World of AI home">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="var(--paper)" stroke-width="2.2"/>
+      <ellipse cx="50" cy="38" rx="42" ry="9" fill="none" stroke="var(--line)" stroke-width="1.3"/>
+      <ellipse cx="50" cy="50" rx="46" ry="12" fill="none" stroke="var(--line)" stroke-width="1.3"/>
+      <ellipse cx="50" cy="62" rx="42" ry="9" fill="none" stroke="var(--line)" stroke-width="1.3"/>
+      <polygon points="50,30 68,44 61,66 39,66 32,44" fill="none" stroke="var(--gold)" stroke-width="1.7"/>
+      <line x1="50" y1="30" x2="50" y2="72" stroke="var(--gold)" stroke-width="1.5"/>
+      <circle cx="50" cy="30" r="3.6" fill="var(--paper)"/><circle cx="68" cy="44" r="3.6" fill="var(--paper)"/>
+      <circle cx="61" cy="66" r="3.6" fill="var(--paper)"/><circle cx="39" cy="66" r="3.6" fill="var(--paper)"/>
+      <circle cx="32" cy="44" r="3.6" fill="var(--paper)"/><circle cx="50" cy="72" r="4.6" fill="var(--gold)"/>
+    </svg>
+    <span class="wm"><b>planet</b><i>AI</i><span class="llp">LLP</span></span>
+  </a>
+  <nav class="links" id="links">
+    <a href="#atlas">The Atlas</a>
+    <a href="#horizon">Horizon</a>
+    <a href="#mission">Mission</a>
+    <a class="cta" href="https://dishacareerlab.com" target="_blank" rel="noopener">Try DISHA →</a>
+  </nav>
+  <button class="icon-btn" id="themeBtn" aria-label="Toggle light and dark mode" title="Toggle day / night">
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.3 6.3 0 0 0 10.5 10.5z"/></svg>
+  </button>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+  </button>
+</header>
+
+<!-- =============== HERO =============== -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="intro">
+      <span class="eyebrow">planetAI LLP · an atlas of intelligence</span>
+      <h1>
+        <span class="a serif">The World</span>
+        <span class="b serif">of <em>AI</em></span>
+      </h1>
+      <p class="lead">Practical, ethical AI for India's next billion — mapped as one connected planet. Spin the world to find each beacon: three lit today, three rising on the horizon.</p>
+      <div class="instr"><span class="dot"></span> Drag the planet · tap a beacon to travel</div>
+      <p class="by">DEVELOPED BY <b>planetAI LLP</b> · 12.97°N 77.59°E · BENGALURU</p>
+    </div>
+
+    <div class="planet-col">
+      <div class="stage">
+        <canvas id="globe" role="img" aria-label="An interactive planet. Six beacons mark planetAI products; explore the full list in The Atlas section below."></canvas>
+        <svg class="compass" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="var(--line)" stroke-width="1"/>
+          <path d="M50 8 L56 50 L50 46 L44 50 Z" fill="var(--gold)"/>
+          <path d="M50 92 L44 50 L50 54 L56 50 Z" fill="var(--dim)"/>
+          <text x="50" y="24" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--mist)">N</text>
+        </svg>
+        <div class="hud" id="hud">FACING<br><b id="hudCoord">00.0°N 000.0°E</b></div>
+      </div>
+
+      <div class="beacon-panel" id="panel" style="--accent:var(--gold)">
+        <div class="bp-top">
+          <span class="bp-coord" id="pCoord">—</span>
+          <span class="bp-status live" id="pStatus">Live</span>
+        </div>
+        <div class="bp-name serif" id="pName">Select a beacon</div>
+        <div class="bp-dom mono" id="pDom">world-of-ai.co.in</div>
+        <p class="bp-desc" id="pDesc">Drag the planet and tap any glowing beacon to open its story, or explore the full atlas below.</p>
+        <div class="bp-foot" id="pFoot"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== THE ATLAS (live) =============== -->
+<section class="band" id="atlas">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <span class="eyebrow">The Atlas · charted &amp; live</span>
+      <h2>Three products, built and shipped before a rupee of outside capital.</h2>
+      <p>News to build awareness. Education to build skill. Guidance to make the decision. Free where it should be, radically affordable where it counts.</p>
+    </div>
+    <div class="gaz" id="gazLive"></div>
+  </div>
+</section>
+
+<!-- =============== HORIZON =============== -->
+<section class="band" id="horizon" style="padding-top:0">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <span class="eyebrow">The Horizon · rising</span>
+      <h2>Three more beacons, each stronger for the trust DISHA builds first.</h2>
+      <p>Deferred by choice, not capacity. Every idea below sharpens once the daily habit and the audience are already in place.</p>
+    </div>
+    <div class="gaz" id="gazHorizon"></div>
+  </div>
+</section>
+
+<!-- =============== MISSION PLATE =============== -->
+<section class="plate" id="mission">
+  <div class="wrap reveal">
+    <svg class="rose" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="47" fill="none" stroke="var(--gold-deep)" stroke-width="1"/>
+      <path d="M50 6 L58 42 L94 50 L58 58 L50 94 L42 58 L6 50 L42 42 Z" fill="none" stroke="var(--gold)" stroke-width="1.4"/>
+      <circle cx="50" cy="50" r="5" fill="var(--gold)"/>
+    </svg>
+    <span class="eyebrow" style="justify-content:center">The reason for all of it</span>
+    <h2 class="serif">AI for every planet. <em>Intelligence accessible to all.</em></h2>
+    <p class="sub">The next billion AI users won't come from Silicon Valley. World of AI is charted for them — the students, parents, and citizens the revolution keeps skipping.</p>
+    <div class="figs">
+      <div class="fig"><div class="n serif"><em>3</em></div><div class="k">Beacons live</div></div>
+      <div class="fig"><div class="n serif"><em>250M+</em></div><div class="k">Students in reach</div></div>
+      <div class="fig"><div class="n serif">₹<em>999</em></div><div class="k">Not ₹10,000+</div></div>
+      <div class="fig"><div class="n serif"><em>0</em></div><div class="k">Login walls on the core</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== SCROLL TO TOP =============== -->
+<button class="fab" id="toTop" aria-label="Back to top">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+</button>
+
+<!-- =============== PLANETAI BOT =============== -->
+<button class="fab" id="botFab" aria-label="Open planetAI Bot">
+  <svg class="open-i" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+    <circle cx="24" cy="24" r="19" fill="none" stroke="currentColor" stroke-width="2"/>
+    <ellipse cx="24" cy="24" rx="19" ry="6" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".65"/>
+    <ellipse cx="24" cy="24" rx="7.5" ry="19" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".65"/>
+    <circle cx="24" cy="24" r="3" fill="currentColor"/>
+  </svg>
+  <svg class="close-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+</button>
+
+<div class="bot-panel" id="botPanel" role="dialog" aria-label="planetAI Bot">
+  <div class="bot-head">
+    <svg class="av" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="44" fill="none" stroke="var(--gold)" stroke-width="3"/>
+      <ellipse cx="50" cy="50" rx="44" ry="13" fill="none" stroke="var(--gold-deep)" stroke-width="2"/>
+      <ellipse cx="50" cy="50" rx="16" ry="44" fill="none" stroke="var(--gold-deep)" stroke-width="2"/>
+      <circle cx="50" cy="50" r="6" fill="var(--gold)"/>
+    </svg>
+    <div>
+      <div class="who serif">planetAI Bot</div>
+      <div class="st">Online · guide to the atlas</div>
+    </div>
+    <button class="x" id="botClose" aria-label="Close chat">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="bot-body" id="botBody"></div>
+  <div class="bot-input">
+    <input id="botInput" type="text" placeholder="Ask about DISHA, pricing, what's next…" autocomplete="off" aria-label="Message" />
+    <button id="botSend" aria-label="Send">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- =============== FOOTER =============== -->
+<footer id="contact">
+  <div class="wrap">
+    <div class="fg">
+      <div class="fc">
+        <span class="brand" style="pointer-events:none">
+          <svg viewBox="0 0 100 100" aria-hidden="true" style="width:36px;height:36px">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="var(--paper)" stroke-width="2.2"/>
+            <ellipse cx="50" cy="50" rx="46" ry="12" fill="none" stroke="var(--line)" stroke-width="1.3"/>
+            <polygon points="50,30 68,44 61,66 39,66 32,44" fill="none" stroke="var(--gold)" stroke-width="1.7"/>
+            <circle cx="50" cy="72" r="4.6" fill="var(--gold)"/>
+          </svg>
+          <span class="wm"><b>planet</b><i>AI</i><span class="llp">LLP</span></span>
+        </span>
+        <p>An ecosystem making practical, ethical intelligence accessible to India's next billion — and, from the Gulf diaspora outward, to the world.</p>
+      </div>
+      <div class="fc">
+        <h4>Charted</h4>
+        <a href="https://aishorts.biz" target="_blank" rel="noopener">AIShorts</a>
+        <a href="https://dishacareerlab.com" target="_blank" rel="noopener">DISHA Career Lab</a>
+        <a href="https://ai-university.co.in" target="_blank" rel="noopener">AI University</a>
+        <a href="#horizon">On the horizon</a>
+      </div>
+      <div class="fc">
+        <h4>planetAI LLP</h4>
+        <a href="#mission">Mission</a>
+        <a href="https://world-of-ai.co.in" target="_blank" rel="noopener">World of AI</a>
+        <a href="mailto:maheshwari1382@gmail.com">Get in touch</a>
+        <a href="https://github.com/pawanmaheshwari" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+    <div class="fbar">
+      <span>© 2026 planetAI LLP · Bengaluru, India</span>
+      <span>AI FOR EVERY PLANET</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------------- DATA ---------------- */
+const BEACONS=[
+  {id:"aishorts",name:"AIShorts",dom:"aishorts.biz",url:"https://aishorts.biz",status:"live",
+   coord:"35.0°N 15.0°E",lat:35,lon:15,accent:"var(--gold)",
+   desc:"Daily AI news distilled into plain English — with quizzes and live market data. The daily AI habit for Bharat.",
+   tags:["Daily news","Quizzes","Live markets"],action:"Read today"},
+  {id:"disha",name:"DISHA Career Lab",dom:"dishacareerlab.com",url:"https://dishacareerlab.com",status:"live",
+   coord:"18.0°N 79.0°E",lat:18,lon:79,accent:"var(--gold)",
+   desc:"Scientific 5-D psychometric career guidance for Class 8–12 — on-device ML aligned to JEE/NEET/CLAT and real Indian colleges. ₹999, not ₹10,000+.",
+   tags:["5-D assessment","On-device ML","Privacy-first"],action:"Find your path"},
+  {id:"university",name:"AI University",dom:"ai-university.co.in",url:"https://ai-university.co.in",status:"live",
+   coord:"14.0°S 48.0°W",lat:-14,lon:-48,accent:"var(--gold)",
+   desc:"Practical, ethical AI across 120+ lessons and 7 age-calibrated tracks. Core learning free, with no login walls.",
+   tags:["120+ lessons","7 tracks","Free core"],action:"Start learning"},
+  {id:"arcade",name:"AI Games Arcade",dom:"Computational thinking · at play",url:"",status:"rising",
+   coord:"51.0°N 100.0°W",lat:51,lon:-100,accent:"var(--ice)",
+   desc:"Procedurally generated games that turn computational thinking into something kids actually want to play.",
+   tags:["Procedural","Learn by play"],action:""},
+  {id:"library",name:"AI Library",dom:"Curated e-books · English + Hindi",url:"",status:"rising",
+   coord:"30.0°S 131.0°E",lat:-30,lon:131,accent:"var(--ice)",
+   desc:"A curated shelf of AI e-books and explainers in English and Hindi — clear, vernacular, free to explore.",
+   tags:["E-books","Vernacular"],action:""},
+  {id:"vitals",name:"AI BMI Vitals",dom:"Camera PPG · BMI · health chat",url:"",status:"rising",
+   coord:"22.0°N 174.0°E",lat:22,lon:174,accent:"var(--ice)",
+   desc:"A privacy-first health companion — camera-based heart-rate sensing, BMI insight and a GenAI wellness chat, all on-device.",
+   tags:["Camera PPG","On-device"],action:""}
+];
+
+/* ---------------- GAZETTEER RENDER ---------------- */
+function renderRows(target,list,startIdx){
+  const el=document.getElementById(target);
+  el.innerHTML=list.map((b,i)=>{
+    const n=String(startIdx+i).padStart(2,"0");
+    const act=b.status==="live"
+      ? `<span class="r-stat live">Live</span><a class="r-go" href="${b.url}" target="_blank" rel="noopener">${b.action} <span class="ar">→</span></a>`
+      : `<span class="r-stat rising">Rising</span><div class="r-soon">◇ In development</div>`;
+    return `<div class="row ${b.status} reveal">
+      <div class="r-idx"><b>${n}</b>${b.coord}</div>
+      <div><div class="r-name serif">${b.name}</div><div class="r-dom">${b.dom}</div></div>
+      <div class="r-desc">${b.desc}</div>
+      <div class="r-act">${act}</div>
+    </div>`;
+  }).join("");
+}
+renderRows("gazLive",BEACONS.filter(b=>b.status==="live"),1);
+renderRows("gazHorizon",BEACONS.filter(b=>b.status==="rising"),4);
+
+/* ---------------- BEACON PANEL ---------------- */
+function selectBeacon(b){
+  const p=document.getElementById("panel");
+  p.style.setProperty("--accent",b.accent);
+  document.getElementById("pCoord").textContent=b.coord;
+  const st=document.getElementById("pStatus");
+  st.textContent=b.status==="live"?"Live":"Rising";
+  st.className="bp-status "+(b.status==="live"?"live":"rising");
+  document.getElementById("pName").textContent=b.name;
+  const dom=document.getElementById("pDom");dom.textContent=b.dom;dom.style.color=b.accent;
+  document.getElementById("pDesc").textContent=b.desc;
+  const foot=document.getElementById("pFoot");
+  const tags=`<div class="bp-tags">${b.tags.map(t=>`<span>${t}</span>`).join("")}</div>`;
+  foot.innerHTML=(b.status==="live"
+    ? `<a class="bp-link serif" href="${b.url}" target="_blank" rel="noopener">${b.action} <span class="ar">→</span></a>`
+    : `<span class="bp-coord">◇ In development</span>`)+tags;
+  selected=b.id;
+}
+
+/* ---------------- CANVAS PLANET ---------------- */
+const cv=document.getElementById("globe");
+const ctx=cv.getContext("2d");
+const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let curTheme=document.documentElement.dataset.theme||"dark";
+const THEMES={
+  dark:{atmoA:"rgba(90,120,180,0.10)",atmoB:"rgba(60,80,140,0.05)",rim:"rgba(168,196,236,0.16)",
+        dot:"150,175,220",aF0:0.16,aF1:0.5,aB0:0.05,aB1:0.05,
+        live:"232,184,92",rise:"120,150,200",liveDot:"247,215,153",riseDot:"168,196,236",
+        label:"rgba(242,239,230,0.92)",labelRise:"rgba(154,166,194,0.8)"},
+  light:{atmoA:"rgba(176,122,36,0.12)",atmoB:"rgba(120,90,40,0.05)",rim:"rgba(70,80,110,0.24)",
+        dot:"70,82,116",aF0:0.30,aF1:0.55,aB0:0.09,aB1:0.06,
+        live:"169,114,30",rise:"90,110,150",liveDot:"140,94,20",riseDot:"70,90,130",
+        label:"rgba(32,36,47,0.9)",labelRise:"rgba(90,96,118,0.85)"}
+};
+let W,H,R,DPR,cx,cy;
+let ry=-0.5, rx=-0.32, vy=0, vx=0, dragging=false, lastX,lastY, idle=0;
+let selected="aishorts";
+
+const N=1350;
+const PTS=(()=>{const a=[],off=2/N,inc=Math.PI*(3-Math.sqrt(5));
+  for(let i=0;i<N;i++){const y=i*off-1+off/2,r=Math.sqrt(Math.max(0,1-y*y)),phi=i*inc;
+    a.push([Math.cos(phi)*r,y,Math.sin(phi)*r]);}return a;})();
+
+function ll(lat,lon){const la=lat*Math.PI/180,lo=lon*Math.PI/180;
+  return [Math.cos(la)*Math.cos(lo),Math.sin(la),Math.cos(la)*Math.sin(lo)];}
+BEACONS.forEach(b=>b.v=ll(b.lat,b.lon));
+
+function rot(p){
+  const cyv=Math.cos(ry),syv=Math.sin(ry),cxv=Math.cos(rx),sxv=Math.sin(rx);
+  let x=p[0]*cyv-p[2]*syv, z=p[0]*syv+p[2]*cyv, y=p[1];
+  let y2=y*cxv-z*sxv, z2=y*sxv+z*cxv;
+  return [x,y2,z2];
+}
+function slerp(a,b,t){let d=a[0]*b[0]+a[1]*b[1]+a[2]*b[2];d=Math.max(-1,Math.min(1,d));
+  const th=Math.acos(d);if(th<1e-4)return a;const s1=Math.sin((1-t)*th)/Math.sin(th),s2=Math.sin(t*th)/Math.sin(th);
+  return [a[0]*s1+b[0]*s2,a[1]*s1+b[1]*s2,a[2]*s1+b[2]*s2];}
+
+function resize(){
+  DPR=Math.min(window.devicePixelRatio||1,2);
+  const r=cv.getBoundingClientRect();W=r.width;H=r.height;
+  cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
+  cx=W/2;cy=H/2;R=Math.min(W,H)*0.42;
+}
+window.addEventListener("resize",resize);
+
+function hudCoord(){
+  // world point currently facing the camera (0,0,1) -> inverse rotate
+  const cxv=Math.cos(-rx),sxv=Math.sin(-rx),cyv=Math.cos(-ry),syv=Math.sin(-ry);
+  let y=0*cxv-1*sxv, z=0*sxv+1*cxv, x=0;
+  let x2=x*cyv-z*syv, z2=x*syv+z*cyv;
+  const lat=Math.asin(Math.max(-1,Math.min(1,y)))*180/Math.PI;
+  const lon=Math.atan2(z2,x2)*180/Math.PI;
+  const ns=lat>=0?"N":"S", ew=lon>=0?"E":"W";
+  document.getElementById("hudCoord").textContent=
+    Math.abs(lat).toFixed(1).padStart(4,"0")+"°"+ns+" "+Math.abs(lon).toFixed(1).padStart(5,"0")+"°"+ew;
+}
+
+function draw(){
+  const T=THEMES[curTheme]||THEMES.dark;
+  ctx.clearRect(0,0,W,H);
+  // atmosphere
+  const g=ctx.createRadialGradient(cx,cy,R*0.55,cx,cy,R*1.5);
+  g.addColorStop(0,T.atmoA);g.addColorStop(0.55,T.atmoB);g.addColorStop(1,"rgba(0,0,0,0)");
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,R*1.5,0,7);ctx.fill();
+  // rim
+  ctx.strokeStyle=T.rim;ctx.lineWidth=1;ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.stroke();
+
+  // dot sphere
+  for(let i=0;i<N;i++){
+    const p=rot(PTS[i]);const sx=cx+p[0]*R, sy=cy-p[1]*R, z=p[2];
+    const front=z>0;
+    const a=front?T.aF0+z*T.aF1:T.aB0+(z+1)*T.aB1;
+    const s=front?0.7+z*1.0:0.5;
+    ctx.fillStyle=`rgba(${T.dot},${a.toFixed(3)})`;
+    ctx.beginPath();ctx.arc(sx,sy,s,0,7);ctx.fill();
+  }
+
+  // great-circle arcs between live beacons
+  const live=BEACONS.filter(b=>b.status==="live");
+  ctx.lineWidth=1.1;
+  for(let i=0;i<live.length;i++){
+    const a=live[i].v, b=live[(i+1)%live.length].v;
+    let prev=null;
+    for(let t=0;t<=1.0001;t+=1/46){
+      const p=rot(slerp(a,b,t));const sx=cx+p[0]*R,sy=cy-p[1]*R;
+      if(prev && (p[2]>-0.15 || prev.z>-0.15)){
+        const vis=Math.max(0,(p[2]+prev.z)/2);
+        ctx.strokeStyle=`rgba(${T.live},${(0.10+vis*0.5).toFixed(3)})`;
+        ctx.beginPath();ctx.moveTo(prev.sx,prev.sy);ctx.lineTo(sx,sy);ctx.stroke();
+      }
+      prev={sx,sy,z:p[2]};
+    }
+    // travelling pulse
+    if(!reduce){
+      const tt=(travel+ i*0.34)%1;
+      const p=rot(slerp(a,b,tt));
+      if(p[2]>-0.05){const sx=cx+p[0]*R,sy=cy-p[1]*R;
+        ctx.fillStyle=`rgba(${T.liveDot},0.9)`;ctx.beginPath();ctx.arc(sx,sy,2.2,0,7);ctx.fill();}
+    }
+  }
+
+  // beacons
+  BEACONS.forEach(b=>{
+    const p=rot(b.v);const sx=cx+p[0]*R,sy=cy-p[1]*R,z=p[2];
+    b._sx=sx;b._sy=sy;b._front=z>0.02;
+    const gold=b.status==="live";
+    const col=gold?T.live:T.rise;
+    if(z>0.02){
+      const glow=ctx.createRadialGradient(sx,sy,0,sx,sy,gold?16:11);
+      glow.addColorStop(0,`rgba(${col},${gold?0.55:0.3})`);glow.addColorStop(1,`rgba(${col},0)`);
+      ctx.fillStyle=glow;ctx.beginPath();ctx.arc(sx,sy,gold?16:11,0,7);ctx.fill();
+      const sel=b.id===selected;
+      ctx.fillStyle=`rgba(${gold?T.liveDot:T.riseDot},1)`;
+      ctx.beginPath();ctx.arc(sx,sy,sel?4.4:(gold?3.4:2.6),0,7);ctx.fill();
+      if(sel){ctx.strokeStyle=`rgba(${col},0.8)`;ctx.lineWidth=1.4;
+        ctx.beginPath();ctx.arc(sx,sy,8+Math.sin(travel*Math.PI*2)*1.6,0,7);ctx.stroke();}
+      // label for live + facing near front
+      if(z>0.35){
+        ctx.font="500 11px 'JetBrains Mono', monospace";
+        ctx.fillStyle=gold?T.label:T.labelRise;
+        ctx.textAlign="left";
+        ctx.fillText(b.name.replace(" Career Lab","").replace("AI ","AI\u00A0"), sx+9, sy+3.5);
+      }
+    }
+  });
+}
+
+let travel=0;
+function loop(){
+  if(!dragging){
+    ry+=vy; rx+=vx; vy*=0.94; vx*=0.94;
+    if(Math.abs(vy)<0.0004)vy=0; if(Math.abs(vx)<0.0004)vx=0;
+    idle++;
+    if(!reduce && idle>90 && vy===0 && vx===0) ry+=0.0016; // gentle auto-spin when idle
+  }
+  rx=Math.max(-1.15,Math.min(1.15,rx));
+  if(!reduce) travel=(travel+0.006)%1;
+  hudCoord();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+/* interaction */
+function pos(e){const t=e.touches?e.touches[0]:e;return{x:t.clientX,y:t.clientY};}
+cv.addEventListener("pointerdown",e=>{dragging=true;idle=0;const p=pos(e);lastX=p.x;lastY=p.y;cv.setPointerCapture(e.pointerId);});
+cv.addEventListener("pointermove",e=>{
+  if(!dragging)return;const p=pos(e);const dx=p.x-lastX,dy=p.y-lastY;lastX=p.x;lastY=p.y;
+  ry+=dx*0.006; rx+=dy*0.006; vy=dx*0.006; vx=dy*0.006;
+});
+cv.addEventListener("pointerup",()=>{dragging=false;idle=0;});
+cv.addEventListener("pointercancel",()=>{dragging=false;});
+
+// click / tap to select nearest front beacon
+cv.addEventListener("click",e=>{
+  const r=cv.getBoundingClientRect();const mx=e.clientX-r.left,my=e.clientY-r.top;
+  let best=null,bd=26;
+  BEACONS.forEach(b=>{if(b._front){const d=Math.hypot(b._sx-mx,b._sy-my);if(d<bd){bd=d;best=b;}}});
+  if(best){selectBeacon(best);
+    // ease that beacon toward front
+    const target=ll(best.lat,best.lon);
+    animateTo(target);}
+});
+let animT=null;
+function animateTo(v){
+  // find ry,rx that brings v to front (0,0,1)
+  const targLon=Math.atan2(v[2],v[0]);
+  const targLat=Math.asin(Math.max(-1,Math.min(1,v[1])));
+  const goalRy=-targLon, goalRx=targLat;
+  cancelAnimationFrame(animT);
+  const startRy=ry,startRx=rx;let t=0;
+  (function step(){t+=0.06;const k=t<1?1-Math.pow(1-t,3):1;
+    ry=startRy+(goalRy-startRy)*k; rx=Math.max(-1.15,Math.min(1.15,startRx+(goalRx-startRx)*k));
+    if(t<1)animT=requestAnimationFrame(step);})();
+}
+
+resize();selectBeacon(BEACONS[0]);
+requestAnimationFrame(loop);
+
+/* ---------------- CHROME ---------------- */
+const nav=document.getElementById("nav");
+const onScroll=()=>nav.classList.toggle("scrolled",window.scrollY>24);
+onScroll();window.addEventListener("scroll",onScroll,{passive:true});
+const links=document.getElementById("links");
+document.getElementById("menuBtn").addEventListener("click",()=>links.classList.toggle("open"));
+links.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>links.classList.remove("open")));
+const io=new IntersectionObserver((es)=>{es.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");io.unobserve(x.target);}})},{threshold:.12});
+document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+
+/* ---------------- THEME TOGGLE (planet recolors live) ---------------- */
+function setTheme(t){
+  curTheme=t;
+  document.documentElement.dataset.theme=t;
+  try{localStorage.setItem("woa-theme",t);}catch(e){}
+}
+document.getElementById("themeBtn").addEventListener("click",()=>setTheme(curTheme==="dark"?"light":"dark"));
+
+/* ---------------- SCROLL TO TOP ---------------- */
+const toTop=document.getElementById("toTop");
+window.addEventListener("scroll",()=>toTop.classList.toggle("show",window.scrollY>560),{passive:true});
+toTop.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
+
+/* ---------------- PLANETAI BOT ---------------- */
+const BOT_AV=`<svg class="av" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--gold)" stroke-width="4"/><ellipse cx="50" cy="50" rx="44" ry="13" fill="none" stroke="var(--gold-deep)" stroke-width="2.5"/><circle cx="50" cy="50" r="7" fill="var(--gold)"/></svg>`;
+function hit(s,k){
+  if(/^[a-z0-9 ]+$/.test(k)) return new RegExp("\\b"+k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b").test(s);
+  return s.includes(k);
+}
+const BOT_INTENTS=[
+  {k:["hi","hello","hey","namaste","hola","yo"],r:{t:"Hello! I'm the planetAI Bot \u{1F30D} — your guide to the World of AI. I can walk you through our live products, what's rising on the horizon, pricing, privacy, or how to reach the team. What would you like to know?",c:["What is DISHA?","What's live now?","Pricing","What's coming next?"]}},
+  {k:["disha","career","stream","psychometric","5-d","5d","guidance"],r:{t:"<b>DISHA Career Lab</b> gives Class 8\u201312 students a scientific 5-D psychometric career assessment \u2014 with on-device ML aligned to JEE / NEET / CLAT and real Indian colleges. It's <b>\u20B9999</b>, versus the \u20B910,000+ the market charges, and the student's data never leaves the device. <a href='https://dishacareerlab.com' target='_blank' rel='noopener'>Open DISHA \u2192</a>",c:["Is it private?","Pricing","What's live now?"]}},
+  {k:["aishorts","shorts","news","daily read","daily"],r:{t:"<b>AIShorts</b> turns daily AI news into plain English \u2014 with quizzes and live market data. It's the daily AI habit for Bharat, free to read. <a href='https://aishorts.biz' target='_blank' rel='noopener'>Read today \u2192</a>",c:["What is AI University?","What's coming next?"]}},
+  {k:["university","learn","course","lesson","study","tracks","education"],r:{t:"<b>AI University</b> teaches practical, ethical AI across 120+ lessons in 7 age-calibrated tracks. The core learning is free, with no login walls. <a href='https://ai-university.co.in' target='_blank' rel='noopener'>Start learning \u2192</a>",c:["What is DISHA?","Pricing"]}},
+  {k:["arcade","game","games","play"],r:{t:"<b>AI Games Arcade</b> is rising on the horizon \u{1F3AE} \u2014 procedurally generated games that make computational thinking something kids actually want to play. In development now.",c:["What else is coming?","What's live now?"]}},
+  {k:["library","book","books","ebook","e-book","reading","hindi"],r:{t:"<b>AI Library</b> is coming soon \u{1F4DA} \u2014 a curated shelf of AI e-books and explainers in English and Hindi, free to explore.",c:["What else is coming?","What's live now?"]}},
+  {k:["vitals","health","bmi","heart","ppg","fitness","wellness"],r:{t:"<b>AI BMI Vitals</b> is on the way \u2764\uFE0F \u2014 a privacy-first health companion with camera-based heart-rate sensing, BMI insight and a GenAI wellness chat, all on-device.",c:["What else is coming?","What's live now?"]}},
+  {k:["price","cost","fee","much","rupee","pay","paid","money","charge"],r:{t:"Pricing is built to stay accessible. AIShorts and AI University's core are <b>free</b>, no login walls. DISHA's full 5-D assessment is <b>\u20B9999</b> (the market charges \u20B910,000+). For schools, licenses run \u20B9250\u2013300 per student.",c:["What is DISHA?","Contact"]}},
+  {k:["free"],r:{t:"Plenty is free: AIShorts daily news, AI University's core lessons, and DISHA's basic exploration \u2014 all with no login walls. Only DISHA's full 5-D report is paid, at \u20B9999.",c:["What is DISHA?","What's live now?"]}},
+  {k:["coming","next","horizon","roadmap","future","soon","else","rising"],r:{t:"Three beacons are rising on the horizon: <b>AI Games Arcade</b> (learn by play), <b>AI Library</b> (e-books in English + Hindi), and <b>AI BMI Vitals</b> (on-device health). Each grows stronger as the DISHA audience does.",c:["AI Games Arcade","AI Library","AI BMI Vitals"]}},
+  {k:["live","now","products","offer","charted","apps","available"],r:{t:"Three products are live today: <b>AIShorts</b> (daily AI news), <b>DISHA Career Lab</b> (5-D career guidance), and <b>AI University</b> (open AI education). Spin the planet up top to explore each beacon.",c:["What is DISHA?","What is AIShorts?","What is AI University?"]}},
+  {k:["mission","about","world of ai","planetai","who","vision","why"],r:{t:"planetAI's mission is simple: <em>AI for every planet \u2014 intelligence accessible to all.</em> We build practical, ethical AI for India's next billion \u2014 the students, parents and citizens the AI revolution keeps skipping.",c:["What's live now?","Contact"]}},
+  {k:["contact","email","reach","founder","pawan","talk","connect","invest","fund","raise","partner"],r:{t:"You can reach the team at <a href='mailto:maheshwari1382@gmail.com'>maheshwari1382@gmail.com</a>, or explore the work on <a href='https://github.com/pawanmaheshwari' target='_blank' rel='noopener'>GitHub</a>. For investors, the same email is the fastest route.",c:["Mission","What's live now?"]}},
+  {k:["privacy","private","data","secure","safe"],r:{t:"Privacy is architectural, not a setting: DISHA runs its ML on-device, so student data never leaves the browser. That's the privacy-first principle across the whole ecosystem.",c:["What is DISHA?","Pricing"]}},
+  {k:["thanks","thank","great","cool","nice","awesome","ok","okay"],r:{t:"Anytime! Spin the planet to explore more, or ask me about any beacon. \u{1F30D}",c:["What's live now?","What's coming next?"]}}
+];
+const BOT_FALLBACK={t:"I'm not sure I caught that \u2014 but I can help with our products (AIShorts, DISHA, AI University), what's coming next, pricing, privacy, or how to get in touch. You can also explore the full atlas right here on the page.",c:["What's live now?","Pricing","Contact"]};
+function botReply(q){const s=q.toLowerCase();for(const it of BOT_INTENTS){if(it.k.some(k=>hit(s,k)))return it.r;}return BOT_FALLBACK;}
+
+const botBody=document.getElementById("botBody");
+const botInput=document.getElementById("botInput");
+function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
+function botScroll(){botBody.scrollTop=botBody.scrollHeight;}
+function addMsg(who,html){
+  const m=document.createElement("div");m.className="msg "+who;
+  m.innerHTML=(who==="bot"?BOT_AV:"")+`<div class="b">${html}</div>`;
+  botBody.appendChild(m);botScroll();return m;
+}
+function clearChips(){const c=botBody.querySelector(".chips");if(c)c.remove();}
+function addChips(list){
+  clearChips();const wrap=document.createElement("div");wrap.className="chips";
+  list.forEach(t=>{const b=document.createElement("button");b.className="chip";b.textContent=t;
+    b.addEventListener("click",()=>botSend(t));wrap.appendChild(b);});
+  botBody.appendChild(wrap);botScroll();
+}
+function typing(){const m=document.createElement("div");m.className="msg bot typing";
+  m.innerHTML=BOT_AV+`<div class="b"><i></i><i></i><i></i></div>`;botBody.appendChild(m);botScroll();return m;}
+function botSend(text){
+  text=(text||"").trim();if(!text)return;
+  clearChips();addMsg("me",esc(text));botInput.value="";
+  const tp=typing();
+  setTimeout(()=>{tp.remove();const r=botReply(text);addMsg("bot",r.t);if(r.c)addChips(r.c);},520+Math.random()*380);
+}
+// wire input
+botInput.addEventListener("keydown",e=>{if(e.key==="Enter")botSend(botInput.value);});
+document.getElementById("botSend").addEventListener("click",()=>botSend(botInput.value));
+
+// open / close
+const botFab=document.getElementById("botFab"),botPanel=document.getElementById("botPanel");
+let botGreeted=false;
+function openBot(){
+  botPanel.classList.add("open");botFab.classList.add("open");
+  botFab.setAttribute("aria-label","Close planetAI Bot");
+  if(!botGreeted){botGreeted=true;
+    setTimeout(()=>{const r=BOT_INTENTS[0].r;addMsg("bot",r.t);addChips(r.c);},250);}
+  setTimeout(()=>botInput.focus(),300);
+}
+function closeBot(){botPanel.classList.remove("open");botFab.classList.remove("open");botFab.setAttribute("aria-label","Open planetAI Bot");}
+botFab.addEventListener("click",()=>botPanel.classList.contains("open")?closeBot():openBot());
+document.getElementById("botClose").addEventListener("click",closeBot);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&botPanel.classList.contains("open"))closeBot();});
+</script>
+</body>
+</html>
