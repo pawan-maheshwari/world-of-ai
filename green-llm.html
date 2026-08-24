@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The GREEN-LLM Index — Environmental Accounting for Language Model Use</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDEEE8;
+  --paper-2:#E3E5DC;
+  --ink:#17241F;
+  --ink-soft:#4A5A52;
+  --rule:#C3C8BC;
+  --b1:#2E6F55;
+  --b2:#7FA05A;
+  --b3:#D4B44A;
+  --b4:#C4783C;
+  --b5:#9E3B2E;
+  --accent:#2E6F55;
+  --shadow:0 1px 0 rgba(23,36,31,.08);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Spectral',Georgia,serif;font-size:16px;line-height:1.6;
+  background-image:linear-gradient(rgba(195,200,188,.35) 1px,transparent 1px);
+  background-size:100% 34px;
+}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px 100px}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink-soft);
+}
+h1,h2,h3{font-family:'Archivo',system-ui,sans-serif;font-weight:700;letter-spacing:-.02em;margin:0}
+h1{font-size:clamp(34px,7.5vw,62px);line-height:1.02;margin:14px 0 12px}
+h2{font-size:clamp(21px,3.6vw,28px);line-height:1.15}
+h3{font-size:15px;font-weight:600;letter-spacing:.01em}
+p{margin:0 0 14px}
+a{color:var(--accent)}
+hr.rule{border:0;border-top:1.5px solid var(--ink);margin:0}
+.hairline{border:0;border-top:1px solid var(--rule);margin:0}
+
+/* masthead */
+header.mast{padding:26px 0 0}
+.mast-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;
+  border-bottom:1px solid var(--rule);padding-bottom:8px}
+.lede{font-size:clamp(16px,2.6vw,19px);max-width:62ch;color:var(--ink-soft)}
+
+/* back to atlas */
+.mast-right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+a.wo-back{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink);text-decoration:none;border:1px solid var(--rule);border-radius:2px;
+  padding:6px 11px;background:var(--paper);transition:border-color .25s,background .25s;white-space:nowrap;
+}
+a.wo-back:hover{border-color:var(--b1);background:var(--paper-2)}
+footer a.wo-foot{color:var(--b1);font-weight:600;text-decoration:none;border-bottom:1px solid var(--rule)}
+footer a.wo-foot:hover{border-bottom-color:var(--b1)}
+
+/* brand */
+.brand{display:flex;align-items:center;gap:11px}
+.mark{width:46px;height:46px;flex:0 0 46px}
+.mark .leaf{transition:fill .5s ease}
+#markNeedle{transition:transform .7s cubic-bezier(.25,1.2,.35,1)}
+.brand-txt b{display:block;font-family:'Archivo',sans-serif;font-weight:700;
+  font-size:16px;letter-spacing:-.02em;line-height:1}
+.brand-txt .eyebrow{font-size:10px}
+
+/* ledger */
+.ledger{font-family:'IBM Plex Mono',monospace;font-size:12.5px;overflow-x:auto;
+  border:1px solid var(--rule);background:var(--paper);-webkit-overflow-scrolling:touch}
+.led-row{display:grid;grid-template-columns:34px 108px 1fr 96px;gap:10px;align-items:baseline;
+  padding:9px 12px;border-bottom:1px solid var(--rule);min-width:520px}
+.led-row:last-child{border-bottom:0}
+.led-row.tot{background:var(--paper-2);font-weight:600}
+.led-row .s{color:var(--ink-soft);font-size:10px;letter-spacing:.08em}
+.led-row .n{font-weight:600;font-family:'Archivo',sans-serif;font-size:12.5px;letter-spacing:.02em}
+.led-row .w{color:var(--ink-soft);font-size:11.5px}
+.led-row .r{text-align:right;font-weight:600;white-space:nowrap}
+.formula{font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.9;
+  background:var(--paper-2);border-left:3px solid var(--accent);padding:13px 15px;
+  overflow-x:auto;white-space:nowrap;margin:0 0 18px}
+
+/* svg figures */
+figure{margin:0 0 6px}
+.fig{width:100%;height:auto;display:block;overflow:visible}
+.fig text{font-family:'IBM Plex Mono',monospace}
+.flow-pipe{stroke:var(--rule);stroke-width:2.5;fill:none}
+.flow-live{stroke:var(--accent);stroke-width:2.5;fill:none;stroke-dasharray:5 7;
+  animation:drift 1.7s linear infinite}
+@keyframes drift{to{stroke-dashoffset:-24}}
+.node-box{fill:var(--paper);stroke:var(--ink);stroke-width:1.6}
+.node-k{font-size:7px;letter-spacing:.09em;fill:var(--ink-soft)}
+.node-v{font-size:11px;font-weight:600;fill:var(--ink);font-family:'Archivo',sans-serif}
+.node-u{font-size:6.5px;fill:var(--ink-soft)}
+.cmp-lbl{font-size:9px;fill:var(--ink)}
+.cmp-val{font-size:8.5px;fill:var(--ink-soft)}
+
+/* dot grid */
+.dots{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;margin:14px 0 10px}
+.dot{aspect-ratio:1;background:var(--paper-2);border-radius:1px;transition:background .35s ease}
+.dot.on{background:var(--b1)}
+.dot.over{background:var(--b5)}
+.dot-key{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-soft);
+  display:flex;gap:16px;flex-wrap:wrap}
+.dot-key i{width:9px;height:9px;display:inline-block;margin-right:5px;vertical-align:-1px}
+
+/* actions */
+.tier{border-top:1px solid var(--rule);padding:16px 0 6px}
+.tier-h{display:flex;align-items:baseline;gap:11px;margin-bottom:9px;flex-wrap:wrap}
+.tier-h b{font-family:'Archivo',sans-serif;font-size:16px}
+.tier-h span{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-soft)}
+.act{display:flex;gap:11px;align-items:flex-start;padding:8px 0;cursor:pointer;
+  border-bottom:1px dotted var(--rule)}
+.act:last-child{border-bottom:0}
+.act input{margin:4px 0 0;width:17px;height:17px;flex:0 0 17px;accent-color:var(--accent)}
+.act .a-t{flex:1;font-size:14.5px;line-height:1.45}
+.act .a-t em{font-style:normal;display:block;color:var(--ink-soft);font-size:12.5px;margin-top:2px}
+.act .a-p{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;
+  color:var(--b1);white-space:nowrap;padding-top:2px}
+.act input:checked ~ .a-t{font-weight:600}
+.pledge{border:1.5px solid var(--ink);padding:16px 18px;margin-top:22px;
+  display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.pledge .big{font-family:'Archivo',sans-serif;font-weight:700;font-size:38px;
+  letter-spacing:-.03em;line-height:1;color:var(--b1)}
+.pledge .txt{flex:1;min-width:200px;font-size:14px;color:var(--ink-soft)}
+.pledge .txt b{color:var(--ink)}
+
+/* --- PlanetAI credit --- */
+.credit{display:flex;align-items:center;gap:8px}
+.credit svg{width:19px;height:19px;flex:0 0 19px}
+.credit b{font-family:'Archivo',sans-serif;font-weight:600;font-size:12.5px;color:var(--ink)}
+
+/* --- board report button --- */
+.board-cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+  border:1.5px solid var(--ink);padding:18px 20px;margin-top:26px}
+.board-cta .t{flex:1;min-width:230px}
+.board-cta .t b{font-family:'Archivo',sans-serif;font-size:16px;display:block}
+.board-cta .t span{font-size:13.5px;color:var(--ink-soft)}
+button.btn{font-family:'Archivo',sans-serif;font-weight:600;font-size:14px;color:var(--paper);
+  background:var(--ink);border:0;padding:12px 20px;cursor:pointer;letter-spacing:.01em}
+button.btn:hover{background:var(--b1)}
+button.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+button.btn.ghost:hover{background:var(--paper-2)}
+
+/* --- chatbot --- */
+#leafBtn{position:fixed;right:18px;bottom:18px;width:60px;height:60px;border-radius:50%;
+  background:var(--b1);border:0;cursor:pointer;z-index:60;
+  box-shadow:0 6px 22px rgba(23,36,31,.28);display:flex;align-items:center;justify-content:center}
+#leafBtn:hover{background:var(--ink)}
+#leafBtn svg{width:32px;height:32px}
+#leafBtn .pulse{position:absolute;inset:0;border-radius:50%;border:2px solid var(--b1);
+  animation:pulse 2.6s ease-out infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.5);opacity:0}}
+#kb{position:fixed;right:18px;bottom:88px;width:min(400px,calc(100vw - 36px));
+  max-height:min(560px,calc(100vh - 130px));background:var(--paper);border:1.5px solid var(--ink);
+  z-index:61;display:none;flex-direction:column;box-shadow:0 12px 40px rgba(23,36,31,.25)}
+#kb.open{display:flex}
+.kb-h{display:flex;align-items:center;gap:10px;padding:13px 14px;border-bottom:1.5px solid var(--ink);
+  background:var(--paper-2)}
+.kb-h svg{width:26px;height:26px;flex:0 0 26px}
+.kb-h .ttl{flex:1;line-height:1.2}
+.kb-h .ttl b{display:block;font-family:'Archivo',sans-serif;font-size:14.5px;font-weight:700}
+.kb-h .ttl span{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-soft)}
+.kb-h button{background:none;border:0;font-size:22px;cursor:pointer;color:var(--ink-soft);
+  line-height:1;padding:0 4px}
+.kb-log{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:11px;
+  -webkit-overflow-scrolling:touch}
+.msg{max-width:88%;font-size:14px;line-height:1.5;padding:10px 13px}
+.msg.bot{background:var(--paper-2);align-self:flex-start;border-left:3px solid var(--b1)}
+.msg.you{background:var(--ink);color:var(--paper);align-self:flex-end}
+.msg b{font-weight:600}
+.msg code{font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:var(--paper);
+  padding:1px 4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
+.chip{font-family:'Archivo',sans-serif;font-size:12px;font-weight:500;background:transparent;
+  border:1px solid var(--rule);padding:6px 10px;cursor:pointer;color:var(--ink)}
+.chip:hover{border-color:var(--b1);color:var(--b1)}
+.kb-in{display:flex;gap:8px;padding:11px 12px;border-top:1px solid var(--rule)}
+.kb-in input{flex:1;font-family:'Spectral',serif;font-size:14px;border:0;
+  border-bottom:1.5px solid var(--ink);background:transparent;padding:6px 0;color:var(--ink)}
+.kb-in button{background:var(--b1);color:var(--paper);border:0;padding:0 15px;cursor:pointer;
+  font-family:'Archivo',sans-serif;font-weight:600;font-size:13px}
+
+/* --- board report (screen-hidden, print-only) --- */
+#board{display:none}
+@media print{
+  @page{size:A4;margin:15mm}
+  body{background:#fff;font-size:10.5pt;background-image:none}
+  .wrap>header,.wrap>section,footer,#leafBtn,#kb,.board-cta{display:none!important}
+  #board{display:block!important}
+  .pg{page-break-after:always}
+  .pg:last-child{page-break-after:auto}
+  #board h1{font-size:24pt;margin:0 0 4pt}
+  #board h2{font-size:13pt;margin:16pt 0 6pt;border-bottom:1.5pt solid #17241F;padding-bottom:3pt}
+  #board .kv{display:flex;justify-content:space-between;border-bottom:.5pt solid #C3C8BC;padding:4pt 0}
+  #board .kv b{font-family:'Archivo',sans-serif}
+  #board table{min-width:0;font-size:9pt}
+  #board .hero{border:1.5pt solid #17241F;padding:10pt;margin:8pt 0}
+  #board .hero .n{font-family:'Archivo',sans-serif;font-weight:700;font-size:34pt;line-height:1}
+  #board .cols{display:flex;gap:14pt}
+  #board .cols>div{flex:1}
+  #board .foot{font-family:'IBM Plex Mono',monospace;font-size:7.5pt;color:#4A5A52;
+    border-top:.5pt solid #17241F;padding-top:5pt;margin-top:12pt}
+}
+
+/* band = signature element */
+.band-block{margin:30px 0 8px}
+.band-shell{position:relative;padding-top:44px}
+.band{
+  display:grid;grid-template-columns:repeat(5,1fr);height:52px;
+  border:1.5px solid var(--ink);overflow:hidden;
+}
+.band span{display:block}
+.band i{
+  position:absolute;top:26px;bottom:-14px;width:0;
+  border-left:2px solid var(--ink);
+  transition:left .55s cubic-bezier(.2,.9,.25,1);
+}
+.band i::before{
+  content:'';position:absolute;left:-7px;top:0;
+  border-left:7px solid transparent;border-right:7px solid transparent;
+  border-top:11px solid var(--ink);
+}
+.band-scale{display:grid;grid-template-columns:repeat(5,1fr);margin-top:7px;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-soft)}
+.band-scale b{display:block;color:var(--ink);font-weight:600;font-size:11px}
+.readout{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-top:26px}
+.score-num{font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(56px,15vw,104px);
+  line-height:.82;letter-spacing:-.045em}
+.score-num small{font-size:.3em;font-weight:500;letter-spacing:0;color:var(--ink-soft)}
+.grade-tag{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;padding:7px 12px;color:#fff;font-weight:600;align-self:center}
+.verdict{font-size:16px;max-width:44ch;color:var(--ink-soft);flex:1 1 240px;min-width:220px}
+
+/* sections */
+section{padding:34px 0 6px}
+.sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:1.5px solid var(--ink);
+  padding-bottom:7px;margin-bottom:20px;flex-wrap:wrap}
+.sec-head .eyebrow{flex:0 0 auto}
+
+/* controls */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px 26px}
+.field{border-top:1px solid var(--rule);padding-top:11px}
+label.lbl{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px}
+select,input[type=number]{
+  width:100%;font-family:'Archivo',sans-serif;font-size:14.5px;font-weight:500;color:var(--ink);
+  background:transparent;border:0;border-bottom:1.5px solid var(--ink);padding:5px 0;border-radius:0;
+  appearance:none;-webkit-appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);
+  background-position:calc(100% - 9px) 13px,calc(100% - 4px) 13px;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+}
+input[type=number]{background-image:none}
+select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.range-row{display:flex;align-items:center;gap:12px}
+input[type=range]{flex:1;accent-color:var(--accent);height:22px}
+.range-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;
+  min-width:74px;text-align:right}
+
+/* readings */
+.readings{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule)}
+.rd{background:var(--paper);padding:14px 14px 16px}
+.rd .k{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-soft)}
+.rd .v{font-family:'Archivo',sans-serif;font-weight:700;font-size:25px;letter-spacing:-.02em;
+  margin-top:5px;line-height:1.05}
+.rd .u{font-size:12.5px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace}
+.equiv{margin-top:16px;font-size:15px;color:var(--ink-soft)}
+.equiv b{color:var(--ink);font-weight:600}
+
+/* dimension bars */
+.dims{margin-top:6px}
+.dim{display:grid;grid-template-columns:26px 1fr auto;gap:12px;align-items:center;
+  padding:11px 0;border-top:1px solid var(--rule)}
+.dim .ltr{font-family:'Archivo',sans-serif;font-weight:700;font-size:20px;color:var(--accent)}
+.dim .nm{font-size:14.5px}
+.dim .nm em{display:block;font-style:normal;font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;letter-spacing:.06em;color:var(--ink-soft);text-transform:uppercase}
+.bar{height:7px;background:var(--paper-2);position:relative;margin-top:6px;max-width:340px}
+.bar span{position:absolute;left:0;top:0;bottom:0;background:var(--accent);transition:width .5s ease}
+.dim .pt{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;white-space:nowrap}
+
+/* matrix */
+.matrix-wrap{position:relative;margin-top:8px}
+.matrix{position:relative;aspect-ratio:1/.82;border:1.5px solid var(--ink);
+  display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.q{padding:13px;position:relative;border:0}
+.q:nth-child(1){border-right:1px dashed var(--ink);border-bottom:1px dashed var(--ink)}
+.q:nth-child(2){border-bottom:1px dashed var(--ink)}
+.q:nth-child(3){border-right:1px dashed var(--ink)}
+.q h4{margin:0;font-family:'Archivo',sans-serif;font-size:clamp(12px,2.6vw,15px);
+  font-weight:700;letter-spacing:-.01em}
+.q p{margin:5px 0 0;font-size:clamp(11px,2.2vw,13px);line-height:1.35;color:var(--ink-soft)}
+.q .qn{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:4px}
+.pin{position:absolute;width:15px;height:15px;border-radius:50%;background:var(--ink);
+  border:3px solid var(--paper);transform:translate(-50%,50%);z-index:3;
+  transition:left .55s cubic-bezier(.2,.9,.25,1),bottom .55s cubic-bezier(.2,.9,.25,1);
+  box-shadow:0 0 0 2px var(--ink)}
+.ax{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-soft)}
+.ax-x{text-align:center;margin-top:8px}
+.ax-y{position:absolute;left:-14px;top:50%;transform:translateY(-50%) rotate(-90deg);
+  transform-origin:center;white-space:nowrap}
+.matrix-pad{padding-left:26px}
+
+/* table */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;min-width:660px;font-size:13px;background:var(--paper)}
+th,td{padding:9px 11px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.09em;
+  text-transform:uppercase;font-weight:600;background:var(--paper-2);position:sticky;top:0}
+td:first-child{font-family:'Archivo',sans-serif;font-weight:600;white-space:nowrap;font-size:12.5px}
+tbody tr:hover{background:var(--paper-2)}
+.lv{display:inline-block;width:9px;height:9px;margin-right:6px;vertical-align:-1px}
+
+/* levers */
+.lever{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:baseline;
+  padding:12px 0;border-top:1px solid var(--rule)}
+.lever .txt{font-size:14.5px}
+.lever .txt em{font-style:normal;display:block;color:var(--ink-soft);font-size:13px;margin-top:2px}
+.lever .amt{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13.5px;
+  color:var(--b1);white-space:nowrap}
+
+/* scenarios */
+.scen{border-top:1px solid var(--rule);padding:15px 0}
+.scen-h{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.scen-h b{font-family:'Archivo',sans-serif;font-size:15.5px}
+.scen-h .n{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600}
+.scen p{font-size:13.5px;color:var(--ink-soft);margin:6px 0 0;max-width:70ch}
+.meter{height:6px;background:var(--paper-2);margin-top:9px;position:relative}
+.meter span{position:absolute;inset:0 auto 0 0}
+
+.note{font-size:13.5px;color:var(--ink-soft);border-left:2px solid var(--rule);
+  padding-left:14px;margin:18px 0}
+.note b{color:var(--ink)}
+details{border-top:1px solid var(--rule);padding:12px 0}
+summary{cursor:pointer;font-family:'Archivo',sans-serif;font-weight:600;font-size:14.5px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'+ ';color:var(--accent);font-family:'IBM Plex Mono',monospace}
+details[open] summary::before{content:'– '}
+details .body{font-size:13.5px;color:var(--ink-soft);padding-top:10px}
+details .body ul{margin:0;padding-left:18px}
+details .body li{margin-bottom:5px}
+footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--ink-soft)}
+@media (max-width:560px){
+  .band{height:42px}
+  .matrix{aspect-ratio:1/1.1}
+  .readout{gap:14px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="mast-top">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 64 64" role="img" aria-label="GREEN-LLM Index mark">
+        <g fill="none" stroke-width="6.5" stroke-linecap="butt">
+          <path d="M9.98 43.83A25 25 0 0 1 8.00 25.00" stroke="var(--b5)"/>
+          <path d="M8.47 23.55A25 25 0 0 1 21.14 9.48" stroke="var(--b4)"/>
+          <path d="M22.53 8.86A25 25 0 0 1 41.47 8.86" stroke="var(--b3)"/>
+          <path d="M42.86 9.48A25 25 0 0 1 55.53 23.55" stroke="var(--b2)"/>
+          <path d="M56.00 25.00A25 25 0 0 1 54.02 43.83" stroke="var(--b1)"/>
+        </g>
+        <g id="markNeedle" transform="rotate(0 32 32)">
+          <path class="leaf" d="M32 32c-4.6-2.4-6.2-8-4.8-13.4C28.4 13.2 31 9.6 32 8c1 1.6 3.6 5.2 4.8 10.6C38.2 24 36.6 29.6 32 32z" fill="var(--ink)"/>
+          <path d="M32 30.4V10.2" stroke="var(--paper)" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+        </g>
+        <circle cx="32" cy="32" r="4.6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+      </svg>
+      <div class="brand-txt">
+        <b>GREEN&#8209;LLM</b>
+        <span class="eyebrow">Index &nbsp;·&nbsp; v1.5 &nbsp;·&nbsp; planetAI LLP</span>
+      </div>
+    </div>
+    <div class="mast-right">
+      <a class="wo-back" href="index.html">&#8592;&nbsp; World of AI</a>
+      <span class="eyebrow">Field instrument for AI environmental accounting</span>
+    </div>
+  </div>
+  <h1>How green is<br>your LLM usage?</h1>
+  <p class="lede">Every prompt draws power, carbon and water. This instrument measures five dimensions of that draw, places your usage on a decision matrix, and scales the result to a planetary view. Set the dials to match how you actually work.</p>
+
+  <div class="band-block">
+    <span class="eyebrow">Verdancy reading</span>
+    <div class="band-shell">
+      <div class="band" aria-hidden="true">
+        <span style="background:var(--b5)"></span>
+        <span style="background:var(--b4)"></span>
+        <span style="background:var(--b3)"></span>
+        <span style="background:var(--b2)"></span>
+        <span style="background:var(--b1)"></span>
+      </div>
+      <i id="needle" style="left:50%"></i>
+    </div>
+    <div class="band-scale">
+      <div><b>E</b>Critical</div><div><b>D</b>Wasteful</div><div><b>C</b>Acceptable</div><div><b>B</b>Efficient</div><div><b>A</b>Regenerative</div>
+    </div>
+    <div class="readout">
+      <div class="score-num" id="scoreNum" aria-live="polite">—<small>/100</small></div>
+      <div class="grade-tag" id="gradeTag">—</div>
+      <p class="verdict" id="verdict"></p>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">01 — Inputs</span><h2>Describe your usage</h2></div>
+  <div class="grid2">
+    <div class="field">
+      <label class="lbl" for="model">Model class</label>
+      <select id="model">
+        <option value="nano">Small / distilled (&lt;10B params)</option>
+        <option value="mid" selected>Mid-tier general purpose</option>
+        <option value="frontier">Frontier dense model</option>
+        <option value="reason">Frontier + extended reasoning</option>
+        <option value="agent">Multi-step agent / coding agent</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="task">Typical task complexity</label>
+      <select id="task">
+        <option value="0">Trivial — rewrite, format, lookup</option>
+        <option value="1" selected>Moderate — draft, summarise, explain</option>
+        <option value="2">Complex — analysis, code, synthesis</option>
+        <option value="3">Research — multi-step, tool-using</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="queries">Queries per person per day</label>
+      <div class="range-row"><input type="range" id="queries" min="1" max="200" value="30"><span class="range-val" id="queriesV">30</span></div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="output">Average output length (tokens)</label>
+      <div class="range-row"><input type="range" id="output" min="100" max="4000" step="50" value="600"><span class="range-val" id="outputV">600</span></div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="context">Context carried per query (K tokens)</label>
+      <div class="range-row"><input type="range" id="context" min="1" max="200" value="12"><span class="range-val" id="contextV">12K</span></div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="retries">Re-prompts before an acceptable answer</label>
+      <div class="range-row"><input type="range" id="retries" min="0" max="4" step="1" value="1"><span class="range-val" id="retriesV">1</span></div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="grid">Grid where inference runs</label>
+      <select id="grid">
+        <option value="35">Nordic / hydro-dominant — 35 g/kWh</option>
+        <option value="45">24/7 carbon-free matched — 45 g/kWh</option>
+        <option value="205">United Kingdom — 205 g/kWh</option>
+        <option value="230">European Union avg — 230 g/kWh</option>
+        <option value="369">United States avg — 369 g/kWh</option>
+        <option value="445" selected>Global average — 445 g/kWh</option>
+        <option value="533">China — 533 g/kWh</option>
+        <option value="632">India — 632 g/kWh</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="pue">Facility efficiency (PUE)</label>
+      <select id="pue">
+        <option value="1.10">1.10 — hyperscale, liquid cooled</option>
+        <option value="1.25" selected>1.25 — modern cloud region</option>
+        <option value="1.45">1.45 — industry average</option>
+        <option value="1.70">1.70 — legacy or on-premise</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="cool">Cooling and water strategy</label>
+      <select id="cool">
+        <option value="0.35">Closed-loop / air-side economised</option>
+        <option value="1.90" selected>Conventional air cooling</option>
+        <option value="2.60">Evaporative / water cooled</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="value">What the output actually displaces</label>
+      <select id="value">
+        <option value="10">Replaces high-carbon activity — travel, physical prototyping, field visits</option>
+        <option value="7" selected>Material productivity gain — hours of skilled work saved</option>
+        <option value="4">Modest assist — convenience, minor time saving</option>
+        <option value="1">Novelty or entertainment — no downstream value</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">02 — Readings</span><h2>What your usage draws</h2></div>
+  <div class="readings">
+    <div class="rd"><div class="k">Energy / query</div><div class="v" id="rWh">—</div><div class="u">Wh at the meter</div></div>
+    <div class="rd"><div class="k">Carbon / query</div><div class="v" id="rG">—</div><div class="u">g CO₂e</div></div>
+    <div class="rd"><div class="k">Water / query</div><div class="v" id="rW">—</div><div class="u">millilitres</div></div>
+    <div class="rd"><div class="k">Your annual carbon</div><div class="v" id="rYr">—</div><div class="u">kg CO₂e per year</div></div>
+  </div>
+  <p class="equiv" id="equiv"></p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">03 — The equation</span><h2>Show the working</h2></div>
+  <p style="max-width:64ch;color:var(--ink-soft)">No black box. Here is the exact arithmetic behind the readings above, with your own numbers substituted into every term. If you disagree with a coefficient, change the input and watch the chain re-derive.</p>
+
+  <p class="formula">
+    E<sub>IT</sub> &nbsp;=&nbsp; ( T<sub>out</sub> · &delta; &nbsp;+&nbsp; T<sub>in</sub> · &pi; ) &nbsp;·&nbsp; C &nbsp;·&nbsp; (1 + R)<br>
+    E<sub>site</sub> &nbsp;=&nbsp; E<sub>IT</sub> &nbsp;·&nbsp; PUE<br>
+    CO<sub>2</sub>e &nbsp;=&nbsp; E<sub>site</sub> &nbsp;·&nbsp; I<sub>grid</sub> &nbsp;&nbsp;&nbsp;&nbsp; H<sub>2</sub>O &nbsp;=&nbsp; E<sub>site</sub> &nbsp;·&nbsp; ( W<sub>site</sub> + W<sub>gen</sub> )
+  </p>
+
+  <div class="ledger" id="ledger"></div>
+
+  <figure style="margin-top:26px">
+    <span class="eyebrow">Where the energy goes</span>
+    <svg class="fig" id="flowFig" viewBox="0 0 700 210" role="img" aria-labelledby="flowTitle">
+      <title id="flowTitle">Energy flow from prompt to atmosphere and water</title>
+      <g class="flow-pipe">
+        <path d="M108 60h34M250 60h34M392 60h34M534 60h34"/>
+        <path d="M463 82v46h34"/>
+      </g>
+      <g class="flow-live">
+        <path d="M108 60h34M250 60h34M392 60h34M534 60h34"/>
+        <path d="M463 82v46h34"/>
+      </g>
+      <g id="flowNodes"></g>
+    </svg>
+    <p class="note" id="flowNote"></p>
+  </figure>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">04 — In context</span><h2>What one of your prompts equals</h2></div>
+  <figure>
+    <svg class="fig" id="cmpFig" viewBox="0 0 700 300" role="img" aria-labelledby="cmpTitle">
+      <title id="cmpTitle">Carbon comparison of one query against everyday activities</title>
+      <g id="cmpBars"></g>
+    </svg>
+  </figure>
+  <p class="note" id="cmpNote"></p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">05 — The score</span><h2>Five dimensions, one hundred points</h2></div>
+  <div class="dims" id="dims"></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">06 — The matrix</span><h2>Carbon cost against value created</h2></div>
+  <div class="matrix-pad">
+  <div class="matrix-wrap">
+    <span class="ax ax-y">Value created →</span>
+    <div class="matrix" id="matrix">
+      <div class="q"><span class="qn">Quadrant I</span><h4>Regenerative</h4><p>Low draw, real displacement. This is the pattern to scale and standardise across the organisation.</p></div>
+      <div class="q"><span class="qn">Quadrant II</span><h4>Justified load</h4><p>Heavy, but it earns its keep. Optimise the infrastructure and routing rather than cutting the use.</p></div>
+      <div class="q"><span class="qn">Quadrant III</span><h4>Ambient drift</h4><p>Individually negligible, collectively enormous. Trim through defaults and smaller models, not policing.</p></div>
+      <div class="q"><span class="qn">Quadrant IV</span><h4>Carbon waste</h4><p>Expensive compute producing little. Eliminate first — this is where the fastest reductions live.</p></div>
+      <div class="pin" id="pin" style="left:50%;bottom:50%"></div>
+    </div>
+    <div class="ax ax-x">Carbon cost per task →</div>
+  </div>
+  </div>
+  <p class="note" id="quadNote"></p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">07 — Rubric</span><h2>The scoring matrix</h2></div>
+  <div class="tbl-scroll">
+    <table>
+      <thead>
+        <tr><th>Dimension</th><th><span class="lv" style="background:var(--b5)"></span>Level 1 — Critical</th><th><span class="lv" style="background:var(--b4)"></span>Level 2 — Wasteful</th><th><span class="lv" style="background:var(--b3)"></span>Level 3 — Acceptable</th><th><span class="lv" style="background:var(--b2)"></span>Level 4 — Efficient</th><th><span class="lv" style="background:var(--b1)"></span>Level 5 — Regenerative</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>G — Generation<br>footprint<br><span style="font-weight:400;color:var(--ink-soft)">25 pts</span></td>
+          <td>Above 8 g CO₂e per task. Untracked, unmeasured.</td>
+          <td>2–8 g. Estimated once, never revisited.</td>
+          <td>0.5–2 g. Measured quarterly at portfolio level.</td>
+          <td>0.05–0.5 g. Per-workload telemetry in place.</td>
+          <td>Under 0.05 g, with per-request attribution to a named owner.</td>
+        </tr>
+        <tr>
+          <td>R — Right-<br>sizing<br><span style="font-weight:400;color:var(--ink-soft)">25 pts</span></td>
+          <td>One frontier model for everything, including formatting.</td>
+          <td>Manual model choice, biased to the largest available.</td>
+          <td>Documented guidance on which model suits which task.</td>
+          <td>Tiered routing with a small-model default and escalation rules.</td>
+          <td>Automatic complexity routing, cascade fallback, measured accuracy floor.</td>
+        </tr>
+        <tr>
+          <td>E — Interaction<br>efficiency<br><span style="font-weight:400;color:var(--ink-soft)">20 pts</span></td>
+          <td>Three or more re-prompts typical; whole history resent each turn.</td>
+          <td>Frequent retries; no caching; unbounded output.</td>
+          <td>Some prompt templates; occasional context pruning.</td>
+          <td>Prompt library, output caps, prefix caching enabled.</td>
+          <td>Single-pass success as a tracked metric; retrieval instead of resent context.</td>
+        </tr>
+        <tr>
+          <td>E — Energy<br>provenance<br><span style="font-weight:400;color:var(--ink-soft)">20 pts</span></td>
+          <td>Unknown region, unknown PUE, water-cooled in a stressed basin.</td>
+          <td>Fossil-heavy grid, PUE above 1.5.</td>
+          <td>Regional average grid, PUE near 1.4, annual REC matching.</td>
+          <td>Low-carbon region, PUE under 1.3, closed-loop cooling.</td>
+          <td>Hourly carbon-free matching, PUE under 1.15, near-zero potable water draw.</td>
+        </tr>
+        <tr>
+          <td>N — Net value<br>displaced<br><span style="font-weight:400;color:var(--ink-soft)">10 pts</span></td>
+          <td>Entertainment and novelty at production volume.</td>
+          <td>Convenience gains only; no measurement attempted.</td>
+          <td>Claimed productivity benefit, anecdotally evidenced.</td>
+          <td>Measured hours or defects avoided, tied to a baseline.</td>
+          <td>Verified displacement of a higher-carbon activity, audited.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note"><b>How to read it.</b> Score each row independently, then sum. The weighting is deliberate: right-sizing and generation footprint carry half the total because model selection is the single largest lever a user controls — larger than grid choice for most organisations, and available immediately.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">08 — Levers</span><h2>What moves the needle for you</h2></div>
+  <div id="levers"></div>
+  <p class="note">Reductions are modelled against your current settings and are not additive — each assumes the others stay as they are.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">09 — Model selection</span><h2>Which model is greenest for this workflow?</h2></div>
+  <p style="max-width:66ch;color:var(--ink-soft)">The greenest model is not the smallest one — it is the smallest one that clears the quality bar, because a model that fails the task pays full price twice. Describe the workflow, and every candidate is costed on money, carbon and capability together.</p>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="field">
+      <label class="lbl" for="wf">Workflow archetype</label>
+      <select id="wf">
+        <option value="0">Bulk classification &amp; extraction</option>
+        <option value="1" selected>Support triage &amp; reply drafting</option>
+        <option value="2">Document summarisation</option>
+        <option value="3">Code review &amp; generation</option>
+        <option value="4">Research synthesis (agentic)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="wfVol">Tasks per month</label>
+      <div class="range-row"><input type="range" id="wfVol" min="1" max="1000" step="1" value="120"><span class="range-val" id="wfVolV">120K</span></div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="wfIn">Input tokens per task</label>
+      <div class="range-row"><input type="range" id="wfIn" min="200" max="40000" step="100" value="2500"><span class="range-val" id="wfInV">2,500</span></div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="wfOut">Output tokens per task</label>
+      <div class="range-row"><input type="range" id="wfOut" min="50" max="4000" step="50" value="400"><span class="range-val" id="wfOutV">400</span></div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="wfBase">Model you use today (the baseline)</label>
+      <select id="wfBase"></select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="wfCarbon">Internal carbon price, USD per tonne CO₂e</label>
+      <div class="range-row"><input type="range" id="wfCarbon" min="0" max="300" step="5" value="85"><span class="range-val" id="wfCarbonV">$85</span></div>
+    </div>
+  </div>
+  <p class="note" id="wfBar"></p>
+
+  <div class="readings" style="margin-top:20px" id="wfPicks"></div>
+
+  <div class="tbl-scroll" style="margin-top:22px">
+    <table id="wfTable">
+      <thead>
+        <tr>
+          <th>Model</th><th>Tier</th><th>$/M in</th><th>$/M out</th>
+          <th>$ / 1K tasks</th><th>kg CO₂e / 1K tasks</th>
+          <th>Annual cost</th><th>Annual tCO₂e</th><th>Green</th><th>Abatement $/tCO₂e</th>
+        </tr>
+      </thead>
+      <tbody id="wfBody"></tbody>
+    </table>
+  </div>
+  <p class="note" id="wfNote"></p>
+  <p class="note"><b>Why the abatement figures are so large.</b> At realistic volumes the money saved by switching models outweighs the carbon saved by three to five orders of magnitude in dollar terms. That is not a rounding error — it is the central strategic fact on this page. No plausible carbon price will ever drive model selection, so <b>do not build the business case on carbon.</b> Build it on cost, and bank the emissions reduction as a consequence. Sustainability programmes that depend on a carbon price to justify themselves lose the budget argument; cost-reduction programmes that happen to cut emissions survive it.</p>
+
+  <figure style="margin-top:26px">
+    <span class="eyebrow">Figure F · Cost against carbon, with the efficient frontier</span>
+    <svg class="fig" id="wfFig" viewBox="0 0 700 400" role="img" aria-labelledby="wfT">
+      <title id="wfT">Scatter of models by cost and carbon per thousand tasks</title>
+      <g id="wfFigBody"></g>
+    </svg>
+    <p class="note" id="wfFigNote"></p>
+  </figure>
+
+  <details open style="margin-top:20px">
+    <summary>Calculation logic — every term, in order</summary>
+    <div class="body">
+      <ol style="padding-left:20px;margin:0">
+        <li style="margin-bottom:7px"><b>Effective attempts.</b> A model one capability tier below the workflow requirement is assumed to need one extra attempt; two tiers below, two extra. <code>A = 1 + max(0, tier_required − tier_model)</code>. This is what stops the cheapest model winning by default.</li>
+        <li style="margin-bottom:7px"><b>Cost per task.</b> <code>$ = (T_in · P_in + T_out · P_out) ÷ 1,000,000 × calls × A</code>, where <code>calls</code> is 1 for chat-style work and higher for agentic archetypes.</li>
+        <li style="margin-bottom:7px"><b>Energy per task.</b> <code>Wh = (T_out · d + T_in · p) × calls × A</code>, using the decode and prefill coefficients for the model's size class from section 03.</li>
+        <li style="margin-bottom:7px"><b>Carbon per task.</b> <code>gCO₂e = Wh ÷ 1000 × PUE × I_grid</code>, taking PUE and grid intensity from your settings in section 01.</li>
+        <li style="margin-bottom:7px"><b>Annualised.</b> Multiply both by tasks per month, then by twelve.</li>
+        <li style="margin-bottom:7px"><b>Marginal abatement cost.</b> <code>MAC = (Cost_model − Cost_baseline) ÷ (CO₂_baseline − CO₂_model)</code>, in dollars per kilogram of CO₂e avoided. A <b>negative</b> MAC means the switch saves money and carbon at once — a no-regret move that needs no sustainability budget to justify. A <b>positive</b> MAC is the real price of that abatement, and should be compared against your internal carbon price before you claim it as a green initiative.</li>
+        <li><b>Green score.</b> The five dimensions from section 05, recomputed per model with the workflow's token profile and the attempt penalty applied.</li>
+      </ol>
+    </div>
+  </details>
+
+  <p class="note"><b>Two warnings before this drives a procurement decision.</b> First, list prices move constantly and the defaults here reflect published rates around August 2026 — verify every row against the provider's current rate card, and note that batch processing and prompt caching can each cut the cost column substantially without changing the carbon column much. Second, the capability tiers are a coarse judgement, not a benchmark result: the honest version of this table is one where you have run your own evaluation set and replaced the tier column with your own pass rates.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">10 — Projection</span><h2>If the world worked the way you do</h2></div>
+  <p style="max-width:64ch;color:var(--ink-soft)">Your per-query figures, scaled to a planetary user base. Adjust the assumption and watch the sensitivity — the honest finding of this exercise is how much the answer depends on inputs nobody publishes.</p>
+  <div class="grid2" style="margin-top:16px">
+    <div class="field">
+      <label class="lbl" for="gq">Global LLM queries per day (billions)</label>
+      <div class="range-row"><input type="range" id="gq" min="1" max="60" value="5"><span class="range-val" id="gqV">5 bn</span></div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="amp">Infrastructure amplifier (training, idle capacity, embodied hardware)</label>
+      <div class="range-row"><input type="range" id="amp" min="10" max="50" step="1" value="25"><span class="range-val" id="ampV">2.5×</span></div>
+    </div>
+  </div>
+  <figure style="margin-top:24px">
+    <span class="eyebrow">Each square = 1% of projected 2030 data centre demand (9.5 TWh)</span>
+    <div class="dots" id="dots" role="img" aria-label="Grid showing your projected share of 2030 data centre electricity demand"></div>
+    <div class="dot-key">
+      <span><i style="background:var(--b1)"></i>Your profile, scaled worldwide</span>
+      <span><i style="background:var(--paper-2)"></i>Remaining 2030 headroom</span>
+      <span><i style="background:var(--b5)"></i>Beyond the 2030 projection</span>
+    </div>
+  </figure>
+
+  <div style="margin-top:22px" id="scenarios"></div>
+  <p class="note"><b>Read the gap, not just the number.</b> For ordinary chat usage this projection lands well below actual data centre consumption — and that gap is the finding. Serving prompts is only a slice of AI's footprint; training runs, idle capacity held warm for latency, networking, storage and the embodied carbon of chips and buildings make up the rest. Push the model class to agentic and the gap closes fast, which is the clearest signal in the whole instrument: <b>workload design, not chat volume, is what will decide AI's environmental trajectory.</b></p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">11 — Equilibrium</span><h2>In the race to adopt AI, are we missing the environment?</h2></div>
+
+  <p style="max-width:66ch">Partly, and in a specific way. The environment is not being ignored — it is being <em>measured on the wrong axis</em>. Efficiency per task is celebrated because it is improving spectacularly. Total load is downplayed because efficiency is improving spectacularly. Both are reported honestly and the combination is misleading, because the quantity that decides the outcome is neither one alone: it is whether workload growth, net of efficiency, outruns the growth of clean supply.</p>
+
+  <figure style="margin:22px 0 6px">
+    <span class="eyebrow">Figure D · What the race actually measures</span>
+    <svg class="fig" id="asymFig" viewBox="0 0 700 260" role="img" aria-label="Annual growth rates across AI investment, demand and disclosure"></svg>
+    <p class="note"><b>The asymmetry is the finding.</b> Capital, compute and demand are all compounding at double or triple digits. The one line that has not moved is disclosure — not a single frontier lab publishes full per-model energy telemetry, which is why every framework on this page, including this one, is estimating rather than auditing.</p>
+  </figure>
+
+  <div class="sec-head" style="margin-top:34px"><span class="eyebrow">11.1</span><h2>How far can the environment sustain this?</h2></div>
+  <p style="max-width:66ch;color:var(--ink-soft)">A carrying-capacity model with three variables. Workload volume grows. Efficiency cuts the energy each unit of work needs. Clean supply grows to meet what is left. Equilibrium holds only while the first two, combined, stay below the third.</p>
+
+  <p class="formula">
+    Net demand growth &nbsp;=&nbsp; (1 + g) · (1 − e) − 1<br>
+    <b>Equilibrium holds while</b> &nbsp; (1 + g) · (1 − e) &nbsp;≤&nbsp; (1 + c)<br>
+    <span style="color:var(--ink-soft)">g = workload growth &nbsp;·&nbsp; e = efficiency gain &nbsp;·&nbsp; c = clean supply growth</span>
+  </p>
+
+  <div class="grid2">
+    <div class="field">
+      <label class="lbl" for="gGrow">g — AI workload volume growth, per year</label>
+      <div class="range-row"><input type="range" id="gGrow" min="10" max="250" step="5" value="130"><span class="range-val" id="gGrowV">130%</span></div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="gEff">e — Energy efficiency gain per task, per year</label>
+      <div class="range-row"><input type="range" id="gEff" min="0" max="70" step="1" value="35"><span class="range-val" id="gEffV">35%</span></div>
+    </div>
+    <div class="field">
+      <label class="lbl" for="gClean">c — Clean supply growth reaching data centres, per year</label>
+      <div class="range-row"><input type="range" id="gClean" min="2" max="60" step="1" value="22"><span class="range-val" id="gCleanV">22%</span></div>
+    </div>
+  </div>
+
+  <div class="pledge" style="margin-top:24px;align-items:flex-start">
+    <div>
+      <div class="big" id="eqYear">—</div>
+      <span class="eyebrow" id="eqYearLbl">Crossover</span>
+    </div>
+    <div class="txt" id="eqVerdict"></div>
+  </div>
+
+  <div class="readings" style="margin-top:18px">
+    <div class="rd"><div class="k">Net demand growth</div><div class="v" id="eqNet">—</div><div class="u">per year, after efficiency</div></div>
+    <div class="rd"><div class="k">Efficiency needed</div><div class="v" id="eqNeedE">—</div><div class="u">per year, to hold the line</div></div>
+    <div class="rd"><div class="k">Workload ceiling</div><div class="v" id="eqNeedG">—</div><div class="u">growth the supply can absorb</div></div>
+    <div class="rd"><div class="k">The shortfall</div><div class="v" id="eqGap">—</div><div class="u">percentage points per year</div></div>
+  </div>
+
+  <figure style="margin-top:26px">
+    <span class="eyebrow">Figure E · AI electricity demand against clean supply reaching data centres</span>
+    <svg class="fig" id="eqFig" viewBox="0 0 700 320" role="img" aria-labelledby="eqT">
+      <title id="eqT">Projected AI demand curve against clean supply curve with crossover point</title>
+      <g id="eqBody"></g>
+    </svg>
+    <p class="note" id="eqNote"></p>
+  </figure>
+
+  <div class="sec-head" style="margin-top:34px"><span class="eyebrow">11.2</span><h2>What holds the equilibrium</h2></div>
+  <p style="max-width:66ch;color:var(--ink-soft)">Each condition below moves one variable in the equation above. The order is deliberate — it runs from what you control this week to what takes a decade and a parliament.</p>
+
+  <div class="tier">
+    <div class="tier-h"><b>Bend g before you polish e</b><span>Workload growth · immediate · yours</span></div>
+    <p style="font-size:14.5px;margin:0 0 4px">Efficiency is losing a race it did not choose. At the default settings the industry needs a far larger annual efficiency gain than it is achieving, and the gap is made of workload volume, not model design. Cap agent step counts, route to small models by default, kill the retry tax. This is the only variable that responds in days.</p>
+  </div>
+  <div class="tier">
+    <div class="tier-h"><b>Keep e compounding, and stop claiming it as victory</b><span>Efficiency · continuous · engineering</span></div>
+    <p style="font-size:14.5px;margin:0 0 4px">Quantisation, distillation, sparsity, better serving stacks and speculative decoding have delivered genuine order-of-magnitude gains and must continue. But an efficiency gain announced without the corresponding volume figure is a half-truth, and the half that is missing is the one that decides the answer.</p>
+  </div>
+  <div class="tier">
+    <div class="tier-h"><b>Raise c with additional generation, not certificates</b><span>Clean supply · years · procurement and policy</span></div>
+    <p style="font-size:14.5px;margin:0 0 4px">Buying existing clean electricity displaces another consumer onto fossil generation and changes nothing at system level. Only additional capacity, contracted ahead of the load it serves, moves c. Hourly matching makes the claim auditable; annual certificates do not.</p>
+  </div>
+  <div class="tier">
+    <div class="tier-h"><b>Decouple the timing, not just the total</b><span>Demand flexibility · months · operations</span></div>
+    <p style="font-size:14.5px;margin:0 0 4px">A crossover is a peak problem before it is an annual problem. Grid-interactive data centres that curtail or shift training and batch inference into clean hours buy real years of runway without reducing a single unit of work done.</p>
+  </div>
+  <div class="tier">
+    <div class="tier-h"><b>Measure, or forfeit the argument</b><span>Disclosure · precondition for everything above</span></div>
+    <p style="font-size:14.5px;margin:0 0 4px">None of these variables can be managed at the values they actually hold, because nobody publishes them. Independent estimates for the same model differ by an order of magnitude. Until per-model energy telemetry is standard disclosure, equilibrium is a claim, not a measurement — and this framework is a well-reasoned guess.</p>
+  </div>
+
+  <p class="note"><b>The honest summary.</b> The environment can sustain AI adoption indefinitely at some rate. The question was never whether, but at what rate — and the current rate is set by capital allocation and product ambition, with the environmental constraint discovered afterwards through interconnection queues, water permits and local opposition rather than chosen deliberately in advance. Equilibrium is available. It is simply not what anyone is currently optimising for.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">12 — Action</span><h2>Suggestions to improve the environment</h2></div>
+  <p style="max-width:64ch;color:var(--ink-soft)">Tick what you will genuinely commit to. The figure at the bottom applies diminishing returns rather than adding percentages, because these measures overlap.</p>
+  <div id="actions"></div>
+  <div class="pledge">
+    <div class="big" id="pledgeNum">0%</div>
+    <div class="txt" id="pledgeTxt">Nothing selected yet. Start with the highest-value items — the first three usually carry most of the reduction.</div>
+  </div>
+  <p class="note"><b>The order matters.</b> Right-sizing and retry reduction are behavioural, free and available today. Region and cooling choices are procurement decisions with a lead time of weeks. Grid and policy measures take years. Do the first tier while you argue about the third.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">13 — Outlook</span><h2>Predicted effects on the world environment</h2></div>
+
+  <figure>
+    <span class="eyebrow">Figure A · Global data centre electricity, actual and projected</span>
+    <svg class="fig" id="trajFig" viewBox="0 0 700 300" role="img" aria-labelledby="trajT">
+      <title id="trajT">Data centre electricity demand rising from 2020 to 2035 with your scaled contribution overlaid</title>
+      <g id="trajBody"></g>
+    </svg>
+    <p class="note" id="trajNote"></p>
+  </figure>
+
+  <figure style="margin-top:30px">
+    <span class="eyebrow">Figure B · The same query, run on eight different grids</span>
+    <svg class="fig" id="gridFig" viewBox="0 0 700 250" role="img" aria-labelledby="gridT">
+      <title id="gridT">Carbon emitted by one identical query across eight electricity grids</title>
+      <g id="gridBody"></g>
+    </svg>
+    <p class="note"><b>Identical compute. Identical answer.</b> Eighteen times the emissions between the cleanest and dirtiest column. This is why siting is a bigger environmental decision than usage policy — and why it is made by people who never see a prompt.</p>
+  </figure>
+
+  <figure style="margin-top:30px">
+    <span class="eyebrow">Figure C · The scissors — why both camps are right</span>
+    <svg class="fig" id="rebFig" viewBox="0 0 700 280" role="img" aria-labelledby="rebT">
+      <title id="rebT">Energy per task falling while total consumption rises</title>
+      <g id="rebBody"></g>
+    </svg>
+    <p class="note"><b>Efficiency is not reduction.</b> Power per AI task is falling at a rate unprecedented in energy history, while total consumption climbs. Both statements are true, and each camp quotes only its own line. The gap between them is the rebound effect, and agentic workloads are its engine.</p>
+  </figure>
+
+  <details open>
+    <summary>Electricity — the load is real, the share is smaller than the discourse suggests</summary>
+    <div class="body">
+      <ul>
+        <li>Global data centre demand sits near 485 TWh in 2025 and is projected to roughly double to 945–950 TWh by 2030 — about 3% of world electricity. AI-focused facilities are the fastest-growing slice, projected to triple over the same period.</li>
+        <li>Data centre demand grew 17% in 2025 against 3% growth in overall electricity demand. The pressure is a rate-of-change problem, not yet a share-of-total problem.</li>
+        <li>Efficiency is improving unusually fast — power per AI task has been falling by roughly an order of magnitude a year. This is the strongest argument against straight-line extrapolation, and the strongest argument for Jevons-effect caution.</li>
+        <li><b>Net expectation to 2030:</b> a genuine new load comparable to a mid-sized industrial economy, arriving faster than grids can decarbonise, but not a dominant driver of global emissions on its own.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details open>
+    <summary>Carbon — siting decides the outcome more than usage does</summary>
+    <div class="body">
+      <ul>
+        <li>The same query emits roughly eighteen times more CO₂e on a coal-heavy grid than a hydro-dominant one. Where inference runs matters more than how often it runs.</li>
+        <li>Natural gas and coal are expected to meet a large share of the additional data centre demand to 2030, because new capacity is being built faster than clean generation can be connected.</li>
+        <li>Renewables still supply the largest slice of the growth, and small modular reactors enter the mix after 2030 — but the near-term gap is filled by whatever the local grid has spare.</li>
+        <li><b>Net expectation:</b> AI's own emissions are modest at global scale; its indirect effect on the pace of grid decarbonisation, through interconnection queues and fossil plant retirement deferrals, is the larger risk.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details open>
+    <summary>Water and land — a local problem, not a global one</summary>
+    <div class="body">
+      <ul>
+        <li>Water impact is highly concentrated. A single large facility can draw hundreds of thousands of gallons a day, which is trivial nationally and severe in a stressed basin.</li>
+        <li>Concentration is the mechanism: nearly half of global data centre electricity is consumed in the United States, with heavy clustering in a handful of regions. Ireland already dedicates around a fifth of national electricity to data centres.</li>
+        <li><b>Net expectation:</b> expect local grid stress, water permitting fights and land-use disputes to become the binding constraint on AI expansion well before global carbon accounting does.</li>
+      </ul>
+      <svg class="fig" viewBox="0 0 700 130" style="margin-top:14px" role="img" aria-label="Geographic concentration of data centre electricity consumption">
+        <g>
+          <rect x="0" y="24" width="315" height="34" fill="var(--b5)"/>
+          <rect x="317" y="24" width="175" height="34" fill="var(--b4)"/>
+          <rect x="494" y="24" width="105" height="34" fill="var(--b3)"/>
+          <rect x="601" y="24" width="99" height="34" fill="var(--b2)"/>
+          <text x="0" y="16" class="node-k">WHERE DATA CENTRE ELECTRICITY IS ACTUALLY CONSUMED</text>
+          <text x="8" y="46" font-size="12" font-weight="700" fill="#fff" font-family="Archivo,sans-serif">United States 45%</text>
+          <text x="325" y="46" font-size="12" font-weight="700" fill="#fff" font-family="Archivo,sans-serif">China 25%</text>
+          <text x="502" y="46" font-size="11" font-weight="700" fill="#fff" font-family="Archivo,sans-serif">Europe 15%</text>
+          <text x="609" y="46" font-size="11" font-weight="700" fill="#fff" font-family="Archivo,sans-serif">Rest 15%</text>
+          <text x="0" y="82" class="node-u" font-size="10">Ireland already devotes around a fifth of its national electricity to data centres. Virginia is near a quarter.</text>
+          <text x="0" y="100" class="node-u" font-size="10">A global average conceals the fact that the burden lands on a handful of counties, aquifers and substations.</text>
+        </g>
+      </svg>
+    </div>
+  </details>
+
+  <details open>
+    <summary>The rebound risk — efficiency is not the same as reduction</summary>
+    <div class="body">
+      <ul>
+        <li>Per-task energy is falling sharply while total consumption rises sharply. Both statements are true simultaneously, and each is used selectively by opposing camps.</li>
+        <li>Agentic workloads are the mechanism. A single agent run can consume tens to hundreds of times a chat query, because it issues many model calls and carries long context through each one.</li>
+        <li><b>Net expectation:</b> the dominant environmental variable for the rest of this decade is not model efficiency but workload design — how many calls a task makes, and whether anyone is counting.</li>
+      </ul>
+    </div>
+  </details>
+
+  <p class="note"><b>Where this framework is weak, stated plainly.</b> Per-query energy figures are estimates, not measurements — no major lab publishes full telemetry, and independent estimates for the same model vary by an order of magnitude. Embodied carbon in chips, buildings and networks is excluded from the per-query figures and folded into a single crude amplifier. Water intensity varies by site and season far more than any single coefficient can capture. Treat every number here as a decision aid with wide error bars, not an audit result.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">14 — Method</span><h2>How the numbers are derived</h2></div>
+  <details>
+    <summary>Calculation chain</summary>
+    <div class="body">
+      <ul>
+        <li><b>Energy is built from tokens, not from a flat per-query constant.</b> Each model class carries a decode coefficient in watt-hours per output token and a prefill coefficient per input token, set roughly thirty times lower because prefill batches efficiently while decode runs the whole model once per token.</li>
+        <li><b>Calibration.</b> The mid-tier coefficient reproduces a median near 0.31 Wh for a typical query, matching peer-reviewed estimates for optimised large-scale inference with an interquartile range of about 0.16–0.60 Wh. Published per-token measurements cluster at 0.0001–0.002 Wh, which brackets every coefficient used here.</li>
+        <li><b>Reasoning models</b> add hidden thinking tokens to the decode count. <b>Agentic runs</b> multiply by sixteen internal model invocations, each re-reading the carried context — which is why context length hurts agents far more than it hurts chat.</li>
+        <li><b>Retries</b> multiply the whole chain linearly — a failed answer costs full price.</li>
+        <li><b>Facility</b> energy = IT energy × PUE. <b>Carbon</b> = facility kWh × grid intensity. <b>Water</b> = facility kWh × (on-site cooling coefficient + off-site generation coefficient scaled to grid carbon intensity).</li>
+        <li><b>Score</b> bands each dimension against the rubric in section 05 and sums to 100.</li>
+      </ul>
+    </div>
+  </details>
+  <details>
+    <summary>Primary sources</summary>
+    <div class="body">
+      <ul>
+        <li>International Energy Agency — <i>Energy and AI</i> (2025) and <i>Key Questions on Energy and AI</i> (2026): data centre demand trajectory, grid mix, regional concentration.</li>
+        <li><i>Joule</i> (2026) — energy use of AI inference, efficiency pathways and test-time scaling: per-query medians and the effect of reasoning length.</li>
+        <li>Benchmarking studies on energy, water and carbon footprint of LLM inference (2025–2026): cross-model comparisons and eco-efficiency ranking.</li>
+        <li>Lawrence Berkeley National Laboratory and Carbon Brief: regional concentration and national share estimates.</li>
+      </ul>
+    </div>
+  </details>
+</section>
+
+<footer>
+  <div class="credit" style="margin-bottom:9px">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-6 5-6 13 0 18 6-5 6-13 0-18z" fill="#2E6F55"/><path d="M12 4.5v16" stroke="#EDEEE8" stroke-width="1.3"/></svg>
+    <b>Developed by planetAI LLP</b>
+  </div>
+  <div style="margin-bottom:9px">Part of the <a class="wo-foot" href="index.html">World of AI</a> atlas &nbsp;·&nbsp; planetAI LLP</div>
+  GREEN-LLM Index v1.5 &nbsp;·&nbsp; Framework and instrument &nbsp;·&nbsp; Figures are modelled estimates with wide uncertainty &nbsp;·&nbsp; Verify against your own provider telemetry before publishing or reporting
+</footer>
+
+<div class="board-cta">
+  <div class="t">
+    <b>Board pack</b>
+    <span>Generates a print-ready executive summary — your score, footprint, model recommendation, equilibrium position and committed actions. Use your browser's <em>Save as PDF</em> in the print dialogue.</span>
+  </div>
+  <button class="btn" id="pdfBtn">Download board report</button>
+  <button class="btn ghost" id="kbOpen2">Ask the assistant</button>
+</div>
+
+<div id="board"></div>
+
+</div>
+
+<button id="leafBtn" aria-label="Open the GREEN-LLM knowledge assistant">
+  <span class="pulse"></span>
+  <svg viewBox="0 0 32 32" aria-hidden="true">
+    <path d="M16 4c-8 6.5-8 17.5 0 24 8-6.5 8-17.5 0-24z" fill="#EDEEE8"/>
+    <g stroke="#2E6F55" stroke-width="1.5" stroke-linecap="round" fill="none">
+      <path d="M16 6v20"/>
+      <path d="M16 11l-4.4 3.4M16 11l4.4 3.4M16 17l-3.8 3M16 17l3.8 3"/>
+    </g>
+  </svg>
+</button>
+
+<div id="kb" role="dialog" aria-label="GREEN-LLM knowledge assistant">
+  <div class="kb-h">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M16 4c-8 6.5-8 17.5 0 24 8-6.5 8-17.5 0-24z" fill="#2E6F55"/>
+      <g stroke="#EDEEE8" stroke-width="1.4" stroke-linecap="round" fill="none">
+        <path d="M16 6v20"/><path d="M16 11l-4.4 3.4M16 11l4.4 3.4M16 17l-3.8 3M16 17l3.8 3"/>
+      </g>
+    </svg>
+    <div class="ttl"><b>Green Leaf</b><span>Knowledge assistant · planetAI LLP</span></div>
+    <button id="kbClose" aria-label="Close assistant">×</button>
+  </div>
+  <div class="kb-log" id="kbLog"></div>
+  <div class="chips" id="kbChips"></div>
+  <div class="kb-in">
+    <input id="kbIn" placeholder="Ask about the framework or your result…" aria-label="Ask a question">
+    <button id="kbSend">Ask</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  // dec = Wh per output token, pre = Wh per input token, calls = model
+  // invocations per user request, hid = hidden reasoning tokens per call
+  var MODELS = {
+    nano:     { dec:8.0e-5, pre:2.4e-6, calls:1,  hid:0,    idx:0, name:'Small / distilled' },
+    mid:      { dec:5.0e-4, pre:1.5e-5, calls:1,  hid:0,    idx:1, name:'Mid-tier' },
+    frontier: { dec:1.5e-3, pre:4.5e-5, calls:1,  hid:0,    idx:2, name:'Frontier dense' },
+    reason:   { dec:1.5e-3, pre:4.5e-5, calls:1,  hid:4000, idx:3, name:'Frontier + reasoning' },
+    agent:    { dec:1.5e-3, pre:4.5e-5, calls:16, hid:800,  idx:4, name:'Agentic' }
+  };
+  var GRADES = [
+    { min:90, g:'A', c:'var(--b1)', label:'Regenerative',
+      v:'Disciplined, well-sited and genuinely productive. This profile is worth documenting as an internal standard.' },
+    { min:75, g:'B', c:'var(--b2)', label:'Efficient',
+      v:'Sound practice with headroom left. The remaining gains are in routing and infrastructure, not in using less.' },
+    { min:60, g:'C', c:'var(--b3)', label:'Acceptable',
+      v:'Defensible but unoptimised. One or two structural changes would move this a full grade.' },
+    { min:40, g:'D', c:'var(--b4)', label:'Wasteful',
+      v:'Significant avoidable draw. The model class or the retry rate is doing most of the damage.' },
+    { min:0,  g:'E', c:'var(--b5)', label:'Critical',
+      v:'Heavy compute, poor fit, high-carbon supply. Start with model right-sizing — it is free and immediate.' }
+  ];
+
+  function $(id){ return document.getElementById(id); }
+  function fmt(n, d){
+    if (!isFinite(n)) return '—';
+    if (n >= 1000) return Math.round(n).toLocaleString();
+    if (n >= 100) return n.toFixed(0);
+    if (n >= 10) return n.toFixed(1);
+    if (n >= 1) return n.toFixed(2);
+    if (n >= 0.01) return n.toFixed(3);
+    return n.toExponential(1);
+  }
+  function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+
+  function readInputs(){
+    return {
+      model:    $('model').value,
+      task:     parseInt($('task').value,10),
+      queries:  parseInt($('queries').value,10),
+      output:   parseInt($('output').value,10),
+      contextK: parseInt($('context').value,10),
+      retries:  parseInt($('retries').value,10),
+      grid:     parseFloat($('grid').value),
+      pue:      parseFloat($('pue').value),
+      cool:     parseFloat($('cool').value),
+      value:    parseInt($('value').value,10),
+      gq:       parseInt($('gq').value,10),
+      amp:      parseInt($('amp').value,10)/10
+    };
+  }
+
+  function physics(s){
+    var m = MODELS[s.model];
+    var outTok  = s.output + m.hid;
+    var ctxTok  = s.contextK * 1000;
+    var perCall = outTok * m.dec + ctxTok * m.pre;
+    var tries   = 1 + s.retries;
+    var itWh    = perCall * m.calls * tries;
+    var facWh   = itWh * s.pue;
+    var kWh     = facWh/1000;
+    var gCO2    = kWh * s.grid;
+    var waterL  = kWh * (s.cool + 1.5*(s.grid/445));
+    return { itWh:itWh, facWh:facWh, kWh:kWh, gCO2:gCO2, waterL:waterL, m:m };
+  }
+
+  function scoreG(g){
+    if (g <= 0.05) return 25;
+    if (g <= 0.2)  return 21;
+    if (g <= 0.5)  return 17;
+    if (g <= 2)    return 12;
+    if (g <= 8)    return 7;
+    if (g <= 25)   return 3;
+    return 0;
+  }
+  function scoreR(s){
+    var d = MODELS[s.model].idx - s.task;
+    var pts = d > 0 ? 25 - 7*d : 25 - 4*Math.abs(d);
+    return clamp(pts, 0, 25);
+  }
+  function scoreE1(s){
+    var r = [8,5,3,1,0][clamp(s.retries,0,4)];
+    var c = s.contextK<=8 ? 6 : s.contextK<=32 ? 4 : s.contextK<=100 ? 2 : 0;
+    var o = s.output<=600 ? 6 : s.output<=1500 ? 4 : s.output<=3000 ? 2 : 0;
+    return r+c+o;
+  }
+  function scoreE2(s){
+    var g = s.grid<=50 ? 10 : s.grid<=150 ? 8 : s.grid<=250 ? 6 : s.grid<=400 ? 4 : s.grid<=550 ? 2 : 1;
+    var p = s.pue<=1.15 ? 5 : s.pue<=1.30 ? 4 : s.pue<=1.50 ? 2 : 1;
+    var c = s.cool<=0.5 ? 5 : s.cool<=2.0 ? 3 : 1;
+    return g+p+c;
+  }
+  function scoreN(s){
+    return ({10:10, 7:7, 4:4, 1:1})[s.value];
+  }
+
+  function grade(total){
+    for (var i=0;i<GRADES.length;i++) if (total >= GRADES[i].min) return GRADES[i];
+    return GRADES[GRADES.length-1];
+  }
+
+  function levers(s, base){
+    var out = [];
+    function delta(mod, txt, sub){
+      var t = Object.assign({}, s, mod);
+      var g = physics(t).gCO2;
+      var pct = (base.gCO2 - g)/base.gCO2*100;
+      if (pct > 1) out.push({ pct:pct, txt:txt, sub:sub });
+    }
+    if (MODELS[s.model].idx > 0) {
+      var lower = ['nano','mid','frontier','reason','agent'][MODELS[s.model].idx-1];
+      delta({model:lower}, 'Route one tier down where the task allows',
+        'Send the simple majority to ' + MODELS[lower].name.toLowerCase() + ' and escalate only on failure.');
+    }
+    if (s.retries > 0) delta({retries:0}, 'Cut re-prompts to zero with a prompt template',
+      'Every retry pays full price. First-pass success is the cheapest efficiency there is.');
+    if (s.contextK > 8) delta({contextK:8}, 'Prune carried context to 8K with retrieval',
+      'Resending history each turn pays the prefill cost again and again.');
+    if (s.output > 600) delta({output:600}, 'Cap default output length at 600 tokens',
+      'Decode dominates per-query energy. Ask for the long version only when you need it.');
+    if (s.grid > 250) delta({grid:230}, 'Run inference in a low-carbon region',
+      'Same compute, same latency budget, a fraction of the emissions.');
+    if (s.pue > 1.25) delta({pue:1.10}, 'Move to a hyperscale liquid-cooled region',
+      'Facility overhead is invisible to the user and often the easiest structural win.');
+    if (s.cool > 0.5) delta({cool:0.35}, 'Prefer closed-loop cooled regions',
+      'Cuts operational water draw sharply, which matters most in water-stressed basins.');
+    out.sort(function(a,b){ return b.pct - a.pct; });
+    return out.slice(0,5);
+  }
+
+  function scenarios(s, base){
+    var qDay = s.gq * 1e9;
+    var yrWh = base.facWh * qDay * 365 * s.amp;
+    var TWh  = yrWh/1e12;
+    var MtCO2 = (yrWh/1000) * s.grid / 1e12;
+    var km3 = (yrWh/1000/1000) * (s.cool + 1.5*(s.grid/445)) / 1e12;
+    return { TWh:TWh, MtCO2:MtCO2, GL: (yrWh/1000) * (s.cool + 1.5*(s.grid/445)) / 1e9 };
+  }
+
+  var ACTIONS = [
+    { tier:'Individual', sub:'Free · today · behavioural', items:[
+      { p:35, t:'Default to the smallest model that clears the bar',
+        s:'Escalate to a frontier model only when the small one visibly fails. Most drafting, formatting and lookup work never needs to escalate.' },
+      { p:22, t:'Write the prompt once, properly',
+        s:'A specified prompt with context, format and constraints removes the retry. Every re-prompt pays full price for a discarded answer.' },
+      { p:14, t:'Ask for the short version by default',
+        s:'Decode dominates energy. Request bullet points or a word limit, then ask to expand only the part you need.' },
+      { p:12, t:'Start a fresh thread when the topic changes',
+        s:'Long threads resend their whole history on every turn. A new thread drops the prefill cost to near zero.' },
+      { p:8,  t:'Stop using a language model as a search engine',
+        s:'Factual lookups with a known answer cost far more through a model than through an index.' }
+    ]},
+    { tier:'Team', sub:'Weeks · engineering and process', items:[
+      { p:30, t:'Build a routing layer with a small-model default',
+        s:'Classify complexity, route accordingly, cascade upward on a confidence threshold. This is the single largest engineering lever available.' },
+      { p:18, t:'Turn on prompt caching and retrieval',
+        s:'Cache the system prompt and shared context; retrieve the relevant slice instead of resending the whole document.' },
+      { p:16, t:'Cap agent step counts and add a budget kill-switch',
+        s:'One agent run can cost what a hundred chat queries cost. Bound the loop and log the spend per task.' },
+      { p:12, t:'Publish a prompt library for recurring tasks',
+        s:'A shared, tested prompt is a shared, tested efficiency. It also removes the retry tax across the whole team.' },
+      { p:10, t:'Batch non-urgent jobs into low-carbon hours',
+        s:'Grid intensity swings by a factor of three across a day. Anything without a latency requirement can wait for the clean window.' }
+    ]},
+    { tier:'Organisation', sub:'Quarters · procurement and governance', items:[
+      { p:28, t:'Site inference in low-carbon regions',
+        s:'The same query on a hydro-dominant grid emits roughly a eighteenth of what it emits on a coal-heavy one. Nothing else moves this far this fast.' },
+      { p:15, t:'Contract for closed-loop cooling and a PUE below 1.2',
+        s:'Facility overhead is invisible to users and typically the cheapest structural win. Closed-loop also removes the potable water draw.' },
+      { p:14, t:'Report AI energy per business outcome, not per user',
+        s:'Per-seat metrics reward adoption. Per-outcome metrics reward efficiency. Pick the one that matches what you actually want.' },
+      { p:12, t:'Require hourly carbon-free matching, not annual certificates',
+        s:'Annual REC matching can show a clean balance sheet while the plant next door burns gas at 3am to serve your prompts.' },
+      { p:9,  t:'Set a compute budget per product team and publish it',
+        s:'Unmetered compute behaves like unmetered anything. A visible budget changes design decisions before code is written.' }
+    ]},
+    { tier:'Systemic', sub:'Years · policy and market', items:[
+      { p:20, t:'Push providers to publish per-model energy telemetry',
+        s:'Independent estimates for the same model differ by an order of magnitude. Every framework, including this one, is guessing until labs disclose.' },
+      { p:16, t:'Support additional clean generation, not just offsets',
+        s:'New demand met by existing clean supply displaces someone else onto fossil generation. Additionality is the only claim that holds.' },
+      { p:12, t:'Back grid-interactive and demand-flexible data centres',
+        s:'Facilities that curtail during peaks stop deferring coal retirements and stop clogging interconnection queues.' },
+      { p:10, t:'Argue for siting rules that weigh water stress and local grid slack',
+        s:'Water and land bind long before global carbon accounting does. Siting policy is where that fight is decided.' },
+      { p:8,  t:'Fund the efficiency research, not only the capability research',
+        s:'Quantisation, distillation, sparsity and better serving stacks have delivered order-of-magnitude gains. They are chronically underfunded relative to scaling.' }
+    ]}
+  ];
+
+  function buildActions(){
+    var html = ACTIONS.map(function(g, gi){
+      return '<div class="tier"><div class="tier-h"><b>'+g.tier+'</b><span>'+g.sub+'</span></div>' +
+        g.items.map(function(it, ii){
+          return '<label class="act"><input type="checkbox" data-p="'+it.p+'" id="a'+gi+'_'+ii+'">'+
+            '<span class="a-t">'+it.t+'<em>'+it.s+'</em></span>'+
+            '<span class="a-p">−'+it.p+'%</span></label>';
+        }).join('') + '</div>';
+    }).join('');
+    $('actions').innerHTML = html;
+    Array.prototype.forEach.call(document.querySelectorAll('#actions input'), function(el){
+      el.addEventListener('change', pledge);
+    });
+  }
+
+  function pledge(){
+    var boxes = Array.prototype.slice.call(document.querySelectorAll('#actions input:checked'));
+    var remaining = 1;
+    boxes.map(function(b){ return parseFloat(b.dataset.p)/100; })
+         .sort(function(a,b){ return b-a; })
+         .forEach(function(p, i){ remaining *= (1 - p * Math.pow(0.82, i)); });
+    var cut = (1 - remaining) * 100;
+    $('pledgeNum').textContent = cut.toFixed(0) + '%';
+    var msg;
+    if (boxes.length === 0) msg = 'Nothing selected yet. Start with the highest-value items — the first three usually carry most of the reduction.';
+    else if (cut < 25) msg = '<b>'+boxes.length+' committed.</b> A start, but the heavy levers are still untouched. Model right-sizing and region choice are where the reductions actually live.';
+    else if (cut < 55) msg = '<b>'+boxes.length+' committed.</b> Meaningful. At this level your grade moves and the annual figures in section 02 roughly halve.';
+    else if (cut < 75) msg = '<b>'+boxes.length+' committed.</b> Strong. Beyond this point the remaining footprint is structural — grid supply and embodied hardware — and no longer yours to cut alone.';
+    else msg = '<b>'+boxes.length+' committed.</b> Near the practical floor. The honest question now is whether every one of these survives contact with a deadline.';
+    $('pledgeTxt').innerHTML = msg + ' <b>Estimated reduction against your current profile: ' + cut.toFixed(0) + '%.</b>';
+  }
+
+  function renderLedger(s, p){
+    var m = p.m, outTok = s.output + m.hid, ctxTok = s.contextK*1000;
+    var dec = outTok * m.dec, pre = ctxTok * m.pre;
+    var wue = s.cool + 1.5*(s.grid/445);
+    var rows = [
+      ['1','Decode',   fmt(outTok)+' out-tok × '+m.dec.toExponential(1)+' Wh/tok', fmt(dec)+' Wh'],
+      ['2','Prefill',  fmt(ctxTok)+' in-tok × '+m.pre.toExponential(1)+' Wh/tok', fmt(pre)+' Wh'],
+      ['3','Invocations','('+fmt(dec)+' + '+fmt(pre)+') × '+m.calls+' call'+(m.calls>1?'s':''), fmt((dec+pre)*m.calls)+' Wh'],
+      ['4','Retries',  '× '+(1+s.retries)+' attempt'+(s.retries?'s':''), fmt(p.itWh)+' Wh'],
+      ['5','Facility', '× '+s.pue.toFixed(2)+' PUE', fmt(p.facWh)+' Wh'],
+      ['6','Carbon',   fmt(p.kWh)+' kWh × '+s.grid+' g/kWh', fmt(p.gCO2)+' g'],
+      ['7','Water',    fmt(p.kWh)+' kWh × '+wue.toFixed(2)+' L/kWh', fmt(p.waterL*1000)+' mL']
+    ];
+    var yr = p.gCO2 * s.queries * 365 / 1000;
+    var html = rows.map(function(r){
+      return '<div class="led-row"><span class="s">'+r[0]+'</span><span class="n">'+r[1]+
+        '</span><span class="w">'+r[2]+'</span><span class="r">'+r[3]+'</span></div>';
+    }).join('');
+    html += '<div class="led-row tot"><span class="s">Σ</span><span class="n">Annual</span>'+
+      '<span class="w">'+fmt(p.gCO2)+' g × '+s.queries+'/day × 365</span>'+
+      '<span class="r">'+fmt(yr)+' kg</span></div>';
+    $('ledger').innerHTML = html;
+  }
+
+  function renderFlow(s, p){
+    var yr = p.gCO2 * s.queries * 365 / 1000;
+    var nodes = [
+      { x:20,  y:34, k:'Prompt',     v:fmt(s.output + p.m.hid + s.contextK*1000), u:'tokens handled' },
+      { x:162, y:34, k:'Compute',    v:fmt(p.itWh),  u:'Wh at the GPU' },
+      { x:304, y:34, k:'Facility',   v:fmt(p.facWh), u:'Wh incl. PUE '+s.pue.toFixed(2) },
+      { x:446, y:34, k:'Grid',       v:s.grid,       u:'g CO₂e per kWh' },
+      { x:588, y:34, k:'Atmosphere', v:fmt(p.gCO2),  u:'g CO₂e per query' },
+      { x:501, y:102,k:'Water',      v:fmt(p.waterL*1000), u:'mL per query' }
+    ];
+    $('flowNodes').innerHTML = nodes.map(function(n){
+      return '<g transform="translate('+n.x+','+n.y+')">'+
+        '<rect class="node-box" x="0" y="0" width="88" height="52" rx="3"/>'+
+        '<text class="node-k" x="8" y="14">'+n.k.toUpperCase()+'</text>'+
+        '<text class="node-v" x="8" y="32">'+n.v+'</text>'+
+        '<text class="node-u" x="8" y="44">'+n.u+'</text></g>';
+    }).join('') +
+    '<text class="node-k" x="20" y="180">ANNUALISED AT '+s.queries+' QUERIES/DAY → '+fmt(yr)+' KG CO₂e AND '+
+      fmt(p.waterL*s.queries*365)+' L WATER PER PERSON PER YEAR</text>';
+    $('flowNote').innerHTML = 'Every stage multiplies. A prompt that is four times longer, retried twice, on a grid three times dirtier is <b>twenty-four times</b> the footprint of the same question asked well — for an answer of identical quality.';
+  }
+
+  function renderCompare(s, p){
+    var items = [
+      { l:'Your LLM query',        v:p.gCO2, me:true },
+      { l:'Web search',            v:0.2 },
+      { l:'One minute of HD video',v:0.6 },
+      { l:'Smartphone charge',     v:8.4 },
+      { l:'Boiling a kettle',      v:60 },
+      { l:'1 km in a petrol car',  v:170 }
+    ];
+    var max = Math.max.apply(null, items.map(function(i){ return i.v; }));
+    var W = 470, X0 = 176, H = 30, GAP = 12;
+    $('cmpBars').innerHTML = items.map(function(it, i){
+      var y = 18 + i*(H+GAP);
+      var w = Math.max(2, it.v/max * W);
+      var col = it.me ? 'var(--b5)' : 'var(--b2)';
+      return '<g>'+
+        '<text class="cmp-lbl" x="'+(X0-10)+'" y="'+(y+15)+'" text-anchor="end"'+
+          (it.me?' font-weight="700"':'')+'>'+it.l+'</text>'+
+        '<rect x="'+X0+'" y="'+(y+2)+'" width="'+w+'" height="'+(H-8)+'" fill="'+col+'">'+
+          '<animate attributeName="width" from="0" to="'+w+'" dur="0.6s" fill="freeze"/></rect>'+
+        '<text class="cmp-val" x="'+(X0+w+7)+'" y="'+(y+15)+'">'+fmt(it.v)+' g</text></g>';
+    }).join('') + '<text class="node-k" x="'+X0+'" y="286">GRAMS CO₂e PER EVENT · YOUR QUERY IN RED</text>';
+
+    var ratio = p.gCO2/0.2;
+    $('cmpNote').innerHTML = ratio >= 1
+      ? 'One of your queries costs roughly <b>'+fmt(ratio)+'×</b> a web search. The comparison is not an argument against using the model — it is an argument for knowing which of the two the task actually needed.'
+      : 'One of your queries costs <b>less</b> than a typical web search. At this efficiency the environmental question shifts entirely to volume and to what the output is worth.';
+  }
+
+  function renderDots(TWh){
+    var pct = TWh/950*100;
+    var full = pct >= 1 ? Math.min(100, Math.round(pct)) : (pct > 0 ? 1 : 0);
+    var over = pct > 100;
+    var html = '';
+    for (var i=0;i<100;i++){
+      var cls = over ? 'dot over' : (i < full ? 'dot on' : 'dot');
+      html += '<div class="'+cls+'"></div>';
+    }
+    $('dots').innerHTML = html;
+  }
+
+  var TRAJ = [
+    { y:2020, v:270 }, { y:2022, v:340 }, { y:2024, v:415 },
+    { y:2025, v:485 }, { y:2027, v:660 }, { y:2030, v:950 }, { y:2035, v:1200 }
+  ];
+
+  function renderTraj(userTWh){
+    var W=700, H=300, L=54, R=18, T=26, B=44;
+    var pw = W-L-R, ph = H-T-B, maxV = 1300;
+    function px(y){ return L + (y-2020)/15 * pw; }
+    function py(v){ return T + ph - (v/maxV)*ph; }
+    var g = '';
+    // gridlines
+    [0,300,600,900,1200].forEach(function(v){
+      g += '<line x1="'+L+'" y1="'+py(v)+'" x2="'+(W-R)+'" y2="'+py(v)+'" stroke="var(--rule)" stroke-width="1"/>'+
+           '<text class="node-u" x="'+(L-8)+'" y="'+(py(v)+3)+'" text-anchor="end">'+v+'</text>';
+    });
+    // actual vs projected split at 2025
+    var act = TRAJ.filter(function(d){ return d.y<=2025; });
+    var prj = TRAJ.filter(function(d){ return d.y>=2025; });
+    function line(arr){ return arr.map(function(d,i){ return (i?'L':'M')+px(d.y).toFixed(1)+' '+py(d.v).toFixed(1); }).join(''); }
+    var area = line(TRAJ) + 'L'+px(2035)+' '+py(0)+'L'+px(2020)+' '+py(0)+'Z';
+    g += '<path d="'+area+'" fill="var(--b2)" opacity=".16"/>';
+    g += '<path d="'+line(act)+'" fill="none" stroke="var(--ink)" stroke-width="2.6"/>';
+    g += '<path d="'+line(prj)+'" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-dasharray="7 5"/>';
+    TRAJ.forEach(function(d){
+      g += '<circle cx="'+px(d.y)+'" cy="'+py(d.v)+'" r="3.6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>';
+    });
+    // user band
+    var uh = Math.min(ph, (userTWh/maxV)*ph);
+    if (uh > 0.6) {
+      g += '<rect x="'+L+'" y="'+(T+ph-uh)+'" width="'+pw+'" height="'+uh+'" fill="var(--b5)" opacity=".30"/>'+
+           '<line x1="'+L+'" y1="'+(T+ph-uh)+'" x2="'+(W-R)+'" y2="'+(T+ph-uh)+'" stroke="var(--b5)" stroke-width="2"/>';
+    }
+    g += '<text class="node-u" x="'+(W-R)+'" y="'+Math.max(T+9, T+ph-uh-6)+'" text-anchor="end" fill="var(--b5)" font-weight="600">'+
+         'YOUR PROFILE SCALED WORLDWIDE · '+fmt(userTWh)+' TWh</text>';
+    // labels
+    [[2024,415,'415'],[2025,485,'485'],[2030,950,'950'],[2035,1200,'1,200']].forEach(function(d){
+      g += '<text class="node-v" x="'+(px(d[0])+7)+'" y="'+(py(d[1])-8)+'" font-size="11">'+d[2]+'</text>';
+    });
+    [2020,2025,2030,2035].forEach(function(y){
+      g += '<text class="node-u" x="'+px(y)+'" y="'+(H-22)+'" text-anchor="middle">'+y+'</text>';
+    });
+    g += '<text class="node-k" x="'+L+'" y="16">TERAWATT-HOURS PER YEAR · SOLID = OBSERVED · DASHED = IEA BASE CASE</text>';
+    g += '<text class="node-u" x="'+px(2026.2)+'" y="'+(H-6)+'" text-anchor="middle">projection begins</text>';
+    g += '<line x1="'+px(2025)+'" y1="'+T+'" x2="'+px(2025)+'" y2="'+(T+ph)+'" stroke="var(--ink-soft)" stroke-width="1" stroke-dasharray="2 4"/>';
+    $('trajBody').innerHTML = g;
+
+    var share = userTWh/950*100;
+    $('trajNote').innerHTML = 'Demand roughly doubles from <b>485 TWh in 2025 to about 950 TWh by 2030</b> — near 3% of world electricity — then heads toward 1,200 TWh by 2035. ' +
+      (share >= 100
+        ? 'Your profile, scaled worldwide, would <b>exceed the entire 2030 projection on its own</b>. That is the agentic cliff, drawn to scale.'
+        : 'Your profile, scaled worldwide, accounts for <b>' + share.toFixed(1) + '%</b> of that 2030 figure. The remainder is training, idle capacity, storage, networking and embodied hardware — the part no individual controls.');
+  }
+
+  function renderGridFig(s, p){
+    var grids = [
+      ['Nordic hydro',35], ['24/7 CFE matched',45], ['United Kingdom',205], ['European Union',230],
+      ['United States',369], ['Global average',445], ['China',533], ['India',632]
+    ];
+    var W=700, L=118, R=70, T=30, B=40, bw=(250-B)/1;
+    var maxG = p.kWh * 632;
+    var pw = W-L-R;
+    var g = '<text class="node-k" x="'+L+'" y="16">GRAMS CO₂e FROM ONE OF YOUR QUERIES · YOUR CURRENT GRID HIGHLIGHTED</text>';
+    grids.forEach(function(d, i){
+      var v = p.kWh * d[1];
+      var y = T + i*24;
+      var w = Math.max(2, v/maxG * pw);
+      var me = Math.abs(d[1]-s.grid) < 1;
+      g += '<text class="cmp-lbl" x="'+(L-9)+'" y="'+(y+11)+'" text-anchor="end"'+(me?' font-weight="700"':'')+'>'+d[0]+'</text>'+
+           '<rect x="'+L+'" y="'+(y+1)+'" width="'+w+'" height="15" fill="'+(me?'var(--b5)':'var(--b2)')+'" opacity="'+(me?1:.65)+'"/>'+
+           '<text class="cmp-val" x="'+(L+w+7)+'" y="'+(y+12)+'"'+(me?' font-weight="700"':'')+'>'+fmt(v)+' g</text>';
+    });
+    g += '<text class="node-u" x="'+L+'" y="234">Grid carbon intensity in grams CO₂e per kilowatt-hour, applied to your exact token and retry settings.</text>';
+    $('gridBody').innerHTML = g;
+  }
+
+  function renderRebound(){
+    var W=700,H=280,L=58,R=120,T=34,B=46;
+    var pw=W-L-R, ph=H-T-B;
+    var yrs=[2022,2023,2024,2025,2026,2027,2028];
+    function px(i){ return L + i/(yrs.length-1)*pw; }
+    var perTask=[1,.42,.16,.06,.024,.011,.005];
+    var total=[.16,.24,.34,.44,.60,.78,1];
+    function py(v){ return T + ph - v*ph; }
+    var g='';
+    g += '<path d="'+perTask.map(function(v,i){ return (i?'L':'M')+px(i)+' '+py(v).toFixed(1); }).join('')+'" fill="none" stroke="var(--b1)" stroke-width="3"/>';
+    g += '<path d="'+total.map(function(v,i){ return (i?'L':'M')+px(i)+' '+py(v).toFixed(1); }).join('')+'" fill="none" stroke="var(--b5)" stroke-width="3"/>';
+    perTask.forEach(function(v,i){ g+='<circle cx="'+px(i)+'" cy="'+py(v)+'" r="3" fill="var(--b1)"/>'; });
+    total.forEach(function(v,i){ g+='<circle cx="'+px(i)+'" cy="'+py(v)+'" r="3" fill="var(--b5)"/>'; });
+    g += '<text x="'+(px(6)+10)+'" y="'+(py(.005)+4)+'" font-size="11" font-weight="700" fill="var(--b1)" font-family="Archivo,sans-serif">Energy per task</text>';
+    g += '<text x="'+(px(6)+10)+'" y="'+(py(1)+4)+'" font-size="11" font-weight="700" fill="var(--b5)" font-family="Archivo,sans-serif">Total consumption</text>';
+    g += '<text class="node-k" x="'+L+'" y="18">INDEXED TO EACH SERIES PEAK · DIRECTION IS THE POINT, NOT THE ABSOLUTE VALUE</text>';
+    yrs.forEach(function(y,i){ g += '<text class="node-u" x="'+px(i)+'" y="'+(H-24)+'" text-anchor="middle">'+y+'</text>'; });
+    var mx=px(3.4);
+    g += '<line x1="'+mx+'" y1="'+py(total[3])+'" x2="'+mx+'" y2="'+py(perTask[3])+'" stroke="var(--ink)" stroke-width="1" stroke-dasharray="3 3"/>';
+    g += '<text class="node-u" x="'+(mx+8)+'" y="'+((py(total[3])+py(perTask[3]))/2)+'" font-weight="600">the rebound gap</text>';
+    g += '<text class="node-u" x="'+L+'" y="'+(H-6)+'">Illustrative shape, drawn from the observed direction of both trends rather than a single published dataset.</text>';
+    $('rebBody').innerHTML = g;
+  }
+
+  // --- Equilibrium carrying-capacity model -------------------------------
+  var D0 = 155;   // TWh — AI-focused data centre demand, 2026 baseline
+  var S0 = 240;   // TWh — clean electricity currently reaching data centres
+  var Y0 = 2026;
+
+  function equilibrium(){
+    var g = parseInt($('gGrow').value,10)/100;
+    var e = parseInt($('gEff').value,10)/100;
+    var c = parseInt($('gClean').value,10)/100;
+    var net    = (1+g)*(1-e) - 1;
+    var needE  = 1 - (1+c)/(1+g);
+    var needG  = (1+c)/(1-e) - 1;
+    var gapPP  = (net - c)*100;
+    var cross  = null;
+    if (net > c) {
+      var t = Math.log(S0/D0) / Math.log((1+net)/(1+c));
+      cross = Y0 + t;
+    }
+    return { g:g, e:e, c:c, net:net, needE:needE, needG:needG, gapPP:gapPP, cross:cross };
+  }
+
+  function renderAsym(){
+    var rows = [
+      ['Big-tech AI capital spending', 75, '+75% expected in 2026'],
+      ['AI-focused data centre demand', 50, '+50% in 2025'],
+      ['Clean supply reaching data centres', 22, '+22% a year to 2030'],
+      ['All data centre demand', 17, '+17% in 2025'],
+      ['Global electricity demand', 3, '+3% in 2025'],
+      ['Labs publishing full energy telemetry', 0, 'none']
+    ];
+    var W=700, L=250, R=110, T=28, pw=W-L-R, max=80;
+    var g = '<text class="node-k" x="'+L+'" y="15">ANNUAL GROWTH RATE, PER CENT</text>';
+    rows.forEach(function(d,i){
+      var y = T + i*34;
+      var w = Math.max(d[1]===0?0:3, d[1]/max*pw);
+      var zero = d[1]===0;
+      var col = zero ? 'var(--b5)' : (i<2 ? 'var(--b4)' : 'var(--b2)');
+      g += '<text class="cmp-lbl" x="'+(L-10)+'" y="'+(y+15)+'" text-anchor="end"'+(zero?' font-weight="700"':'')+'>'+d[0]+'</text>';
+      if (zero) {
+        g += '<line x1="'+L+'" y1="'+(y+3)+'" x2="'+L+'" y2="'+(y+21)+'" stroke="var(--b5)" stroke-width="3"/>'+
+             '<text class="cmp-val" x="'+(L+10)+'" y="'+(y+16)+'" font-weight="700" fill="var(--b5)">'+d[2]+'</text>';
+      } else {
+        g += '<rect x="'+L+'" y="'+(y+3)+'" width="'+w+'" height="18" fill="'+col+'">'+
+             '<animate attributeName="width" from="0" to="'+w+'" dur="0.7s" fill="freeze"/></rect>'+
+             '<text class="cmp-val" x="'+(L+w+8)+'" y="'+(y+16)+'">'+d[2]+'</text>';
+      }
+    });
+    $('asymFig').innerHTML = g;
+  }
+
+  function renderEq(){
+    var q = equilibrium();
+    $('gGrowV').textContent  = $('gGrow').value + '%';
+    $('gEffV').textContent   = $('gEff').value + '%';
+    $('gCleanV').textContent = $('gClean').value + '%';
+
+    $('eqNet').textContent   = (q.net*100).toFixed(0) + '%';
+    $('eqNeedE').textContent = q.needE <= 0 ? 'none' : (q.needE*100).toFixed(0) + '%';
+    $('eqNeedG').textContent = (q.needG*100).toFixed(0) + '%';
+    $('eqGap').textContent   = (q.gapPP > 0 ? '+' : '') + q.gapPP.toFixed(0);
+
+    var sustainable = q.net <= q.c;
+    if (sustainable) {
+      $('eqYear').textContent = '∞';
+      $('eqYear').style.color = 'var(--b1)';
+      $('eqYearLbl').textContent = 'No crossover';
+      $('eqVerdict').innerHTML = '<b>Equilibrium holds.</b> Net demand grows at ' + (q.net*100).toFixed(0) +
+        '% a year against clean supply growing at ' + (q.c*100).toFixed(0) +
+        '%. Clean generation keeps pace, marginal AI load never has to be met by fossil generation, and adoption can compound without an environmental ceiling. Note how narrow the settings are that produce this result.';
+    } else {
+      var yr = q.cross;
+      var runway = yr - Y0;
+      $('eqYear').textContent = runway <= 0 ? 'now' : Math.round(yr);
+      $('eqYear').style.color = runway < 4 ? 'var(--b5)' : runway < 9 ? 'var(--b4)' : 'var(--b3)';
+      $('eqYearLbl').textContent = runway <= 0 ? 'Already crossed' : 'Crossover year';
+      $('eqVerdict').innerHTML = '<b>' + (runway <= 0
+          ? 'The line is already crossed.'
+          : 'Runway of roughly ' + runway.toFixed(1) + ' years.') +
+        '</b> Net demand compounds at ' + (q.net*100).toFixed(0) + '% while clean supply reaching data centres grows at ' +
+        (q.c*100).toFixed(0) + '% — a shortfall of ' + q.gapPP.toFixed(0) +
+        ' points a year. Past the crossover, every additional unit of AI work must be powered by whatever the local grid has spare, which is gas and coal. ' +
+        'Holding the line would need efficiency gains of <b>' + (q.needE*100).toFixed(0) +
+        '% a year</b> against the <b>' + (q.e*100).toFixed(0) + '%</b> currently achieved, or workload growth capped at <b>' +
+        (q.needG*100).toFixed(0) + '%</b> against the <b>' + (q.g*100).toFixed(0) + '%</b> assumed.';
+    }
+
+    // curves
+    var W=700,H=320,L=58,R=104,T=30,B=48, pw=W-L-R, ph=H-T-B, yrs=16;
+    var dEnd = D0*Math.pow(1+q.net, yrs), sEnd = S0*Math.pow(1+q.c, yrs);
+    var maxV = Math.max(dEnd, sEnd, 400);
+    function px(t){ return L + t/yrs*pw; }
+    function py(v){ return T + ph - Math.min(1, Math.max(0, Math.log10(Math.max(v,20)/20)/Math.log10(maxV/20)))*ph; }
+    var g = '';
+    [20,50,150,400,1200,3600].filter(function(v){ return v<=maxV*1.2; }).forEach(function(v){
+      g += '<line x1="'+L+'" y1="'+py(v)+'" x2="'+(W-R)+'" y2="'+py(v)+'" stroke="var(--rule)" stroke-width="1"/>'+
+           '<text class="node-u" x="'+(L-8)+'" y="'+(py(v)+3)+'" text-anchor="end">'+v.toLocaleString()+'</text>';
+    });
+    var dPath='', sPath='';
+    for (var t=0;t<=yrs;t++){
+      dPath += (t?'L':'M')+px(t).toFixed(1)+' '+py(D0*Math.pow(1+q.net,t)).toFixed(1);
+      sPath += (t?'L':'M')+px(t).toFixed(1)+' '+py(S0*Math.pow(1+q.c,t)).toFixed(1);
+    }
+    g += '<path d="'+sPath+'" fill="none" stroke="var(--b1)" stroke-width="3"/>';
+    g += '<path d="'+dPath+'" fill="none" stroke="var(--b5)" stroke-width="3"/>';
+    if (q.cross !== null && q.cross-Y0 >= 0 && q.cross-Y0 <= yrs){
+      var ct = q.cross-Y0, cx = px(ct), cy = py(D0*Math.pow(1+q.net,ct));
+      g += '<line x1="'+cx+'" y1="'+T+'" x2="'+cx+'" y2="'+(T+ph)+'" stroke="var(--ink)" stroke-width="1.4" stroke-dasharray="4 4"/>'+
+           '<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.6"/>'+
+           '<text class="node-v" x="'+(cx+9)+'" y="'+(T+16)+'" font-size="12">CROSSOVER '+Math.round(q.cross)+'</text>'+
+           '<text class="node-u" x="'+(cx+9)+'" y="'+(T+29)+'">marginal load turns fossil</text>';
+    }
+    g += '<text x="'+(W-R+8)+'" y="'+(py(sEnd)+4)+'" font-size="11" font-weight="700" fill="var(--b1)" font-family="Archivo,sans-serif">Clean supply</text>';
+    g += '<text x="'+(W-R+8)+'" y="'+(py(dEnd)+4)+'" font-size="11" font-weight="700" fill="var(--b5)" font-family="Archivo,sans-serif">AI demand</text>';
+    [0,4,8,12,16].forEach(function(t){ g += '<text class="node-u" x="'+px(t)+'" y="'+(H-26)+'" text-anchor="middle">'+(Y0+t)+'</text>'; });
+    g += '<text class="node-k" x="'+L+'" y="16">TERAWATT-HOURS PER YEAR · LOGARITHMIC SCALE</text>';
+    g += '<text class="node-u" x="'+L+'" y="'+(H-8)+'">Baseline: AI data centres near 155 TWh in 2026; clean electricity reaching data centres near 240 TWh. Both figures are estimates.</text>';
+    $('eqBody').innerHTML = g;
+
+    STATE.eq = sustainable
+      ? 'equilibrium holds, no crossover'
+      : (q.cross - Y0 <= 0 ? 'already past the crossover'
+         : 'crossover in ' + Math.round(q.cross) + ', roughly ' + (q.cross-Y0).toFixed(1) + ' years of runway');
+    $('eqNote').innerHTML = sustainable
+      ? 'The curves never meet. Everything that follows in section 11 is then about local constraints — water, land, interconnection queues — which bind long before the global carbon arithmetic does.'
+      : 'The crossover is not a cliff and nothing breaks on that date. It is the year the marginal watt stops being clean — after which additional AI adoption is, at system level, an argument for keeping fossil plants running. The date moves years in either direction on assumptions nobody publishes, which is precisely the problem.';
+  }
+
+  // --- Model comparison ---------------------------------------------------
+  // Prices are published list rates around Aug 2026, USD per million tokens.
+  // Size classes carry the decode/prefill coefficients used everywhere else.
+  var CLASSES = {
+    nano:  { dec:8.0e-5, pre:2.4e-6 },
+    small: { dec:2.2e-4, pre:6.6e-6 },
+    mid:   { dec:5.0e-4, pre:1.5e-5 },
+    front: { dec:1.5e-3, pre:4.5e-5 },
+    frontP:{ dec:2.2e-3, pre:6.6e-5 }
+  };
+  var CATALOG = [
+    { n:'Llama 3.1 8B (hosted)', c:'nano',  pi:0.02, po:0.05, t:1 },
+    { n:'DeepSeek V4 Flash',     c:'small', pi:0.14, po:0.28, t:2 },
+    { n:'Mistral Small 4',       c:'small', pi:0.15, po:0.60, t:2 },
+    { n:'Gemini 2.5 Flash',      c:'small', pi:0.30, po:2.50, t:2 },
+    { n:'Claude Haiku 4.5',      c:'small', pi:1.00, po:5.00, t:3 },
+    { n:'GLM 5.2',               c:'mid',   pi:1.40, po:4.40, t:3 },
+    { n:'Claude Sonnet 5',       c:'mid',   pi:2.00, po:10.0, t:4 },
+    { n:'Gemini 3.1 Pro',        c:'mid',   pi:2.00, po:12.0, t:4 },
+    { n:'GPT-5.4',               c:'mid',   pi:2.50, po:15.0, t:4 },
+    { n:'Claude Opus 5',         c:'front', pi:5.00, po:25.0, t:5 },
+    { n:'GPT-5.6 Sol',           c:'front', pi:5.00, po:30.0, t:5 },
+    { n:'Claude Fable 5',        c:'frontP',pi:10.0, po:50.0, t:5 }
+  ];
+  var WORKFLOWS = [
+    { n:'Bulk classification & extraction', req:2, calls:1,  vol:500, tin:800,   tout:120,  ideal:1 },
+    { n:'Support triage & reply drafting',  req:3, calls:1,  vol:120, tin:2500,  tout:400,  ideal:1 },
+    { n:'Document summarisation',           req:3, calls:1,  vol:40,  tin:12000, tout:700,  ideal:2 },
+    { n:'Code review & generation',         req:4, calls:2,  vol:20,  tin:8000,  tout:1500, ideal:2 },
+    { n:'Research synthesis (agentic)',     req:5, calls:12, vol:4,   tin:20000, tout:2500, ideal:3 }
+  ];
+  var TIERNAME = ['','Basic','Light','Standard','Advanced','Frontier'];
+  var wfLastArch = -1;
+
+  function scoreModel(m, gPerTask, attempts, tin, tout, s){
+    var g = scoreG(gPerTask);
+    var idx = {nano:0, small:1, mid:2, front:3, frontP:4}[m.c];
+    var ideal = WORKFLOWS[parseInt($('wf').value,10)].ideal;
+    var dd = idx - ideal;
+    var r = Math.max(0, Math.min(25, dd > 0 ? 25 - 7*dd : 25 - 4*Math.abs(dd)));
+    var extra = attempts - 1;
+    var e1 = [8,5,3,1,0][Math.min(4,extra)] +
+             (tin<=8000 ? 6 : tin<=32000 ? 4 : tin<=100000 ? 2 : 0) +
+             (tout<=600 ? 6 : tout<=1500 ? 4 : tout<=3000 ? 2 : 0);
+    return g + r + e1 + scoreE2(s) + scoreN(s);
+  }
+
+  function computeModels(){
+    var s = readInputs();
+    var w  = WORKFLOWS[parseInt($('wf').value,10)];
+    var vol  = parseInt($('wfVol').value,10) * 1000;
+    var tin  = parseInt($('wfIn').value,10);
+    var tout = parseInt($('wfOut').value,10);
+    return CATALOG.map(function(m){
+      var att = 1 + Math.max(0, w.req - m.t);
+      var cls = CLASSES[m.c];
+      var costTask = (tin*m.pi + tout*m.po)/1e6 * w.calls * att;
+      var whTask   = (tout*cls.dec + tin*cls.pre) * w.calls * att;
+      var gTask    = whTask/1000 * s.pue * s.grid;
+      return {
+        m:m, att:att, below:m.t < w.req,
+        costTask:costTask, whTask:whTask, gTask:gTask,
+        cost1k: costTask*1000, kg1k: gTask/1000*1000,
+        costYr: costTask*vol*12, tYr: gTask*vol*12/1e6,
+        kgYr: gTask*vol*12/1000,
+        score: scoreModel(m, gTask, att, tin, tout, s)
+      };
+    });
+  }
+
+  function renderModels(){
+    var wIdx = parseInt($('wf').value,10), w = WORKFLOWS[wIdx];
+    if (wIdx !== wfLastArch) {   // archetype presets, then user is free to override
+      $('wfVol').value = w.vol; $('wfIn').value = w.tin; $('wfOut').value = w.tout;
+      wfLastArch = wIdx;
+    }
+    var vol = parseInt($('wfVol').value,10);
+    $('wfVolV').textContent    = vol + 'K';
+    $('wfInV').textContent     = parseInt($('wfIn').value,10).toLocaleString();
+    $('wfOutV').textContent    = parseInt($('wfOut').value,10).toLocaleString();
+    $('wfCarbonV').textContent = '$' + $('wfCarbon').value;
+
+    var rows = computeModels();
+    var baseSel = $('wfBase');
+    if (!baseSel.options.length) {
+      baseSel.innerHTML = CATALOG.map(function(m,i){
+        return '<option value="'+i+'"'+(m.n==='Claude Sonnet 5'?' selected':'')+'>'+m.n+'</option>';
+      }).join('');
+    }
+    var base = rows[parseInt(baseSel.value || 6,10)];
+    var cPrice = parseInt($('wfCarbon').value,10);  // $ per tonne
+
+    var baseWarn = '';
+    $('wfBar').innerHTML = '<b>Quality bar for this workflow: ' + TIERNAME[w.req] + ' (tier ' + w.req + ').</b> ' +
+      'Models below it are still costed, with an attempt penalty applied — that is how a cheap model that fails becomes an expensive one. ' +
+      (w.calls > 1 ? 'This archetype issues <b>' + w.calls + ' model calls</b> per task.' : 'This archetype issues one model call per task.');
+
+    var eligible = rows.filter(function(r){ return !r.below; });
+    var pool = eligible.length ? eligible : rows;
+    var greenest = pool.slice().sort(function(a,b){ return a.gTask - b.gTask; })[0];
+    var cheapest = pool.slice().sort(function(a,b){ return a.costTask - b.costTask; })[0];
+    var bestScore= pool.slice().sort(function(a,b){ return b.score - a.score; })[0];
+    var saveC = base.costYr - greenest.costYr, saveT = base.tYr - greenest.tYr;
+    STATE.greenest = greenest.m.n; STATE.cheapest = cheapest.m.n;
+
+    $('wfPicks').innerHTML =
+      '<div class="rd"><div class="k">Lowest carbon that clears the bar</div><div class="v" style="font-size:19px">'+greenest.m.n+
+        '</div><div class="u">'+fmt(greenest.kg1k)+' kg CO₂e / 1K tasks</div></div>'+
+      '<div class="rd"><div class="k">Lowest cost that clears the bar</div><div class="v" style="font-size:19px">'+cheapest.m.n+
+        '</div><div class="u">$'+fmt(cheapest.cost1k)+' / 1K tasks</div></div>'+
+      '<div class="rd"><div class="k">Best GREEN score</div><div class="v" style="font-size:19px">'+bestScore.m.n+
+        '</div><div class="u">'+Math.round(bestScore.score)+' / 100</div></div>'+
+      '<div class="rd"><div class="k">Switching from '+base.m.n+'</div><div class="v" style="font-size:19px;color:'+
+        (saveT>0?'var(--b1)':'var(--b5)')+'">'+(saveT>0?'−':'+')+fmt(Math.abs(saveT))+' t</div><div class="u">'+
+        (saveC>=0?'and saves $':'and costs $')+fmt(Math.abs(saveC))+' a year</div></div>';
+
+    // table
+    var sorted = rows.slice().sort(function(a,b){ return a.gTask - b.gTask; });
+    $('wfBody').innerHTML = sorted.map(function(r){
+      var dC = r.costYr - base.costYr, dG = (base.kgYr - r.kgYr)/1000;  // tonnes avoided
+      var mac, macTxt, macCol = 'var(--ink-soft)';
+      if (r === base) { macTxt = 'baseline'; }
+      else if (dG <= 0) { macTxt = 'adds carbon'; macCol = 'var(--b5)'; }
+      else {
+        mac = dC/dG;
+        if (mac < 0) {
+          macTxt = 'no-regret · saves $' + fmt(Math.abs(mac)) + '/t';
+          macCol = 'var(--b1)';
+        } else {
+          macTxt = '$' + fmt(mac) + '/t' + (mac <= cPrice ? ' · under price' : ' · over price');
+          macCol = mac <= cPrice ? 'var(--b2)' : 'var(--b4)';
+        }
+      }
+      var flag = r.below ? ' <span style="color:var(--b5);font-weight:600">below bar ×'+r.att+'</span>' : '';
+      var bold = (r === base) ? ' style="background:var(--paper-2)"' : '';
+      return '<tr'+bold+'><td>'+r.m.n+flag+'</td><td>'+TIERNAME[r.m.t]+'</td><td>$'+r.m.pi.toFixed(2)+'</td><td>$'+r.m.po.toFixed(2)+
+        '</td><td>$'+fmt(r.cost1k)+'</td><td>'+fmt(r.kg1k)+'</td><td>$'+fmt(r.costYr)+'</td><td>'+fmt(r.tYr)+
+        '</td><td>'+Math.round(r.score)+'</td><td style="color:'+macCol+';font-weight:600">'+macTxt+'</td></tr>';
+    }).join('');
+
+    // narrative
+    var freeWins = rows.filter(function(r){
+      return r!==base && !r.below && r.costYr < base.costYr && r.kgYr < base.kgYr;
+    }).sort(function(a,b){ return a.kgYr - b.kgYr; });
+    $('wfNote').innerHTML = freeWins.length
+      ? '<b>' + freeWins.length + ' option' + (freeWins.length>1?'s':'') + ' beat your baseline on both axes at once.</b> ' +
+        'The strongest is <b>' + freeWins[0].m.n + '</b>: ' + fmt(base.tYr - freeWins[0].tYr) +
+        ' tonnes CO₂e and $' + fmt(base.costYr - freeWins[0].costYr) +
+        ' saved a year, at the same capability tier. Negative abatement cost means this needs no sustainability budget — it is a cost reduction that happens to be green, which is the only kind that reliably survives a budget review.'
+      : '<b>No option beats your baseline on both cost and carbon.</b> Every greener choice here has a positive abatement cost, so the decision becomes an explicit trade: compare the abatement column against your internal carbon price of $' +
+        $('wfCarbon').value + ' per tonne and decide whether the reduction is worth buying.';
+
+    // scatter
+    var W=700,H=400,L=68,R=140,T=28,B=52, pw=W-L-R, ph=H-T-B;
+    var xs=rows.map(function(r){return r.cost1k;}), ys=rows.map(function(r){return r.kg1k;});
+    var xmin=Math.min.apply(null,xs)*0.6, xmax=Math.max.apply(null,xs)*1.6;
+    var ymin=Math.min.apply(null,ys)*0.6, ymax=Math.max.apply(null,ys)*1.6;
+    function px(v){ return L + Math.log10(v/xmin)/Math.log10(xmax/xmin)*pw; }
+    function py(v){ return T + ph - Math.log10(v/ymin)/Math.log10(ymax/ymin)*ph; }
+    var g = '<text class="node-k" x="'+L+'" y="14">CARBON (KG CO₂e PER 1,000 TASKS) AGAINST COST (USD PER 1,000 TASKS) · BOTH LOG SCALE</text>';
+    g += '<rect x="'+L+'" y="'+T+'" width="'+pw+'" height="'+ph+'" fill="none" stroke="var(--rule)"/>';
+    // pareto frontier over eligible models
+    var par = pool.slice().sort(function(a,b){ return a.cost1k - b.cost1k; });
+    var front=[], bestY=Infinity;
+    par.forEach(function(r){ if (r.kg1k < bestY){ front.push(r); bestY = r.kg1k; } });
+    if (front.length>1){
+      g += '<path d="'+front.map(function(r,i){ return (i?'L':'M')+px(r.cost1k).toFixed(1)+' '+py(r.kg1k).toFixed(1); }).join('')+
+           '" fill="none" stroke="var(--b1)" stroke-width="2" stroke-dasharray="6 4"/>';
+    }
+    rows.forEach(function(r, i){
+      var x=px(r.cost1k), y=py(r.kg1k);
+      var col = r.below ? 'var(--b5)' : (r===base ? 'var(--ink)' : 'var(--b2)');
+      var rad = r===base ? 8 : 6;
+      g += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+rad+'" fill="'+col+'" opacity="'+(r.below?.55:1)+
+           '" stroke="var(--paper)" stroke-width="2"/>';
+      var dy = (i % 2 === 0) ? -10 : 15;
+      g += '<line x1="'+x.toFixed(1)+'" y1="'+y.toFixed(1)+'" x2="'+x.toFixed(1)+'" y2="'+(y+dy*0.55).toFixed(1)+
+           '" stroke="var(--rule)" stroke-width="1"/>';
+      g += '<text class="cmp-val" x="'+x.toFixed(1)+'" y="'+(y+dy).toFixed(1)+'" font-size="8.5" text-anchor="middle"'+
+           (r===base?' font-weight="700"':'')+'>'+r.m.n+'</text>';
+    });
+    g += '<text class="node-u" x="'+L+'" y="'+(H-30)+'">cheaper →</text>';
+    g += '<text class="node-u" x="'+(W-R)+'" y="'+(H-30)+'" text-anchor="end">← pricier</text>';
+    g += '<text class="node-u" x="'+L+'" y="'+(H-12)+'">Dashed line: the efficient frontier — no model is both cheaper and cleaner than these. Red dots fall below the quality bar.</text>';
+    $('wfFigBody').innerHTML = g;
+
+    $('wfFigNote').innerHTML = 'Anything above and to the right of the dashed line is <b>dominated</b>: another model does the same job for less money <em>and</em> less carbon. Dominated options are not trade-offs — they are mistakes, and they are usually there because someone picked a default and never revisited it.';
+  }
+
+  // --- Green Leaf knowledge assistant (local, offline) --------------------
+  var STATE = {};   // refreshed on every render so the bot can read live values
+
+  var KB = [
+    { k:'green llm index framework purpose overview explain define',
+      a:function(){ return 'The GREEN-LLM Index scores the environmental cost of language-model use across five dimensions — <b>G</b>eneration footprint, <b>R</b>ight-sizing, <b>E</b>fficiency of interaction, <b>E</b>nergy provenance and <b>N</b>et value displaced — summing to 100. It then places you on a cost-versus-value matrix, compares candidate models, and projects when adoption outruns clean supply. It is a decision aid, not an audit.'; } },
+    { k:'score result grade doing current mine verdancy',
+      a:function(){ return 'You are scoring <b>' + STATE.total + '/100</b>, grade <b>' + STATE.grade + '</b>, sitting in the <b>' + STATE.quad + '</b> quadrant. Each query costs about <b>' + STATE.wh + ' Wh</b>, <b>' + STATE.g + ' g CO₂e</b> and <b>' + STATE.ml + ' mL</b> of water. Annualised at your volume that is <b>' + STATE.yr + ' kg CO₂e</b>.'; } },
+    { k:'scoring weights points dimensions rubric weighted',
+      a:function(){ return 'Generation footprint and right-sizing carry 25 points each, interaction efficiency and energy provenance 20 each, net value 10. The heavy weighting on the first two is deliberate — model selection is the largest lever a user controls and the only one available today. Section 07 has the full five-by-five rubric.'; } },
+    { k:'energy calculated equation formula math token decode prefill watt joules',
+      a:function(){ return 'Energy is built from tokens, not a flat per-query constant: <code>Wh = (T_out·d + T_in·p) × calls × attempts</code>, where d is watt-hours per output token and p per input token, set about thirty times lower because prefill batches efficiently. Then <code>× PUE</code> for the facility, <code>× grid intensity</code> for carbon. Section 03 shows every term with your numbers substituted.'; } },
+    { k:'model choose pick best recommend selection compare switch llm',
+      a:function(){ return 'For your current workflow the lowest-carbon option that clears the quality bar is <b>' + STATE.greenest + '</b>, and the cheapest is <b>' + STATE.cheapest + '</b>. Section 09 costs all twelve candidates on money and carbon together. The key rule: the greenest model is not the smallest, it is the smallest that clears the bar — a model that fails pays full price twice.'; } },
+    { k:'abatement cost mac carbon price tonne business case justify budget',
+      a:function(){ return 'Marginal abatement cost is <code>(Δcost) ÷ (ΔtCO₂e avoided)</code>. Negative means the switch saves money and carbon at once. The important finding: at real volumes the money saved outweighs the carbon saved by three to five orders of magnitude in dollar terms — so <b>do not build the business case on carbon</b>. Build it on cost and bank the emissions cut as a consequence.'; } },
+    { k:'equilibrium crossover sustain how long ceiling runway capacity',
+      a:function(){ return 'Equilibrium holds while <code>(1+g)·(1−e) ≤ (1+c)</code> — workload growth, net of efficiency, must stay under clean supply growth. At your current settings the model gives <b>' + STATE.eq + '</b>. Section 11 lets you move all three variables and see the crossover date shift.'; } },
+    { k:'reduce cut improve lower footprint actions suggestions optimise',
+      a:function(){ return 'In order of effect: route one tier down where the task allows, eliminate re-prompts with a proper prompt template, prune carried context, cap output length, and move inference to a low-carbon region. Section 08 quantifies each against your current settings; section 12 has twenty actions across individual, team, organisation and systemic tiers.'; } },
+    { k:'water why included cooling litres wue drought',
+      a:function(){ return 'Water enters twice — on-site cooling, and off-site water consumed generating the electricity. Combined it runs roughly 0.4 to 4 litres per kWh depending on cooling type and grid. Globally the figure is unremarkable; locally it decides whether a data centre gets planning permission. Your usage draws about <b>' + STATE.ml + ' mL per query</b>.'; } },
+    { k:'pue grid intensity region siting where run location carbon',
+      a:function(){ return 'PUE is total facility energy divided by IT energy — the overhead of cooling and power distribution. Grid intensity is grams CO₂e per kWh where the inference runs. Siting matters more than usage: the same query emits roughly eighteen times more on a coal-heavy grid than a hydro-dominant one. Figure B in section 13 shows your exact query across eight grids.'; } },
+    { k:'accurate reliable limitations weakness uncertain trust wrong caveat',
+      a:function(){ return 'Treat every number here as a decision aid with wide error bars. No frontier lab publishes full per-model energy telemetry, so independent estimates for the same model differ by an order of magnitude. Embodied carbon in chips and buildings is excluded from per-query figures and folded into a crude amplifier. Capability tiers in section 09 are coarse judgement, not benchmark results — replace them with your own eval pass rates before this drives procurement.'; } },
+    { k:'agentic agent multi step coding rebound jevons efficiency',
+      a:function(){ return 'Agentic workloads are the environmental story of this decade. One agent run issues many model calls and re-reads long context on each, so it can cost tens to hundreds of times a chat query. Per-task efficiency is falling fast while total consumption climbs — both true at once, which is the rebound effect. Workload design, not model efficiency, is what decides the trajectory.'; } },
+    { k:'report pdf board download export presentation print boardroom',
+      a:function(){ return 'Use the <b>Download board report</b> button at the foot of the page. It generates a print-ready executive summary — your score, footprint, model recommendation, equilibrium position and committed actions — then opens the print dialogue where you choose <em>Save as PDF</em>.'; } },
+    { k:'who built made developed planetai company author contact',
+      a:function(){ return 'This framework and instrument are developed by <b>planetAI LLP</b>. The methodology draws on the IEA\'s Energy and AI work, peer-reviewed inference-energy research and published LLM footprint benchmarking — all listed in section 14.'; } },
+    { k:'matrix quadrant regenerative waste drift justified',
+      a:function(){ return 'The matrix plots carbon cost per task against value created. <b>Regenerative</b> (low cost, high value) is the pattern to scale. <b>Justified load</b> earns its footprint — optimise the infrastructure, not the behaviour. <b>Ambient drift</b> is cheap but high-volume, fixed with defaults. <b>Carbon waste</b> is expensive compute producing little, and is where the fastest reductions live. You are currently in <b>' + STATE.quad + '</b>.'; } }
+  ];
+
+  function kbAnswer(q){
+    var STOP = {the:1,and:1,for:1,are:1,was:1,you:1,your:1,can:1,does:1,did:1,how:1,what:1,why:1,who:1,
+                when:1,where:1,this:1,that:1,with:1,from:1,should:1,would:1,could:1,about:1,tell:1,
+                give:1,show:1,make:1,its:1,has:1,have:1,been:1,were:1,any:1,all:1,get:1,use:1,used:1};
+    var words = q.toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/)
+                 .filter(function(w){ return w.length>2 && !STOP[w]; });
+    var best = null, bestScore = 0;
+    KB.forEach(function(e){
+      var keys = e.k.split(' ');
+      var sc = 0;
+      words.forEach(function(w){
+        keys.forEach(function(k){
+          if (k === w) sc += 3;
+          else if (k.indexOf(w) === 0 || w.indexOf(k) === 0) sc += 1.5;
+        });
+      });
+      if (sc > bestScore){ bestScore = sc; best = e; }
+    });
+    if (!best || bestScore < 3) {
+      return 'I hold the framework\'s own knowledge base rather than a general model, so I answer on the GREEN-LLM Index, your current result, model selection, the equilibrium projection and the method. Try asking about your score, which model to choose, how the energy is calculated, or how far the environment can sustain current adoption.';
+    }
+    return best.a();
+  }
+
+  function kbPush(text, who){
+    var log = $('kbLog');
+    var el = document.createElement('div');
+    el.className = 'msg ' + who;
+    el.innerHTML = text;
+    log.appendChild(el);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function kbAsk(q){
+    if (!q.trim()) return;
+    kbPush(q.replace(/</g,'&lt;'), 'you');
+    $('kbIn').value = '';
+    setTimeout(function(){ kbPush(kbAnswer(q), 'bot'); }, 220);
+  }
+
+  function initKB(){
+    kbPush('I am <b>Green Leaf</b>, the knowledge assistant for this framework. I can explain the method, read your current result, or help you choose a model. What would you like to know?', 'bot');
+    var chips = ['What is my score?','Which model should I use?','How is energy calculated?','How long can this be sustained?','How accurate is this?'];
+    $('kbChips').innerHTML = chips.map(function(c){ return '<button class="chip">'+c+'</button>'; }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('#kbChips .chip'), function(b){
+      b.addEventListener('click', function(){ kbAsk(b.textContent); });
+    });
+    function toggle(open){ $('kb').classList.toggle('open', open); if (open) $('kbIn').focus(); }
+    $('leafBtn').addEventListener('click', function(){ toggle(!$('kb').classList.contains('open')); });
+    $('kbClose').addEventListener('click', function(){ toggle(false); });
+    $('kbOpen2').addEventListener('click', function(){ toggle(true); });
+    $('kbSend').addEventListener('click', function(){ kbAsk($('kbIn').value); });
+    $('kbIn').addEventListener('keydown', function(e){ if (e.key === 'Enter') kbAsk($('kbIn').value); });
+  }
+
+  // --- Board report -------------------------------------------------------
+  function buildBoard(){
+    var s = readInputs(), p = physics(s), q = equilibrium();
+    var rows = computeModels();
+    var w = WORKFLOWS[parseInt($('wf').value,10)];
+    var pool = rows.filter(function(r){ return !r.below; }); if (!pool.length) pool = rows;
+    var green = pool.slice().sort(function(a,b){ return a.gTask - b.gTask; })[0];
+    var base = rows[parseInt($('wfBase').value || 6,10)];
+    var picked = Array.prototype.slice.call(document.querySelectorAll('#actions input:checked'));
+    var d = new Date().toISOString().slice(0,10);
+
+    var acts = picked.length
+      ? '<ol style="margin:6pt 0 0;padding-left:16pt">' + picked.map(function(b){
+          return '<li>' + b.parentNode.querySelector('.a-t').childNodes[0].nodeValue.trim() +
+                 ' <b>(' + b.parentNode.querySelector('.a-p').textContent + ')</b></li>'; }).join('') + '</ol>'
+      : '<p><em>No actions have been selected. Return to section 12 and commit before presenting.</em></p>';
+
+    var modelRows = rows.slice().sort(function(a,b){ return a.gTask - b.gTask; }).slice(0,6).map(function(r){
+      return '<tr><td>' + r.m.n + (r.below ? ' (below bar)' : '') + '</td><td>$' + fmt(r.cost1k) +
+             '</td><td>' + fmt(r.kg1k) + '</td><td>$' + fmt(r.costYr) + '</td><td>' + fmt(r.tYr) + '</td></tr>';
+    }).join('');
+
+    $('board').innerHTML =
+    '<div class="pg">' +
+      '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:8pt;letter-spacing:1.6pt">GREEN-LLM INDEX · BOARD REPORT · ' + d + '</div>' +
+      '<h1>Environmental position of our AI usage</h1>' +
+      '<p style="color:#4A5A52;margin:0 0 10pt">Prepared with the GREEN-LLM Index v1.5, developed by planetAI LLP. All figures are modelled estimates with wide error bars.</p>' +
+      '<div class="hero"><div style="font-family:\'IBM Plex Mono\',monospace;font-size:8pt;letter-spacing:1.4pt">VERDANCY SCORE</div>' +
+        '<div class="n">' + STATE.total + ' / 100 &nbsp; <span style="font-size:16pt">Grade ' + STATE.grade + '</span></div>' +
+        '<div style="margin-top:5pt">' + STATE.quad + ' quadrant — ' + STATE.verdict + '</div></div>' +
+      '<h2>1 · Current footprint</h2>' +
+      '<div class="cols"><div>' +
+        '<div class="kv"><span>Energy per query</span><b>' + STATE.wh + ' Wh</b></div>' +
+        '<div class="kv"><span>Carbon per query</span><b>' + STATE.g + ' g CO₂e</b></div>' +
+        '<div class="kv"><span>Water per query</span><b>' + STATE.ml + ' mL</b></div>' +
+      '</div><div>' +
+        '<div class="kv"><span>Annual carbon per user</span><b>' + STATE.yr + ' kg CO₂e</b></div>' +
+        '<div class="kv"><span>Model class in use</span><b>' + p.m.name + '</b></div>' +
+        '<div class="kv"><span>Grid intensity</span><b>' + s.grid + ' g/kWh</b></div>' +
+      '</div></div>' +
+      '<h2>2 · Model selection for ' + w.n.toLowerCase() + '</h2>' +
+      '<p style="margin:0 0 6pt">Quality bar: <b>' + TIERNAME[w.req] + '</b>. Recommended: <b>' + green.m.n +
+        '</b> — the lowest-carbon option that clears it. Against the current baseline (' + base.m.n + ') this is ' +
+        (base.costYr - green.costYr >= 0 ? 'a saving of $' + fmt(base.costYr - green.costYr) : 'an increase of $' + fmt(green.costYr - base.costYr)) +
+        ' and ' + (base.tYr - green.tYr >= 0 ? 'a reduction of ' + fmt(base.tYr - green.tYr) : 'an increase of ' + fmt(green.tYr - base.tYr)) +
+        ' tonnes CO₂e a year.</p>' +
+      '<table><thead><tr><th>Model</th><th>$/1K tasks</th><th>kg CO₂e/1K</th><th>Annual $</th><th>Annual t</th></tr></thead><tbody>' +
+        modelRows + '</tbody></table>' +
+      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.5 · Page 1 of 2</div>' +
+    '</div>' +
+    '<div class="pg">' +
+      '<h2>3 · How long the current rate can be sustained</h2>' +
+      '<p style="margin:0 0 8pt">Equilibrium holds while <b>(1 + g) · (1 − e) ≤ (1 + c)</b>, where g is workload growth, e efficiency gain and c growth in clean supply reaching data centres.</p>' +
+      '<div class="cols"><div>' +
+        '<div class="kv"><span>Workload growth (g)</span><b>' + (q.g*100).toFixed(0) + '%</b></div>' +
+        '<div class="kv"><span>Efficiency gain (e)</span><b>' + (q.e*100).toFixed(0) + '%</b></div>' +
+        '<div class="kv"><span>Clean supply growth (c)</span><b>' + (q.c*100).toFixed(0) + '%</b></div>' +
+      '</div><div>' +
+        '<div class="kv"><span>Net demand growth</span><b>' + (q.net*100).toFixed(0) + '%</b></div>' +
+        '<div class="kv"><span>Efficiency required</span><b>' + (q.needE<=0?'none':(q.needE*100).toFixed(0)+'%') + '</b></div>' +
+        '<div class="kv"><span>Position</span><b>' + STATE.eq + '</b></div>' +
+      '</div></div>' +
+      '<h2>4 · Committed actions</h2>' + acts +
+      '<p style="margin-top:6pt">Estimated reduction against the current profile: <b>' +
+        $('pledgeNum').textContent + '</b>, applying diminishing returns rather than summing the individual measures.</p>' +
+      '<h2>5 · What the board should note</h2>' +
+      '<ul style="margin:6pt 0 0;padding-left:16pt">' +
+        '<li>The money saved by right-sizing models exceeds the carbon saved by three to five orders of magnitude in dollar terms. The business case should be built on cost, with the emissions reduction banked as a consequence.</li>' +
+        '<li>Siting decides more than usage. The same query emits roughly eighteen times more on a coal-heavy grid than a hydro-dominant one.</li>' +
+        '<li>Agentic workloads are the dominant variable. One agent run can cost what a hundred chat queries cost, so step-count caps and budget kill-switches matter more than user policy.</li>' +
+        '<li>No frontier lab publishes full per-model energy telemetry. Every figure in this report is an estimate, and improving that is a procurement lever the board can pull.</li>' +
+      '</ul>' +
+      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.5 · Generated ' + d + ' · Modelled estimates, wide error bars · Page 2 of 2</div>' +
+    '</div>';
+  }
+
+  function render(){
+    var s = readInputs();
+    var p = physics(s);
+
+    $('queriesV').textContent = s.queries;
+    $('outputV').textContent  = s.output;
+    $('contextV').textContent = s.contextK + 'K';
+    $('retriesV').textContent = s.retries;
+    $('gqV').textContent      = s.gq + ' bn';
+    $('ampV').textContent     = s.amp.toFixed(1) + '×';
+
+    // readings
+    $('rWh').textContent = fmt(p.facWh);
+    $('rG').textContent  = fmt(p.gCO2);
+    $('rW').textContent  = fmt(p.waterL*1000);
+    var yrKg = p.gCO2 * s.queries * 365 / 1000;
+    $('rYr').textContent = fmt(yrKg);
+
+    var kmDrive = yrKg / 0.17;
+    var phones  = yrKg / 0.0084;
+    $('equiv').innerHTML = 'At <b>' + s.queries + ' queries a day</b> that is roughly <b>' +
+      fmt(yrKg) + ' kg CO₂e</b> a year — about the same as driving <b>' + fmt(kmDrive) +
+      ' km</b> in a petrol car, or charging a smartphone <b>' + fmt(phones) +
+      '</b> times. Annual water draw: <b>' + fmt(p.waterL * s.queries * 365) + ' litres</b>.';
+
+    // score
+    var d = [
+      { l:'G', n:'Generation footprint', e:'Carbon per completed task', v:scoreG(p.gCO2), max:25 },
+      { l:'R', n:'Right-sizing',         e:'Model capability against task need', v:scoreR(s), max:25 },
+      { l:'E', n:'Interaction efficiency', e:'Retries, context, output discipline', v:scoreE1(s), max:20 },
+      { l:'E', n:'Energy provenance',    e:'Grid, facility and cooling', v:scoreE2(s), max:20 },
+      { l:'N', n:'Net value displaced',  e:'What the output replaces', v:scoreN(s), max:10 }
+    ];
+    var total = d.reduce(function(a,x){ return a + x.v; }, 0);
+    var gr = grade(total);
+
+    $('scoreNum').innerHTML = Math.round(total) + '<small>/100</small>';
+    var tag = $('gradeTag');
+    tag.textContent = gr.g + ' · ' + gr.label;
+    tag.style.background = gr.c;
+    $('verdict').textContent = gr.v;
+    $('needle').style.left = clamp(total,1.5,98.5) + '%';
+
+    $('dims').innerHTML = d.map(function(x){
+      return '<div class="dim"><div class="ltr">'+x.l+'</div>'+
+        '<div><div class="nm">'+x.n+'<em>'+x.e+'</em></div>'+
+        '<div class="bar"><span style="width:'+(x.v/x.max*100)+'%"></span></div></div>'+
+        '<div class="pt">'+x.v+' / '+x.max+'</div></div>';
+    }).join('');
+
+    // matrix — x is log carbon 0.01..50 g, y is value 1..10
+    var lx = clamp((Math.log10(p.gCO2) - Math.log10(0.01)) / (Math.log10(50) - Math.log10(0.01)), 0.03, 0.97);
+    var ly = clamp((s.value - 1) / 9, 0.04, 0.96);
+    $('pin').style.left = (lx*100) + '%';
+    $('pin').style.bottom = (ly*100) + '%';
+
+    var hiC = p.gCO2 > 1.0, hiV = s.value >= 5;
+    var quad = hiV ? (hiC ? ['Justified load','Your usage earns its footprint, but the footprint is large. Attack the infrastructure — region, PUE, cooling — before you attack the behaviour.']
+                          : ['Regenerative','Low draw and real displacement. This is the pattern worth turning into a default for everyone around you.'])
+                   : (hiC ? ['Carbon waste','Heavy compute producing little. This is the quadrant to empty first — right-sizing alone typically cuts most of it.']
+                          : ['Ambient drift','Cheap per query, but volume is the story. Fix this with better defaults and smaller models, not with usage policing.']);
+    $('quadNote').innerHTML = '<b>You are in ' + quad[0] + '.</b> ' + quad[1];
+
+    // levers
+    var lv = levers(s, p);
+    $('levers').innerHTML = lv.length ? lv.map(function(x){
+      return '<div class="lever"><div class="txt">'+x.txt+'<em>'+x.sub+'</em></div>'+
+             '<div class="amt">−'+x.pct.toFixed(0)+'% CO₂e</div></div>';
+    }).join('') : '<div class="lever"><div class="txt">No material levers remain at these settings.<em>You are at or near the efficient frontier this model can represent.</em></div><div class="amt">—</div></div>';
+
+    // scenarios
+    var sc = scenarios(s, p);
+    var rows = [
+      { b:'Your profile, scaled to the world', n: fmt(sc.TWh) + ' TWh / yr',
+        p:'Annual electricity if every one of the assumed global queries looked like yours, including the infrastructure amplifier.',
+        w: clamp(sc.TWh/950*100, 1, 100), c:'var(--b2)' },
+      { b:'Against data centres today', n: (sc.TWh/485*100).toFixed(1) + '% of 2025 demand',
+        p:'Global data centre consumption sits near 485 TWh in 2025 — roughly 1.5% of world electricity.',
+        w: clamp(sc.TWh/485*100, 1, 100), c:'var(--b3)' },
+      { b:'Against the 2030 projection', n: (sc.TWh/950*100).toFixed(1) + '% of 950 TWh',
+        p:'The IEA base case has data centre demand roughly doubling to 945–950 TWh by 2030, about 3% of global electricity.',
+        w: clamp(sc.TWh/950*100, 1, 100), c:'var(--b4)' },
+      { b:'Carbon at your grid intensity', n: fmt(sc.MtCO2) + ' Mt CO₂e / yr',
+        p:'For scale: global aviation emits roughly 900 Mt CO₂e a year.',
+        w: clamp(sc.MtCO2/900*100, 1, 100), c:'var(--b5)' },
+      { b:'Water drawn', n: fmt(sc.GL) + ' GL / yr',
+        p:'Operational cooling and generation water. The global figure is unremarkable; the local figure decides whether a data centre gets built.',
+        w: clamp(sc.GL/5000*100, 1, 100), c:'var(--b1)' }
+    ];
+    renderLedger(s, p);
+    renderFlow(s, p);
+    renderCompare(s, p);
+    renderDots(sc.TWh);
+    renderTraj(sc.TWh);
+    renderGridFig(s, p);
+    renderModels();
+
+    STATE.total = Math.round(total); STATE.grade = gr.g + ' (' + gr.label + ')';
+    STATE.verdict = gr.v; STATE.quad = quad[0];
+    STATE.wh = fmt(p.facWh); STATE.g = fmt(p.gCO2);
+    STATE.ml = fmt(p.waterL*1000); STATE.yr = fmt(yrKg);
+
+    // the mark is a live gauge: needle swings to the score, blade takes the band colour
+    var leaf = document.querySelector('.mark .leaf');
+    if (leaf) leaf.setAttribute('fill', gr.c);
+    var ndl = $('markNeedle');
+    if (ndl) ndl.setAttribute('transform', 'rotate(' + (-120 + total*2.4).toFixed(1) + ' 32 32)');
+
+    $('scenarios').innerHTML = rows.map(function(r){
+      return '<div class="scen"><div class="scen-h"><b>'+r.b+'</b><span class="n">'+r.n+'</span></div>'+
+        '<div class="meter"><span style="width:'+r.w+'%;background:'+r.c+'"></span></div>'+
+        '<p>'+r.p+'</p></div>';
+    }).join('');
+  }
+
+  var ids = ['model','task','queries','output','context','retries','grid','pue','cool','value','gq','amp'];
+  ids.forEach(function(id){
+    var el = $(id);
+    el.addEventListener('input', render);
+    el.addEventListener('change', render);
+  });
+  ['gGrow','gEff','gClean'].forEach(function(id){
+    var el = $(id);
+    el.addEventListener('input', renderEq);
+    el.addEventListener('change', renderEq);
+  });
+  ['wf','wfVol','wfIn','wfOut','wfBase','wfCarbon'].forEach(function(id){
+    var el = $(id);
+    el.addEventListener('input', renderModels);
+    el.addEventListener('change', renderModels);
+  });
+  buildActions();
+  pledge();
+  renderRebound();
+  renderAsym();
+  renderEq();
+  initKB();
+  $('pdfBtn').addEventListener('click', function(){ buildBoard(); setTimeout(function(){ window.print(); }, 60); });
+  render();
+  window.__greenRender = render;
+  window.__greenPhysics = physics;
+})();
+</script>
+</body>
+</html>
