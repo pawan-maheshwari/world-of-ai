@@ -252,6 +252,7 @@ input[type=number]{background-image:none}
 select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .range-row{display:flex;align-items:center;gap:12px}
 input[type=range]{flex:1;accent-color:var(--accent);height:22px}
+.fh{font-size:12.5px;color:var(--ink-soft);margin:7px 0 0;line-height:1.4}
 .range-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;
   min-width:74px;text-align:right}
 
@@ -299,9 +300,11 @@ input[type=range]{flex:1;accent-color:var(--accent);height:22px}
 .ax{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--ink-soft)}
 .ax-x{text-align:center;margin-top:8px}
-.ax-y{position:absolute;left:-14px;top:50%;transform:translateY(-50%) rotate(-90deg);
-  transform-origin:center;white-space:nowrap}
-.matrix-pad{padding-left:26px}
+.ax-y{position:absolute;left:0;top:50%;width:0;height:0;overflow:visible;
+  transform:rotate(-90deg);transform-origin:0 0;white-space:nowrap;
+  display:flex;align-items:center;justify-content:center;pointer-events:none}
+.ax-y span{position:absolute;transform:translate(-50%,-50%);margin-top:-16px}
+.matrix-pad{padding-left:34px}
 
 /* table */
 .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule)}
@@ -373,7 +376,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
       </svg>
       <div class="brand-txt">
         <b>GREEN&#8209;LLM</b>
-        <span class="eyebrow">Index &nbsp;·&nbsp; v1.6 &nbsp;·&nbsp; planetAI LLP</span>
+        <span class="eyebrow">Index &nbsp;·&nbsp; v1.7 &nbsp;·&nbsp; planetAI LLP</span>
       </div>
     </div>
     <span class="eyebrow">Field instrument for AI environmental accounting</span>
@@ -545,7 +548,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
   <div class="sec-head"><span class="eyebrow">06 — The matrix</span><h2>Carbon cost against value created</h2></div>
   <div class="matrix-pad">
   <div class="matrix-wrap">
-    <span class="ax ax-y">Value created →</span>
+    <span class="ax ax-y"><span>Value created &#8594;</span></span>
     <div class="matrix" id="matrix">
       <div class="q"><span class="qn">Quadrant I</span><h4>Regenerative</h4><p>Low draw, real displacement. This is the pattern to scale and standardise across the organisation.</p></div>
       <div class="q"><span class="qn">Quadrant II</span><h4>Justified load</h4><p>Heavy, but it earns its keep. Optimise the infrastructure and routing rather than cutting the use.</p></div>
@@ -676,7 +679,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
 
   <figure style="margin-top:26px">
     <span class="eyebrow">Figure F · Cost against carbon, with the efficient frontier</span>
-    <svg class="fig" id="wfFig" viewBox="0 0 700 400" role="img" aria-labelledby="wfT">
+    <svg class="fig" id="wfFig" viewBox="0 0 700 430" role="img" aria-labelledby="wfT">
       <title id="wfT">Scatter of models by cost and carbon per thousand tasks</title>
       <g id="wfFigBody"></g>
     </svg>
@@ -703,7 +706,27 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
 
 <section>
   <div class="sec-head"><span class="eyebrow">10 — The agent</span><h2>Requirements agent</h2></div>
-  <p style="max-width:66ch;color:var(--ink-soft)">A deterministic advisor. It reads everything you have set above, checks it for contradictions and implausible values, then searches the configuration space for the deployment that minimises carbon and operating cost together — subject to the constraints you declare here. It shows its working rather than asserting a conclusion.</p>
+
+  <p style="max-width:66ch;font-size:17px"><b>Sections 01 to 09 tell you where you stand. This tells you what to do.</b> You have set roughly a dozen dials across this page — model, region, facility, tokens, workload. There are hundreds of valid combinations and no human picks the best one by eye. The agent does it arithmetically, and shows its working.</p>
+
+  <div class="grid2" style="margin-top:22px;gap:16px 24px">
+    <div class="field" style="border-top:3px solid var(--b1)">
+      <span class="eyebrow">Step 1 — it checks</span>
+      <p style="font-size:14.5px;margin:8px 0 0">Reads every input you have set and looks for contradictions: a real-time promise on a workflow that cannot be real-time, a retry rate that signals a broken prompt, evaporative cooling on a coal grid. <b>It tells you what is wrong before it recommends anything.</b></p>
+    </div>
+    <div class="field" style="border-top:3px solid var(--b2)">
+      <span class="eyebrow">Step 2 — it searches</span>
+      <p style="font-size:14.5px;margin:8px 0 0">Enumerates every combination of model, region, facility efficiency, cooling, prompt caching, batching and output policy that your constraints permit — typically several hundred — and scores each on carbon and cost together.</p>
+    </div>
+    <div class="field" style="border-top:3px solid var(--b3)">
+      <span class="eyebrow">Step 3 — it recommends</span>
+      <p style="font-size:14.5px;margin:8px 0 0">Returns one deployable configuration, the projected annual cost and carbon against your current baseline, and an eight-line trace of how it got there — including the runner-up, so you can see whether the decision was close.</p>
+    </div>
+  </div>
+
+  <p class="note" style="border-left-color:var(--b1)"><b>A worked example of the value.</b> On a support-triage workflow at 120,000 tasks a month, most teams default to a mid-tier frontier model on whatever region their cloud account defaults to. The agent typically finds a smaller model that clears the same quality bar, on a cleaner grid, with a tighter output cap — and returns something in the order of <b>a few thousand dollars and a fraction of a tonne of CO₂e saved a year, for the same work</b>. Run it and read the numbers for your own settings rather than mine.</p>
+
+  <p style="max-width:66ch;color:var(--ink-soft);margin-top:20px">Set the four constraints below to describe what you are actually allowed to change. If you are unsure, the defaults are the common enterprise case.</p>
 
   <div class="grid2" style="margin-top:18px">
     <div class="field">
@@ -715,6 +738,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
         <option value="in">India only</option>
         <option value="onprem">On-premise / air-gapped</option>
       </select>
+      <p class="fh">Where the law or your contracts say inference may physically run. Picking a region is the single biggest carbon lever — if you cannot move, say so and the agent will stop offering it.</p>
     </div>
     <div class="field">
       <label class="lbl" for="agLatency">Latency requirement</label>
@@ -723,6 +747,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
         <option value="ix" selected>Interactive — a few seconds is fine</option>
         <option value="batch">Batch tolerant — minutes or hours</option>
       </select>
+      <p class="fh">How fast the answer must come back. Batch tolerance unlocks a fifty per cent cost cut; real time rules out multi-step agents entirely.</p>
     </div>
     <div class="field">
       <label class="lbl" for="agTol">Quality tolerance</label>
@@ -731,23 +756,33 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
         <option value="bal" selected>Balanced — hold the tier, allow tighter outputs</option>
         <option value="cost">Cost-first — accept one tier down and its retry penalty</option>
       </select>
+      <p class="fh">How much quality you will trade for savings. Strict protects the answer; cost-first accepts a weaker model and pays for the extra attempts it needs.</p>
     </div>
     <div class="field">
       <label class="lbl" for="agW">Objective weighting</label>
       <div class="range-row"><input type="range" id="agW" min="0" max="100" step="5" value="50"><span class="range-val" id="agWV">50 / 50</span></div>
       <p style="font-size:12px;color:var(--ink-soft);margin:6px 0 0;font-family:'IBM Plex Mono',monospace">← all carbon &nbsp;·&nbsp; all cost →</p>
+      <p class="fh">Which you care about more when the two disagree. They usually agree — slide it to both ends and see whether your answer even changes.</p>
     </div>
   </div>
 
   <div class="board-cta" style="margin-top:22px">
     <div class="t">
       <b>Run the agent</b>
-      <span>Validates your inputs, then evaluates every permitted combination of model, region, facility, cooling, caching, batching and output policy against the joint objective.</span>
+      <span>Takes about a second. Nothing is sent anywhere — the search runs entirely in your browser.</span>
     </div>
     <button class="btn" id="agRun">Run agent</button>
   </div>
 
   <div id="agOut" style="display:none">
+    <div class="pledge" style="margin-top:26px;align-items:flex-start;border-width:2.5px">
+      <div style="flex:1;min-width:240px">
+        <span class="eyebrow" id="agHeadK">The recommendation</span>
+        <div id="agHead" style="font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(20px,3.6vw,27px);letter-spacing:-.02em;line-height:1.15;margin-top:7px"></div>
+        <div id="agHeadSub" style="font-size:15px;color:var(--ink-soft);margin-top:9px;max-width:52ch"></div>
+      </div>
+    </div>
+
     <div class="sec-head" style="margin-top:30px"><span class="eyebrow">10.1</span><h2>Validation report</h2></div>
     <div id="agFindings"></div>
 
@@ -1020,7 +1055,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-6 5-6 13 0 18 6-5 6-13 0-18z" fill="#2E6F55"/><path d="M12 4.5v16" stroke="#EDEEE8" stroke-width="1.3"/></svg>
     <b>Developed by planetAI LLP</b>
   </div>
-  GREEN-LLM Index v1.6 &nbsp;·&nbsp; Framework and instrument &nbsp;·&nbsp; Figures are modelled estimates with wide uncertainty &nbsp;·&nbsp; Verify against your own provider telemetry before publishing or reporting
+  GREEN-LLM Index v1.7 &nbsp;·&nbsp; Framework and instrument &nbsp;·&nbsp; Figures are modelled estimates with wide uncertainty &nbsp;·&nbsp; Verify against your own provider telemetry before publishing or reporting
 </footer>
 
 <div class="board-cta">
@@ -1757,7 +1792,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
         $('wfCarbon').value + ' per tonne and decide whether the reduction is worth buying.';
 
     // scatter
-    var W=700,H=400,L=68,R=140,T=28,B=52, pw=W-L-R, ph=H-T-B;
+    var W=700,H=430,L=68,R=196,T=34,B=56, pw=W-L-R, ph=H-T-B;
     var xs=rows.map(function(r){return r.cost1k;}), ys=rows.map(function(r){return r.kg1k;});
     var xmin=Math.min.apply(null,xs)*0.6, xmax=Math.max.apply(null,xs)*1.6;
     var ymin=Math.min.apply(null,ys)*0.6, ymax=Math.max.apply(null,ys)*1.6;
@@ -1771,26 +1806,50 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     par.forEach(function(r){ if (r.kg1k < bestY){ front.push(r); bestY = r.kg1k; } });
     if (front.length>1){
       g += '<path d="'+front.map(function(r,i){ return (i?'L':'M')+px(r.cost1k).toFixed(1)+' '+py(r.kg1k).toFixed(1); }).join('')+
-           '" fill="none" stroke="var(--b1)" stroke-width="2" stroke-dasharray="6 4"/>';
+           '" fill="none" stroke="var(--b1)" stroke-width="2.5" stroke-dasharray="6 4"/>';
+    } else if (front.length===1){
+      var fx=px(front[0].cost1k), fy=py(front[0].kg1k);
+      g += '<circle cx="'+fx.toFixed(1)+'" cy="'+fy.toFixed(1)+'" r="13" fill="none" stroke="var(--b1)" stroke-width="2" stroke-dasharray="4 3"/>';
     }
-    rows.forEach(function(r, i){
-      var x=px(r.cost1k), y=py(r.kg1k);
-      var col = r.below ? 'var(--b5)' : (r===base ? 'var(--ink)' : 'var(--b2)');
-      var rad = r===base ? 8 : 6;
-      g += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+rad+'" fill="'+col+'" opacity="'+(r.below?.55:1)+
-           '" stroke="var(--paper)" stroke-width="2"/>';
-      var dy = (i % 2 === 0) ? -10 : 15;
-      g += '<line x1="'+x.toFixed(1)+'" y1="'+y.toFixed(1)+'" x2="'+x.toFixed(1)+'" y2="'+(y+dy*0.55).toFixed(1)+
-           '" stroke="var(--rule)" stroke-width="1"/>';
-      g += '<text class="cmp-val" x="'+x.toFixed(1)+'" y="'+(y+dy).toFixed(1)+'" font-size="8.5" text-anchor="middle"'+
-           (r===base?' font-weight="700"':'')+'>'+r.m.n+'</text>';
+    // labels live in a right-hand column with leader lines, so they can never collide
+    var pts = rows.map(function(r){ return { r:r, x:px(r.cost1k), y:py(r.kg1k) }; })
+                  .sort(function(a,b){ return a.y - b.y; });
+    var lx = W - R + 26, slot = ph/(pts.length-1);
+    pts.forEach(function(pt, i){
+      var ly = T + i*slot;
+      g += '<path d="M'+(pt.x+7).toFixed(1)+' '+pt.y.toFixed(1)+'L'+(lx-32)+' '+ly.toFixed(1)+
+           'L'+(lx-6)+' '+ly.toFixed(1)+'" fill="none" stroke="var(--rule)" stroke-width="1"/>';
     });
-    g += '<text class="node-u" x="'+L+'" y="'+(H-30)+'">cheaper →</text>';
-    g += '<text class="node-u" x="'+(W-R)+'" y="'+(H-30)+'" text-anchor="end">← pricier</text>';
-    g += '<text class="node-u" x="'+L+'" y="'+(H-12)+'">Dashed line: the efficient frontier — no model is both cheaper and cleaner than these. Red dots fall below the quality bar.</text>';
+    pts.forEach(function(pt){
+      var r = pt.r;
+      var col = r.below ? 'var(--b5)' : (r===base ? 'var(--ink)' : 'var(--b2)');
+      g += '<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+(r===base?8:6)+'" fill="'+col+
+           '" opacity="'+(r.below?.6:1)+'" stroke="var(--paper)" stroke-width="2"/>';
+    });
+    pts.forEach(function(pt, i){
+      var r = pt.r, ly = T + i*slot;
+      var col = r.below ? 'var(--b5)' : (r===base ? 'var(--ink)' : 'var(--b2)');
+      g += '<circle cx="'+(lx-13)+'" cy="'+(ly-3).toFixed(1)+'" r="3.5" fill="'+col+'" opacity="'+(r.below?.6:1)+'"/>';
+      g += '<text class="cmp-val" x="'+lx+'" y="'+ly.toFixed(1)+'" font-size="9"'+
+           (r===base?' font-weight="700"':'')+'>'+r.m.n+(r===base?'  (current)':'')+'</text>';
+      g += '<text class="node-u" x="'+lx+'" y="'+(ly+9).toFixed(1)+'" font-size="7.5">$'+fmt(r.cost1k)+
+           ' · '+fmt(r.kg1k)+' kg'+(r.below?' · below bar':'')+'</text>';
+    });
+    g += '<text class="node-u" x="'+L+'" y="'+(H-30)+'">← cheaper</text>';
+    g += '<text class="node-u" x="'+(W-R)+'" y="'+(H-30)+'" text-anchor="end">pricier →</text>';
+    g += '<text class="node-u" x="'+(L-52)+'" y="'+(T-4)+'">more carbon ↑</text>';
+    g += '<text class="node-u" x="'+L+'" y="'+(H-12)+'" font-size="8">'+
+      (front.length>1 ? 'Dashed line: the efficient frontier. Red = below the quality bar.'
+                      : 'Circled: one model dominates every other. Red = below the quality bar.')+'</text>';
     $('wfFigBody').innerHTML = g;
 
-    $('wfFigNote').innerHTML = 'Anything above and to the right of the dashed line is <b>dominated</b>: another model does the same job for less money <em>and</em> less carbon. Dominated options are not trade-offs — they are mistakes, and they are usually there because someone picked a default and never revisited it.';
+    var domTail = ': another model does the same job for less money <em>and</em> less carbon. '
+      + 'Dominated options are not trade-offs — they are mistakes, and they are usually there '
+      + 'because someone picked a default and never revisited it.';
+    $('wfFigNote').innerHTML = (front.length > 1)
+      ? 'Anything above and to the right of the dashed line is <b>dominated</b>' + domTail
+      : '<b>' + front[0].m.n + ' dominates the entire eligible field</b> — nothing else is both cheaper '
+        + 'and cleaner. Every other option shown is <b>dominated</b>' + domTail;
   }
 
   // --- Green Leaf knowledge assistant (local, offline) --------------------
@@ -1912,7 +1971,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     '<div class="pg">' +
       '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:8pt;letter-spacing:1.6pt">GREEN-LLM INDEX · BOARD REPORT · ' + d + '</div>' +
       '<h1>Environmental position of our AI usage</h1>' +
-      '<p style="color:#4A5A52;margin:0 0 10pt">Prepared with the GREEN-LLM Index v1.6, developed by planetAI LLP. All figures are modelled estimates with wide error bars.</p>' +
+      '<p style="color:#4A5A52;margin:0 0 10pt">Prepared with the GREEN-LLM Index v1.7, developed by planetAI LLP. All figures are modelled estimates with wide error bars.</p>' +
       '<div class="hero"><div style="font-family:\'IBM Plex Mono\',monospace;font-size:8pt;letter-spacing:1.4pt">VERDANCY SCORE</div>' +
         '<div class="n">' + STATE.total + ' / 100 &nbsp; <span style="font-size:16pt">Grade ' + STATE.grade + '</span></div>' +
         '<div style="margin-top:5pt">' + STATE.quad + ' quadrant — ' + STATE.verdict + '</div></div>' +
@@ -1934,7 +1993,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
         ' tonnes CO₂e a year.</p>' +
       '<table><thead><tr><th>Model</th><th>$/1K tasks</th><th>kg CO₂e/1K</th><th>Annual $</th><th>Annual t</th></tr></thead><tbody>' +
         modelRows + '</tbody></table>' +
-      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.6 · Page 1 of 2</div>' +
+      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.7 · Page 1 of 2</div>' +
     '</div>' +
     '<div class="pg">' +
       '<h2>3 · How long the current rate can be sustained</h2>' +
@@ -1962,7 +2021,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
         '<li>Agentic workloads are the dominant variable. One agent run can cost what a hundred chat queries cost, so step-count caps and budget kill-switches matter more than user policy.</li>' +
         '<li>No frontier lab publishes full per-model energy telemetry. Every figure in this report is an estimate, and improving that is a procurement lever the board can pull.</li>' +
       '</ul>' +
-      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.6 · Generated ' + d + ' · Modelled estimates, wide error bars · Page 2 of 2</div>' +
+      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.7 · Generated ' + d + ' · Modelled estimates, wide error bars · Page 2 of 2</div>' +
     '</div>';
   }
 
@@ -2088,6 +2147,8 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     var res = agentSearch(ctx);
     var b = res.best;
     var base = computeModels()[parseInt($('wfBase').value||6,10)];
+    var costYr = b.costTask*vol*12, tYr = b.gTask*vol*12/1e6;
+    var dC = base.costYr - costYr, dT = base.tYr - tYr;
 
     $('agOut').style.display = 'block';
     $('agWV').textContent = Math.round((1-res.wCost)*100) + ' / ' + Math.round(res.wCost*100);
@@ -2135,8 +2196,6 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
         '<td style="font-size:12.5px;color:var(--ink-soft)">'+r[3]+'</td></tr>';
     }).join('');
 
-    var costYr = b.costTask*vol*12, tYr = b.gTask*vol*12/1e6;
-    var dC = base.costYr - costYr, dT = base.tYr - tYr;
     $('agResult').innerHTML =
       '<div class="rd"><div class="k">Cost per 1,000 tasks</div><div class="v">$'+fmt(b.costTask*1000)+
         '</div><div class="u">was $'+fmt(base.cost1k)+'</div></div>'+
@@ -2148,6 +2207,28 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
         fmt(tYr)+'</div><div class="u">tCO₂e · '+(dT>0?'−':'+')+fmt(Math.abs(dT))+' vs baseline</div></div>';
 
     var blockers = findings.filter(function(f){ return f.sev==='blocker'; }).length;
+
+    // plain-language headline, stated before any diagnostics
+    var changes = [];
+    if (b.m.n !== base.m.n) changes.push('switch to <b>'+b.m.n+'</b>');
+    if (b.g.v !== s.grid)   changes.push('run it in <b>'+b.g.n+'</b>');
+    if (b.outCap !== tout)  changes.push('cap output at <b>'+b.outCap.toLocaleString()+' tokens</b>');
+    if (b.pue.v !== s.pue)  changes.push('move to a <b>PUE '+b.pue.v.toFixed(2)+'</b> facility');
+    if (b.cache)            changes.push('turn on <b>prompt caching</b>');
+    if (b.batch)            changes.push('use the <b>batch API</b>');
+    var headline = changes.length
+      ? changes.slice(0,3).join(', ').replace(/,([^,]*)$/, ' and$1') +
+        (changes.length>3 ? ', plus '+(changes.length-3)+' more below' : '') + '.'
+      : 'Keep your current configuration — nothing permitted beats it.';
+    $('agHead').innerHTML = headline.charAt(0).toUpperCase() + headline.slice(1);
+    $('agHeadK').textContent = blockers ? 'Best available — but see the blocker' : 'The recommendation';
+    $('agHeadSub').innerHTML = changes.length
+      ? 'For the same work: ' +
+        (dC >= 0 ? '<b style="color:var(--b1)">$'+fmt(dC)+' cheaper</b>' : '<b style="color:var(--b5)">$'+fmt(-dC)+' dearer</b>') +
+        ' and ' +
+        (dT >= 0 ? '<b style="color:var(--b1)">'+fmt(dT)+' tonnes CO₂e lighter</b>' : '<b style="color:var(--b5)">'+fmt(-dT)+' tonnes heavier</b>') +
+        ' a year than your current baseline (' + base.m.n + '). The reasoning is below.'
+      : 'Your current setup is already the best available under these constraints. Loosen a constraint above to see whether that changes.';
     $('agVerdict').innerHTML = blockers
       ? '<b>Recommendation withheld pending a blocker.</b> The configuration above is the best available, but a stated constraint cannot be satisfied as specified. Resolve the blocker in the validation report before acting on this.'
       : (dC > 0 && dT > 0
