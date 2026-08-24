@@ -50,17 +50,6 @@ header.mast{padding:26px 0 0}
   border-bottom:1px solid var(--rule);padding-bottom:8px}
 .lede{font-size:clamp(16px,2.6vw,19px);max-width:62ch;color:var(--ink-soft)}
 
-/* back to atlas */
-.mast-right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:7px}
-a.wo-back{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--ink);text-decoration:none;border:1px solid var(--rule);border-radius:2px;
-  padding:6px 11px;background:var(--paper);transition:border-color .25s,background .25s;white-space:nowrap;
-}
-a.wo-back:hover{border-color:var(--b1);background:var(--paper-2)}
-footer a.wo-foot{color:var(--b1);font-weight:600;text-decoration:none;border-bottom:1px solid var(--rule)}
-footer a.wo-foot:hover{border-bottom-color:var(--b1)}
-
 /* brand */
 .brand{display:flex;align-items:center;gap:11px}
 .mark{width:46px;height:46px;flex:0 0 46px}
@@ -384,13 +373,10 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
       </svg>
       <div class="brand-txt">
         <b>GREEN&#8209;LLM</b>
-        <span class="eyebrow">Index &nbsp;·&nbsp; v1.5 &nbsp;·&nbsp; planetAI LLP</span>
+        <span class="eyebrow">Index &nbsp;·&nbsp; v1.6 &nbsp;·&nbsp; planetAI LLP</span>
       </div>
     </div>
-    <div class="mast-right">
-      <a class="wo-back" href="index.html">&#8592;&nbsp; World of AI</a>
-      <span class="eyebrow">Field instrument for AI environmental accounting</span>
-    </div>
+    <span class="eyebrow">Field instrument for AI environmental accounting</span>
   </div>
   <h1>How green is<br>your LLM usage?</h1>
   <p class="lede">Every prompt draws power, carbon and water. This instrument measures five dimensions of that draw, places your usage on a decision matrix, and scales the result to a planetary view. Set the dials to match how you actually work.</p>
@@ -716,7 +702,75 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
 </section>
 
 <section>
-  <div class="sec-head"><span class="eyebrow">10 — Projection</span><h2>If the world worked the way you do</h2></div>
+  <div class="sec-head"><span class="eyebrow">10 — The agent</span><h2>Requirements agent</h2></div>
+  <p style="max-width:66ch;color:var(--ink-soft)">A deterministic advisor. It reads everything you have set above, checks it for contradictions and implausible values, then searches the configuration space for the deployment that minimises carbon and operating cost together — subject to the constraints you declare here. It shows its working rather than asserting a conclusion.</p>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="field">
+      <label class="lbl" for="agResidency">Data residency constraint</label>
+      <select id="agResidency">
+        <option value="any" selected>None — inference can run anywhere</option>
+        <option value="eu">European Union only</option>
+        <option value="us">United States only</option>
+        <option value="in">India only</option>
+        <option value="onprem">On-premise / air-gapped</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="agLatency">Latency requirement</label>
+      <select id="agLatency">
+        <option value="rt">Real time — under two seconds</option>
+        <option value="ix" selected>Interactive — a few seconds is fine</option>
+        <option value="batch">Batch tolerant — minutes or hours</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="agTol">Quality tolerance</label>
+      <select id="agTol">
+        <option value="strict">Strict — no capability downgrade, no output trimming</option>
+        <option value="bal" selected>Balanced — hold the tier, allow tighter outputs</option>
+        <option value="cost">Cost-first — accept one tier down and its retry penalty</option>
+      </select>
+    </div>
+    <div class="field">
+      <label class="lbl" for="agW">Objective weighting</label>
+      <div class="range-row"><input type="range" id="agW" min="0" max="100" step="5" value="50"><span class="range-val" id="agWV">50 / 50</span></div>
+      <p style="font-size:12px;color:var(--ink-soft);margin:6px 0 0;font-family:'IBM Plex Mono',monospace">← all carbon &nbsp;·&nbsp; all cost →</p>
+    </div>
+  </div>
+
+  <div class="board-cta" style="margin-top:22px">
+    <div class="t">
+      <b>Run the agent</b>
+      <span>Validates your inputs, then evaluates every permitted combination of model, region, facility, cooling, caching, batching and output policy against the joint objective.</span>
+    </div>
+    <button class="btn" id="agRun">Run agent</button>
+  </div>
+
+  <div id="agOut" style="display:none">
+    <div class="sec-head" style="margin-top:30px"><span class="eyebrow">10.1</span><h2>Validation report</h2></div>
+    <div id="agFindings"></div>
+
+    <div class="sec-head" style="margin-top:30px"><span class="eyebrow">10.2</span><h2>Derived requirements</h2></div>
+    <p style="max-width:66ch;color:var(--ink-soft)" id="agSearch"></p>
+    <div class="tbl-scroll" style="margin-top:14px">
+      <table>
+        <thead><tr><th>Requirement</th><th>Current</th><th>Recommended</th><th>Why</th></tr></thead>
+        <tbody id="agSpec"></tbody>
+      </table>
+    </div>
+
+    <div class="readings" style="margin-top:20px" id="agResult"></div>
+    <p class="note" id="agVerdict"></p>
+
+    <div class="sec-head" style="margin-top:30px"><span class="eyebrow">10.3</span><h2>Reasoning trace</h2></div>
+    <div class="ledger" id="agTrace"></div>
+    <p class="note"><b>This agent is deterministic, not generative.</b> It runs a bounded search over a defined configuration space using the same arithmetic as sections 03 and 09 — no model is called, nothing is inferred, and the same inputs always produce the same output. That makes it auditable, which matters more than sophistication when the output is going into a procurement decision. Its judgement is only as good as the coefficients and capability tiers it inherits, and both carry the uncertainty stated throughout this document.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">11 — Projection</span><h2>If the world worked the way you do</h2></div>
   <p style="max-width:64ch;color:var(--ink-soft)">Your per-query figures, scaled to a planetary user base. Adjust the assumption and watch the sensitivity — the honest finding of this exercise is how much the answer depends on inputs nobody publishes.</p>
   <div class="grid2" style="margin-top:16px">
     <div class="field">
@@ -743,7 +797,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
 </section>
 
 <section>
-  <div class="sec-head"><span class="eyebrow">11 — Equilibrium</span><h2>In the race to adopt AI, are we missing the environment?</h2></div>
+  <div class="sec-head"><span class="eyebrow">12 — Equilibrium</span><h2>In the race to adopt AI, are we missing the environment?</h2></div>
 
   <p style="max-width:66ch">Partly, and in a specific way. The environment is not being ignored — it is being <em>measured on the wrong axis</em>. Efficiency per task is celebrated because it is improving spectacularly. Total load is downplayed because efficiency is improving spectacularly. Both are reported honestly and the combination is misleading, because the quantity that decides the outcome is neither one alone: it is whether workload growth, net of efficiency, outruns the growth of clean supply.</p>
 
@@ -753,7 +807,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     <p class="note"><b>The asymmetry is the finding.</b> Capital, compute and demand are all compounding at double or triple digits. The one line that has not moved is disclosure — not a single frontier lab publishes full per-model energy telemetry, which is why every framework on this page, including this one, is estimating rather than auditing.</p>
   </figure>
 
-  <div class="sec-head" style="margin-top:34px"><span class="eyebrow">11.1</span><h2>How far can the environment sustain this?</h2></div>
+  <div class="sec-head" style="margin-top:34px"><span class="eyebrow">12.1</span><h2>How far can the environment sustain this?</h2></div>
   <p style="max-width:66ch;color:var(--ink-soft)">A carrying-capacity model with three variables. Workload volume grows. Efficiency cuts the energy each unit of work needs. Clean supply grows to meet what is left. Equilibrium holds only while the first two, combined, stay below the third.</p>
 
   <p class="formula">
@@ -801,7 +855,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     <p class="note" id="eqNote"></p>
   </figure>
 
-  <div class="sec-head" style="margin-top:34px"><span class="eyebrow">11.2</span><h2>What holds the equilibrium</h2></div>
+  <div class="sec-head" style="margin-top:34px"><span class="eyebrow">12.2</span><h2>What holds the equilibrium</h2></div>
   <p style="max-width:66ch;color:var(--ink-soft)">Each condition below moves one variable in the equation above. The order is deliberate — it runs from what you control this week to what takes a decade and a parliament.</p>
 
   <div class="tier">
@@ -829,7 +883,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
 </section>
 
 <section>
-  <div class="sec-head"><span class="eyebrow">12 — Action</span><h2>Suggestions to improve the environment</h2></div>
+  <div class="sec-head"><span class="eyebrow">13 — Action</span><h2>Suggestions to improve the environment</h2></div>
   <p style="max-width:64ch;color:var(--ink-soft)">Tick what you will genuinely commit to. The figure at the bottom applies diminishing returns rather than adding percentages, because these measures overlap.</p>
   <div id="actions"></div>
   <div class="pledge">
@@ -840,7 +894,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
 </section>
 
 <section>
-  <div class="sec-head"><span class="eyebrow">13 — Outlook</span><h2>Predicted effects on the world environment</h2></div>
+  <div class="sec-head"><span class="eyebrow">14 — Outlook</span><h2>Predicted effects on the world environment</h2></div>
 
   <figure>
     <span class="eyebrow">Figure A · Global data centre electricity, actual and projected</span>
@@ -934,7 +988,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
 </section>
 
 <section>
-  <div class="sec-head"><span class="eyebrow">14 — Method</span><h2>How the numbers are derived</h2></div>
+  <div class="sec-head"><span class="eyebrow">15 — Method</span><h2>How the numbers are derived</h2></div>
   <details>
     <summary>Calculation chain</summary>
     <div class="body">
@@ -966,8 +1020,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-6 5-6 13 0 18 6-5 6-13 0-18z" fill="#2E6F55"/><path d="M12 4.5v16" stroke="#EDEEE8" stroke-width="1.3"/></svg>
     <b>Developed by planetAI LLP</b>
   </div>
-  <div style="margin-bottom:9px">Part of the <a class="wo-foot" href="index.html">World of AI</a> atlas &nbsp;·&nbsp; planetAI LLP</div>
-  GREEN-LLM Index v1.5 &nbsp;·&nbsp; Framework and instrument &nbsp;·&nbsp; Figures are modelled estimates with wide uncertainty &nbsp;·&nbsp; Verify against your own provider telemetry before publishing or reporting
+  GREEN-LLM Index v1.6 &nbsp;·&nbsp; Framework and instrument &nbsp;·&nbsp; Figures are modelled estimates with wide uncertainty &nbsp;·&nbsp; Verify against your own provider telemetry before publishing or reporting
 </footer>
 
 <div class="board-cta">
@@ -1766,12 +1819,14 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
       a:function(){ return 'PUE is total facility energy divided by IT energy — the overhead of cooling and power distribution. Grid intensity is grams CO₂e per kWh where the inference runs. Siting matters more than usage: the same query emits roughly eighteen times more on a coal-heavy grid than a hydro-dominant one. Figure B in section 13 shows your exact query across eight grids.'; } },
     { k:'accurate reliable limitations weakness uncertain trust wrong caveat',
       a:function(){ return 'Treat every number here as a decision aid with wide error bars. No frontier lab publishes full per-model energy telemetry, so independent estimates for the same model differ by an order of magnitude. Embodied carbon in chips and buildings is excluded from per-query figures and folded into a crude amplifier. Capability tiers in section 09 are coarse judgement, not benchmark results — replace them with your own eval pass rates before this drives procurement.'; } },
-    { k:'agentic agent multi step coding rebound jevons efficiency',
+    { k:'agentic multistep loops coding rebound jevons workloads',
       a:function(){ return 'Agentic workloads are the environmental story of this decade. One agent run issues many model calls and re-reads long context on each, so it can cost tens to hundreds of times a chat query. Per-task efficiency is falling fast while total consumption climbs — both true at once, which is the rebound effect. Workload design, not model efficiency, is what decides the trajectory.'; } },
     { k:'report pdf board download export presentation print boardroom',
       a:function(){ return 'Use the <b>Download board report</b> button at the foot of the page. It generates a print-ready executive summary — your score, footprint, model recommendation, equilibrium position and committed actions — then opens the print dialogue where you choose <em>Save as PDF</em>.'; } },
     { k:'who built made developed planetai company author contact',
       a:function(){ return 'This framework and instrument are developed by <b>planetAI LLP</b>. The methodology draws on the IEA\'s Energy and AI work, peer-reviewed inference-energy research and published LLM footprint benchmarking — all listed in section 14.'; } },
+    { k:'agent validate validation requirements advisor recommend configuration spec optimiser',
+      a:function(){ return 'The requirements agent in section 10 validates your inputs for contradictions, then searches every permitted combination of model, region, facility, cooling, caching and batching against a weighted carbon-and-cost objective. It is deterministic — no model is called, so the same inputs always give the same answer, which is what makes it auditable for procurement.' + (STATE.agent ? ' Its current recommendation is <b>' + STATE.agent + '</b>.' : ' Run it from section 10 to see a recommendation for your workflow.'); } },
     { k:'matrix quadrant regenerative waste drift justified',
       a:function(){ return 'The matrix plots carbon cost per task against value created. <b>Regenerative</b> (low cost, high value) is the pattern to scale. <b>Justified load</b> earns its footprint — optimise the infrastructure, not the behaviour. <b>Ambient drift</b> is cheap but high-volume, fixed with defaults. <b>Carbon waste</b> is expensive compute producing little, and is where the fastest reductions live. You are currently in <b>' + STATE.quad + '</b>.'; } }
   ];
@@ -1857,7 +1912,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     '<div class="pg">' +
       '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:8pt;letter-spacing:1.6pt">GREEN-LLM INDEX · BOARD REPORT · ' + d + '</div>' +
       '<h1>Environmental position of our AI usage</h1>' +
-      '<p style="color:#4A5A52;margin:0 0 10pt">Prepared with the GREEN-LLM Index v1.5, developed by planetAI LLP. All figures are modelled estimates with wide error bars.</p>' +
+      '<p style="color:#4A5A52;margin:0 0 10pt">Prepared with the GREEN-LLM Index v1.6, developed by planetAI LLP. All figures are modelled estimates with wide error bars.</p>' +
       '<div class="hero"><div style="font-family:\'IBM Plex Mono\',monospace;font-size:8pt;letter-spacing:1.4pt">VERDANCY SCORE</div>' +
         '<div class="n">' + STATE.total + ' / 100 &nbsp; <span style="font-size:16pt">Grade ' + STATE.grade + '</span></div>' +
         '<div style="margin-top:5pt">' + STATE.quad + ' quadrant — ' + STATE.verdict + '</div></div>' +
@@ -1879,7 +1934,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
         ' tonnes CO₂e a year.</p>' +
       '<table><thead><tr><th>Model</th><th>$/1K tasks</th><th>kg CO₂e/1K</th><th>Annual $</th><th>Annual t</th></tr></thead><tbody>' +
         modelRows + '</tbody></table>' +
-      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.5 · Page 1 of 2</div>' +
+      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.6 · Page 1 of 2</div>' +
     '</div>' +
     '<div class="pg">' +
       '<h2>3 · How long the current rate can be sustained</h2>' +
@@ -1896,15 +1951,229 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
       '<h2>4 · Committed actions</h2>' + acts +
       '<p style="margin-top:6pt">Estimated reduction against the current profile: <b>' +
         $('pledgeNum').textContent + '</b>, applying diminishing returns rather than summing the individual measures.</p>' +
-      '<h2>5 · What the board should note</h2>' +
+      (STATE.agent ? '<h2>5 · Agent recommendation</h2>' +
+        '<p style="margin:0 0 6pt">The requirements agent recommends <b>' + STATE.agent + '</b> for this workflow, ' +
+        (STATE.agentSave >= 0 ? 'saving $' + fmt(STATE.agentSave) : 'at an additional $' + fmt(-STATE.agentSave)) +
+        ' a year against the current baseline. It is a deterministic search over the permitted configuration space, not a generative judgement — the same inputs always produce the same recommendation.</p>' : '') +
+      '<h2>' + (STATE.agent ? '6' : '5') + ' · What the board should note</h2>' +
       '<ul style="margin:6pt 0 0;padding-left:16pt">' +
         '<li>The money saved by right-sizing models exceeds the carbon saved by three to five orders of magnitude in dollar terms. The business case should be built on cost, with the emissions reduction banked as a consequence.</li>' +
         '<li>Siting decides more than usage. The same query emits roughly eighteen times more on a coal-heavy grid than a hydro-dominant one.</li>' +
         '<li>Agentic workloads are the dominant variable. One agent run can cost what a hundred chat queries cost, so step-count caps and budget kill-switches matter more than user policy.</li>' +
         '<li>No frontier lab publishes full per-model energy telemetry. Every figure in this report is an estimate, and improving that is a procurement lever the board can pull.</li>' +
       '</ul>' +
-      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.5 · Generated ' + d + ' · Modelled estimates, wide error bars · Page 2 of 2</div>' +
+      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.6 · Generated ' + d + ' · Modelled estimates, wide error bars · Page 2 of 2</div>' +
     '</div>';
+  }
+
+  // --- Requirements agent -------------------------------------------------
+  var GRIDS = [
+    { n:'Nordic hydro', v:35,  z:'eu' }, { n:'24/7 CFE matched', v:45, z:'any' },
+    { n:'United Kingdom', v:205, z:'eu' }, { n:'European Union', v:230, z:'eu' },
+    { n:'United States', v:369, z:'us' }, { n:'Global average', v:445, z:'any' },
+    { n:'China', v:533, z:'any' }, { n:'India', v:632, z:'in' }
+  ];
+  var PUES   = [{n:'1.10 hyperscale liquid',v:1.10},{n:'1.25 modern cloud',v:1.25},
+                {n:'1.45 industry average',v:1.45},{n:'1.70 legacy / on-premise',v:1.70}];
+  var COOLS  = [{n:'Closed loop',v:0.35},{n:'Conventional air',v:1.90},{n:'Evaporative',v:2.60}];
+
+  function agentValidate(ctx){
+    var f = [], s = ctx.s, w = ctx.w, tin = ctx.tin, tout = ctx.tout;
+    function add(sev, t, d){ f.push({ sev:sev, t:t, d:d }); }
+
+    if (ctx.latency === 'rt' && w.calls > 1)
+      add('blocker', 'Real-time latency is incompatible with an agentic workflow',
+        'This archetype issues ' + w.calls + ' sequential model calls. Sub-two-second completion is not achievable. Either relax the latency requirement or decompose the task so the user-facing step is a single call.');
+    if (ctx.residency === 'onprem' && s.pue < 1.45)
+      add('warning', 'On-premise hosting declared, but facility efficiency is set to a hyperscale figure',
+        'On-premise data centres rarely achieve a PUE below 1.45. The agent has overridden this to 1.70 for the search; your current carbon figures in section 02 are optimistic.');
+    if (s.retries >= 2)
+      add('warning', 'Two or more re-prompts per task indicates a prompt problem, not a model problem',
+        'Every retry pays full price for a discarded answer. Escalating model tier will not fix a specification failure. Fix the prompt template before changing the model, or the agent will recommend an expensive model to compensate for a cheap mistake.');
+    if (w.req <= 2 && tout > 400)
+      add('warning', 'Output length is implausible for a classification or extraction workload',
+        tout.toLocaleString() + ' output tokens for a task of this type suggests the model is being asked to explain rather than to label. Constrain the output schema — decode dominates energy.');
+    if (tin > 32000 && !ctx.cacheable)
+      add('warning', 'Large context resent on every call with no caching assumed',
+        tin.toLocaleString() + ' input tokens per task. If any part of that is a stable system prompt or shared document, prompt caching cuts the input bill by around ninety per cent and part of the prefill energy with it.');
+    if (w.calls > 1 && tin > 20000)
+      add('warning', 'Context length compounds across agent steps',
+        'Each of the ' + w.calls + ' calls re-reads the carried context, so prefill cost is multiplied, not shared. Retrieval per step is worth more here than in any chat workflow.');
+    if (s.cool > 2.0 && s.grid > 400)
+      add('warning', 'Evaporative cooling on a fossil-heavy grid',
+        'This is the worst combination for water: high on-site cooling draw plus high off-site generation draw. If the region is water-stressed this is a planning risk before it is an emissions one.');
+    if (s.value <= 4 && ctx.mIdx >= 3)
+      add('warning', 'Frontier-class compute assigned to low-value output',
+        'You have described the output as convenience or novelty while running a frontier model. This is the carbon-waste quadrant by definition and is the first thing to cut.');
+    if (ctx.residency === 'in' || (ctx.residency === 'any' && s.grid > 550))
+      add('note', 'Grid carbon intensity is high and may be fixed by policy',
+        'Where residency rules pin the region, siting is off the table and the whole reduction has to come from model choice, output discipline and scheduling. The agent has excluded region from the search.');
+    if (ctx.latency === 'batch')
+      add('note', 'Batch tolerance unlocks a fifty per cent cost reduction',
+        'The agent has included batch processing in the search. It halves token cost without materially changing energy, so it improves cost but not carbon — worth knowing before it is reported as a green measure.');
+    if (ctx.monthlyTok > 5e9)
+      add('note', 'Volume is above the threshold where list pricing stops applying',
+        Math.round(ctx.monthlyTok/1e9) + ' billion tokens a month. At this scale committed-use or enterprise agreements typically change the cost column materially — re-run this with your negotiated rates.');
+    if (!f.length)
+      add('pass', 'No contradictions found', 'Inputs are internally consistent and within plausible ranges for the declared workflow.');
+    return f;
+  }
+
+  function agentSearch(ctx){
+    var w = ctx.w, evaluated = 0;
+    var minTier = ctx.tol === 'cost' ? w.req - 1 : w.req;
+    var outCap  = ctx.tol === 'strict' ? ctx.tout
+                : ctx.tol === 'bal'    ? Math.max(120, Math.round(ctx.tout*0.75))
+                :                        Math.max(100, Math.round(ctx.tout*0.60));
+    var grids = GRIDS.filter(function(g){
+      if (ctx.residency === 'onprem') return g.v === ctx.s.grid;
+      if (ctx.residency === 'any')    return true;
+      return g.z === ctx.residency;
+    });
+    if (!grids.length) grids = [{ n:'Current region', v:ctx.s.grid, z:'any' }];
+    var pues  = ctx.residency === 'onprem' ? [PUES[3]] : PUES;
+    var cools = COOLS;
+    var batchOpts = ctx.latency === 'batch' ? [true,false] : [false];
+    var cacheOpts = ctx.tin >= 4000 ? [true,false] : [false];
+    var models = CATALOG.filter(function(m){ return m.t >= minTier; });
+    if (!models.length) models = CATALOG.filter(function(m){ return m.t >= w.req - 1; });
+
+    var cand = [];
+    models.forEach(function(m){
+      var att = 1 + Math.max(0, w.req - m.t), cls = CLASSES[m.c];
+      cacheOpts.forEach(function(cache){
+        var costIn  = ctx.tin * m.pi * (cache ? 0.10 : 1);
+        var energyIn= ctx.tin * cls.pre * (cache ? 0.35 : 1);
+        batchOpts.forEach(function(batch){
+          var costTask = (costIn + outCap*m.po)/1e6 * w.calls * att * (batch ? 0.5 : 1);
+          var whTask   = (outCap*cls.dec + energyIn) * w.calls * att * (batch ? 0.95 : 1);
+          grids.forEach(function(g){ pues.forEach(function(pu){ cools.forEach(function(co){
+            evaluated++;
+            cand.push({ m:m, cache:cache, batch:batch, g:g, pue:pu, cool:co, att:att, outCap:outCap,
+              costTask:costTask, whTask:whTask,
+              gTask: whTask/1000*pu.v*g.v,
+              water: whTask/1000*pu.v*(co.v + 1.5*(g.v/445)) });
+          }); }); });
+        });
+      });
+    });
+    var cs = cand.map(function(c){ return c.costTask; }), gs = cand.map(function(c){ return c.gTask; });
+    var cmin=Math.min.apply(null,cs), cmax=Math.max.apply(null,cs);
+    var gmin=Math.min.apply(null,gs), gmax=Math.max.apply(null,gs);
+    var wCost = parseInt($('agW').value,10)/100;
+    cand.forEach(function(c){
+      var cn = cmax>cmin ? (c.costTask-cmin)/(cmax-cmin) : 0;
+      var gn = gmax>gmin ? (c.gTask-gmin)/(gmax-gmin) : 0;
+      c.J = wCost*cn + (1-wCost)*gn;
+      c.cn = cn; c.gn = gn;
+    });
+    cand.sort(function(a,b){ return a.J - b.J; });
+    return { best:cand[0], runnerUp:cand[1], evaluated:evaluated, wCost:wCost,
+             cheapest:cand.slice().sort(function(a,b){return a.costTask-b.costTask;})[0],
+             greenest:cand.slice().sort(function(a,b){return a.gTask-b.gTask;})[0] };
+  }
+
+  function runAgent(){
+    var s = readInputs();
+    var wi = parseInt($('wf').value,10), w = WORKFLOWS[wi];
+    var tin = parseInt($('wfIn').value,10), tout = parseInt($('wfOut').value,10);
+    var vol = parseInt($('wfVol').value,10)*1000;
+    var mIdx = {nano:0, small:1, mid:2, front:3, frontP:4}[
+      CATALOG[parseInt($('wfBase').value||6,10)].c];
+    var ctx = { s:s, w:w, tin:tin, tout:tout, vol:vol, mIdx:mIdx,
+      residency:$('agResidency').value, latency:$('agLatency').value, tol:$('agTol').value,
+      cacheable:false, monthlyTok:(tin+tout)*vol*w.calls };
+
+    var findings = agentValidate(ctx);
+    var res = agentSearch(ctx);
+    var b = res.best;
+    var base = computeModels()[parseInt($('wfBase').value||6,10)];
+
+    $('agOut').style.display = 'block';
+    $('agWV').textContent = Math.round((1-res.wCost)*100) + ' / ' + Math.round(res.wCost*100);
+
+    var SEV = { blocker:['var(--b5)','Blocker'], warning:['var(--b4)','Warning'],
+                note:['var(--b3)','Note'], pass:['var(--b1)','Pass'] };
+    $('agFindings').innerHTML = findings.map(function(f){
+      return '<div class="tier"><div class="tier-h">' +
+        '<span style="background:'+SEV[f.sev][0]+';color:#fff;padding:3px 9px;font-family:\'IBM Plex Mono\',monospace;' +
+        'font-size:10px;letter-spacing:.1em;font-weight:600">'+SEV[f.sev][1].toUpperCase()+'</span>' +
+        '<b>'+f.t+'</b></div><p style="font-size:14px;margin:0 0 4px;color:var(--ink-soft)">'+f.d+'</p></div>';
+    }).join('');
+
+    $('agSearch').innerHTML = 'Evaluated <b>' + res.evaluated.toLocaleString() +
+      '</b> permitted configurations against an objective weighted <b>' + Math.round((1-res.wCost)*100) +
+      '% carbon / ' + Math.round(res.wCost*100) + '% cost</b>. ' +
+      (res.best === res.cheapest && res.best === res.greenest
+        ? 'The winner is simultaneously the cheapest and the lowest-carbon option — no trade-off exists at these constraints.'
+        : res.best === res.cheapest ? 'The winner is also the cheapest permitted option.'
+        : res.best === res.greenest ? 'The winner is also the lowest-carbon permitted option.'
+        : 'The winner is neither the absolute cheapest nor the absolute greenest — it is the best joint position at your weighting.');
+
+    var rows = [
+      ['Model', CATALOG[parseInt($('wfBase').value||6,10)].n, b.m.n,
+        b.att>1 ? 'Accepts a tier-down with '+b.att+' attempts under cost-first tolerance' : 'Smallest model clearing the '+TIERNAME[w.req]+' bar'],
+      ['Output cap', tout.toLocaleString()+' tokens', b.outCap.toLocaleString()+' tokens',
+        b.outCap<tout ? 'Decode dominates energy; trimmed under the declared tolerance' : 'Held at the requested length under strict tolerance'],
+      ['Region', s.grid+' g/kWh', b.g.n+' ('+b.g.v+' g/kWh)',
+        b.g.v<s.grid ? 'Lower grid intensity for identical compute' : 'Fixed by the residency constraint'],
+      ['Facility PUE', s.pue.toFixed(2), b.pue.v.toFixed(2),
+        b.pue.v<s.pue ? 'Facility overhead is invisible to users and cheap to change' : 'Constrained by hosting model'],
+      ['Cooling', s.cool<=0.5?'Closed loop':s.cool<=2?'Conventional air':'Evaporative', b.cool.n,
+        b.cool.v<s.cool ? 'Reduces operational water draw' : 'Best available under constraints'],
+      ['Prompt caching', 'not assumed', b.cache?'required':'not applicable',
+        b.cache ? 'Context is large enough that cached prefill pays for itself' : 'Context too small for caching to matter'],
+      ['Batch processing', 'not assumed', b.batch?'required':'not permitted',
+        b.batch ? 'Halves token cost at no carbon penalty' : (ctx.latency==='batch'?'Rejected — cost gain did not justify it at this weighting':'Excluded by the latency requirement')],
+      ['Agent step cap', w.calls+(w.calls>1?' calls':' call'), w.calls>1?w.calls+' calls, hard ceiling + budget kill-switch':'1 call',
+        w.calls>1 ? 'Unbounded agent loops are the single largest cost and carbon risk' : 'Single-call workflow, no loop to bound']
+    ];
+    $('agSpec').innerHTML = rows.map(function(r){
+      var changed = String(r[1]) !== String(r[2]);
+      return '<tr'+(changed?' style="background:var(--paper-2)"':'')+'><td>'+r[0]+'</td><td style="color:var(--ink-soft)">'+r[1]+
+        '</td><td style="font-weight:600'+(changed?';color:var(--b1)':'')+'">'+r[2]+'</td>'+
+        '<td style="font-size:12.5px;color:var(--ink-soft)">'+r[3]+'</td></tr>';
+    }).join('');
+
+    var costYr = b.costTask*vol*12, tYr = b.gTask*vol*12/1e6;
+    var dC = base.costYr - costYr, dT = base.tYr - tYr;
+    $('agResult').innerHTML =
+      '<div class="rd"><div class="k">Cost per 1,000 tasks</div><div class="v">$'+fmt(b.costTask*1000)+
+        '</div><div class="u">was $'+fmt(base.cost1k)+'</div></div>'+
+      '<div class="rd"><div class="k">Carbon per 1,000 tasks</div><div class="v">'+fmt(b.gTask)+
+        '</div><div class="u">kg CO₂e · was '+fmt(base.kg1k)+'</div></div>'+
+      '<div class="rd"><div class="k">Annual operating cost</div><div class="v" style="color:'+(dC>0?'var(--b1)':'var(--b5)')+'">$'+
+        fmt(costYr)+'</div><div class="u">'+(dC>0?'saves $':'adds $')+fmt(Math.abs(dC))+' a year</div></div>'+
+      '<div class="rd"><div class="k">Annual carbon</div><div class="v" style="color:'+(dT>0?'var(--b1)':'var(--b5)')+'">'+
+        fmt(tYr)+'</div><div class="u">tCO₂e · '+(dT>0?'−':'+')+fmt(Math.abs(dT))+' vs baseline</div></div>';
+
+    var blockers = findings.filter(function(f){ return f.sev==='blocker'; }).length;
+    $('agVerdict').innerHTML = blockers
+      ? '<b>Recommendation withheld pending a blocker.</b> The configuration above is the best available, but a stated constraint cannot be satisfied as specified. Resolve the blocker in the validation report before acting on this.'
+      : (dC > 0 && dT > 0
+        ? '<b>No-regret recommendation.</b> This configuration is both cheaper and lower-carbon than your baseline, so it needs no sustainability budget to justify — it is a cost reduction that happens to be green. Those are the ones that survive a budget review.'
+        : dT > 0
+        ? '<b>Abatement recommendation.</b> This cuts carbon but raises operating cost by $'+fmt(Math.abs(dC))+' a year, or $'+
+          fmt(Math.abs(dC)/Math.max(dT,0.0001))+' per tonne avoided. Compare that against your internal carbon price before committing.'
+        : '<b>Cost recommendation.</b> This lowers operating cost but does not reduce carbon against your baseline. Do not present it as an environmental measure.');
+
+    var trace = [
+      ['1','Intake', 'Workflow: '+w.n+' · '+vol.toLocaleString()+' tasks/month · '+w.calls+' call'+(w.calls>1?'s':'')+' each'],
+      ['2','Validate', findings.length+' finding'+(findings.length>1?'s':'')+' · '+blockers+' blocker'+(blockers===1?'':'s')],
+      ['3','Constrain', 'Residency '+ctx.residency+' · latency '+ctx.latency+' · tolerance '+ctx.tol+' · min tier '+(ctx.tol==='cost'?w.req-1:w.req)],
+      ['4','Enumerate', res.evaluated.toLocaleString()+' configurations across model, region, PUE, cooling, caching and batching'],
+      ['5','Normalise', 'Cost and carbon scaled to 0–1 across the candidate set'],
+      ['6','Optimise', 'J = '+res.wCost.toFixed(2)+'·cost + '+(1-res.wCost).toFixed(2)+'·carbon → minimum J = '+res.best.J.toFixed(3)],
+      ['7','Compare', 'Runner-up: '+res.runnerUp.m.n+' at J = '+res.runnerUp.J.toFixed(3)+' — margin '+((res.runnerUp.J-res.best.J)*100).toFixed(1)+'%'],
+      ['8','Report', 'Selected '+b.m.n+' · '+b.g.n+' · PUE '+b.pue.v.toFixed(2)+' · '+b.cool.n+(b.cache?' · cached':'')+(b.batch?' · batched':'')]
+    ];
+    $('agTrace').innerHTML = trace.map(function(t){
+      return '<div class="led-row" style="grid-template-columns:34px 108px 1fr"><span class="s">'+t[0]+
+        '</span><span class="n">'+t[1]+'</span><span class="w">'+t[2]+'</span></div>';
+    }).join('');
+    STATE.agent = b.m.n + ' · ' + b.g.n + ' · PUE ' + b.pue.v.toFixed(2);
+    STATE.agentSave = dC;
+    return true;
   }
 
   function render(){
@@ -2044,6 +2313,13 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
   renderAsym();
   renderEq();
   initKB();
+  $('agRun').addEventListener('click', runAgent);
+  ['agResidency','agLatency','agTol','agW'].forEach(function(id){
+    $(id).addEventListener('input', function(){
+      $('agWV').textContent = (100-parseInt($('agW').value,10)) + ' / ' + $('agW').value;
+      if ($('agOut').style.display === 'block') runAgent();
+    });
+  });
   $('pdfBtn').addEventListener('click', function(){ buildBoard(); setTimeout(function(){ window.print(); }, 60); });
   render();
   window.__greenRender = render;
