@@ -353,8 +353,31 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
+<style>
+/* ---- World of AI ribbon (site-wide chrome) ---- */
+.woa-ribbon{border-bottom:1px solid var(--rule);background:var(--paper-2);}
+.woa-in{
+  max-width:960px;margin:0 auto;padding:9px 20px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);
+}
+.woa-in a{color:var(--b1);text-decoration:none;border-bottom:1px solid rgba(46,111,85,.32);}
+.woa-in a:hover{border-bottom-color:var(--b1);}
+.woa-mark{width:15px;height:15px;flex:0 0 auto;opacity:.85}
+.woa-sep{opacity:.4}
+.woa-right{margin-left:auto;display:flex;gap:10px;align-items:center;}
+@media (max-width:560px){.woa-right{margin-left:0;width:100%;}}
+</style>
 </head>
 <body>
+<div class="woa-ribbon">
+  <div class="woa-in">
+    <svg class="woa-mark" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="5"/><ellipse cx="50" cy="50" rx="45" ry="13" fill="none" stroke="currentColor" stroke-width="4" opacity=".55"/><circle cx="50" cy="50" r="9" fill="var(--b1)"/></svg>
+    <span>An instrument of <a href="index.html">World&nbsp;of&nbsp;AI</a><span class="woa-sep"> &nbsp;·&nbsp; </span>planetAI&nbsp;LLP</span>
+    <span class="woa-right"><a href="index.html">←&nbsp;The atlas</a><span class="woa-sep">·</span><a href="harmonia.html">HARMONIA&nbsp;Index&nbsp;→</a></span>
+  </div>
+</div>
 <div class="wrap">
 
 <header class="mast">

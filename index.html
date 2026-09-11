@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>World of AI — an atlas of accessible intelligence, by planetAI LLP</title>
-<meta name="description" content="World of AI by planetAI LLP — spin the planet to explore an ecosystem making practical, ethical AI accessible to India's next billion. Daily AI news, 5-D career guidance, and open AI education." />
+<meta name="description" content="World of AI by planetAI LLP — spin the planet to explore an ecosystem making practical, ethical AI accessible to India's next billion. Daily AI news, 5-D career guidance, open AI education, and instruments for green and ethical AI use." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -22,6 +22,7 @@
     --ice:#A8C4EC;
     --ice-dim:#4C6491;
     --leaf:#8FB86A;
+    --harm:#6FB3B8;
     --paper:#F2EFE6;   /* warm star-chart white */
     --mist:#9AA6C2;
     --dim:#5A688B;
@@ -36,6 +37,7 @@
     --gold:#A9721E; --gold-bright:#7E560F; --gold-deep:#C7A968;
     --ice:#3B5A86; --ice-dim:#8097BB;
     --leaf:#3F6B2E;
+    --harm:#2E7B80;
     --paper:#20242F; --mist:#585E74; --dim:#8A8368;
     --glass:rgba(244,240,226,.86);
     color-scheme:light;
@@ -399,6 +401,7 @@
   <nav class="links" id="links">
     <a href="#atlas">The Atlas</a>
     <a href="green-llm.html">GREEN-LLM</a>
+    <a href="harmonia.html">HARMONIA</a>
     <a href="#horizon">Horizon</a>
     <a href="#about">About</a>
     <a href="#mission">Mission</a>
@@ -422,14 +425,14 @@
         <span class="a serif">The World</span>
         <span class="b serif">of <em>AI</em></span>
       </h1>
-      <p class="lead">Practical, ethical AI for India's next billion — mapped as one connected planet. Spin the world to find each beacon: four lit today, three rising on the horizon.</p>
+      <p class="lead">Practical, ethical AI for India's next billion — mapped as one connected planet. Spin the world to find each beacon: five lit today, three rising on the horizon.</p>
       <div class="instr"><span class="dot"></span> Drag the planet · tap a beacon to travel</div>
       <p class="by">DEVELOPED BY <b>planetAI LLP</b> · 12.97°N 77.59°E · BENGALURU</p>
     </div>
 
     <div class="planet-col">
       <div class="stage">
-        <canvas id="globe" role="img" aria-label="An interactive planet. Six beacons mark planetAI products; explore the full list in The Atlas section below."></canvas>
+        <canvas id="globe" role="img" aria-label="An interactive planet. Eight beacons mark planetAI products; explore the full list in The Atlas section below."></canvas>
         <svg class="compass" viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="50" r="46" fill="none" stroke="var(--line)" stroke-width="1"/>
           <path d="M50 8 L56 50 L50 46 L44 50 Z" fill="var(--gold)"/>
@@ -458,8 +461,8 @@
   <div class="wrap">
     <div class="band-head reveal">
       <span class="eyebrow">The Atlas · charted &amp; live</span>
-      <h2>Four products, built and shipped before a rupee of outside capital.</h2>
-      <p>News to build awareness. Education to build skill. Guidance to make the decision. Accounting to keep the intelligence itself honest. Free where it should be, radically affordable where it counts.</p>
+      <h2>Five products, built and shipped before a rupee of outside capital.</h2>
+      <p>News to build awareness. Education to build skill. Guidance to make the decision. Accounting to keep the intelligence itself honest, and a tuning fork for when its use falls out of key. Free where it should be, radically affordable where it counts.</p>
     </div>
     <div class="gaz" id="gazLive"></div>
   </div>
@@ -627,6 +630,7 @@
         <a href="https://dishacareerlab.com" target="_blank" rel="noopener">DISHA Career Lab</a>
         <a href="https://ai-university.co.in" target="_blank" rel="noopener">AI University</a>
         <a href="green-llm.html">GREEN-LLM Index</a>
+        <a href="harmonia.html">HARMONIA Index</a>
         <a href="#horizon">On the horizon</a>
       </div>
       <div class="fc">
@@ -716,6 +720,10 @@ const BEACONS=[
    coord:"62.0\u00B0N 25.0\u00B0E",lat:62,lon:25,accent:"var(--leaf)",
    desc:"Environmental accounting for AI use \u2014 score any LLM workflow across five dimensions of energy, carbon and water, then scale the reading to a planetary view.",
    tags:["Five dimensions","Carbon & water","Planetary view"],action:"Measure your usage"},
+  {id:"harmonia",name:"HARMONIA",dom:"world-of-ai.co.in/harmonia",url:"harmonia.html",status:"live",
+   coord:"9.0\u00B0N 8.0\u00B0E",lat:9,lon:8,accent:"var(--harm)",
+   desc:"An ethical-AI harmonic index \u2014 score any prompt or provider on six dimensions of responsible use, read it on the Fibonacci scale, and hear whether it resolves to consonance or rings dissonant.",
+   tags:["Six dimensions","Fibonacci scale","Audible verdict"],action:"Tune your prompt"},
   {id:"arcade",name:"AI Games Arcade",dom:"Computational thinking · at play",url:"",status:"rising",
    coord:"51.0°N 100.0°W",lat:51,lon:-100,accent:"var(--ice)",
    desc:"Procedurally generated games that turn computational thinking into something kids actually want to play.",
@@ -982,19 +990,20 @@ const BOT_INTENTS=[
   {k:["aishorts","shorts","news","daily read","daily"],r:{t:"<b>AIShorts</b> turns daily AI news into plain English \u2014 with quizzes and live market data. It's the daily AI habit for Bharat, free to read. <a href='https://aishorts.biz' target='_blank' rel='noopener'>Read today \u2192</a>",c:["What is AI University?","What's coming next?"]}},
   {k:["university","learn","course","lesson","study","tracks","education"],r:{t:"<b>AI University</b> teaches practical, ethical AI across 120+ lessons in 7 age-calibrated tracks. The core learning is free, with no login walls. <a href='https://ai-university.co.in' target='_blank' rel='noopener'>Start learning \u2192</a>",c:["What is DISHA?","Pricing"]}},
   {k:["green","green-llm","greenllm","carbon","climate","environment","environmental","sustainable","sustainability","energy","water","footprint","emissions"],r:{t:"<b>GREEN\u2011LLM Index</b> is environmental accounting for AI use \u2014 it scores any LLM workflow across five dimensions of energy, carbon and water, places it on a decision matrix, and scales the reading to a planetary view. Free to use, no login. <a href='green-llm.html'>Measure your usage \u2192</a>",c:["What's live now?","Mission","Pricing"]}},
+  {k:["harmonia","harmonic","ethical","ethics","responsible","fibonacci","chord","music","sonify","bias","governance","safety","misuse","alignment"],r:{t:"<b>HARMONIA</b> is an ethical-AI harmonic index \u2014 paste a prompt or pick a provider, and it scores six dimensions of responsible use, places the result on the Fibonacci scale, and plays it as a chord: aligned use resolves to consonance, misuse rings dissonant. It also compares national AI-governance roadmaps. Free, and it runs in your browser. <a href='harmonia.html'>Tune your prompt \u2192</a>",c:["What's live now?","GREEN-LLM Index","Mission"]}},
   {k:["arcade","game","games","play"],r:{t:"<b>AI Games Arcade</b> is rising on the horizon \u{1F3AE} \u2014 procedurally generated games that make computational thinking something kids actually want to play. In development now.",c:["What else is coming?","What's live now?"]}},
   {k:["library","book","books","ebook","e-book","reading","hindi"],r:{t:"<b>AI Library</b> is coming soon \u{1F4DA} \u2014 a curated shelf of AI e-books and explainers in English and Hindi, free to explore.",c:["What else is coming?","What's live now?"]}},
   {k:["vitals","health","bmi","heart","ppg","fitness","wellness"],r:{t:"<b>AI BMI Vitals</b> is on the way \u2764\uFE0F \u2014 a privacy-first health companion with camera-based heart-rate sensing, BMI insight and a GenAI wellness chat, all on-device.",c:["What else is coming?","What's live now?"]}},
-  {k:["price","cost","fee","much","rupee","pay","paid","money","charge"],r:{t:"Pricing is built to stay accessible. AIShorts and AI University's core are <b>free</b>, no login walls. DISHA's full 5-D assessment is <b>\u20B9999</b> (the market charges \u20B910,000+). For schools, licenses run \u20B9250\u2013300 per student.",c:["What is DISHA?","Contact"]}},
-  {k:["free"],r:{t:"Plenty is free: AIShorts daily news, AI University's core lessons, and DISHA's basic exploration \u2014 all with no login walls. Only DISHA's full 5-D report is paid, at \u20B9999.",c:["What is DISHA?","What's live now?"]}},
+  {k:["price","pricing","cost","fee","much","rupee","pay","paid","money","charge"],r:{t:"Pricing is built to stay accessible. AIShorts, AI University's core, the GREEN\u2011LLM Index and HARMONIA are <b>free</b>, no login walls. DISHA's full 5-D assessment is <b>\u20B9999</b> (the market charges \u20B910,000+). For schools, licenses run \u20B9250\u2013300 per student.",c:["What is DISHA?","Contact"]}},
+  {k:["free"],r:{t:"Plenty is free: AIShorts daily news, AI University's core lessons, the GREEN\u2011LLM Index, HARMONIA, and DISHA's basic exploration \u2014 all with no login walls. Only DISHA's full 5-D report is paid, at \u20B9999.",c:["What is DISHA?","What's live now?"]}},
   {k:["coming","next","horizon","roadmap","future","soon","else","rising"],r:{t:"Three beacons are rising on the horizon: <b>AI Games Arcade</b> (learn by play), <b>AI Library</b> (e-books in English + Hindi), and <b>AI BMI Vitals</b> (on-device health). Each grows stronger as the DISHA audience does.",c:["AI Games Arcade","AI Library","AI BMI Vitals"]}},
-  {k:["live","now","products","offer","charted","apps","available"],r:{t:"Four products are live today: <b>AIShorts</b> (daily AI news), <b>DISHA Career Lab</b> (5-D career guidance), <b>AI University</b> (open AI education), and the <b>GREEN\u2011LLM Index</b> (environmental accounting for AI use). Spin the planet up top to explore each beacon.",c:["What is DISHA?","What is AIShorts?","GREEN-LLM Index"]}},
+  {k:["live","now","products","offer","charted","apps","available"],r:{t:"Five products are live today: <b>AIShorts</b> (daily AI news), <b>DISHA Career Lab</b> (5-D career guidance), <b>AI University</b> (open AI education), the <b>GREEN\u2011LLM Index</b> (environmental accounting for AI use) and <b>HARMONIA</b> (the ethical-AI harmonic index). Spin the planet up top to explore each beacon.",c:["What is DISHA?","GREEN-LLM Index","What is HARMONIA?"]}},
   {k:["mission","about","world of ai","planetai","who","vision","why"],r:{t:"planetAI's mission is simple: <em>AI for every planet \u2014 intelligence accessible to all.</em> We build practical, ethical AI for India's next billion \u2014 the students, parents and citizens the AI revolution keeps skipping.",c:["What's live now?","Contact"]}},
   {k:["contact","email","reach","founder","pawan","talk","connect","invest","fund","raise","partner"],r:{t:"You can reach the team at <a href='mailto:maheshwari1382@gmail.com'>maheshwari1382@gmail.com</a>, or explore the work on <a href='https://github.com/pawanmaheshwari' target='_blank' rel='noopener'>GitHub</a>. For investors, the same email is the fastest route.",c:["Mission","What's live now?"]}},
   {k:["privacy","private","data","secure","safe"],r:{t:"Privacy is architectural, not a setting: DISHA runs its ML on-device, so student data never leaves the browser. That's the privacy-first principle across the whole ecosystem.",c:["What is DISHA?","Pricing"]}},
   {k:["thanks","thank","great","cool","nice","awesome","ok","okay"],r:{t:"Anytime! Spin the planet to explore more, or ask me about any beacon. \u{1F30D}",c:["What's live now?","What's coming next?"]}}
 ];
-const BOT_FALLBACK={t:"I'm not sure I caught that \u2014 but I can help with our products (AIShorts, DISHA, AI University, GREEN\u2011LLM Index), what's coming next, pricing, privacy, or how to get in touch. You can also explore the full atlas right here on the page.",c:["What's live now?","Pricing","Contact"]};
+const BOT_FALLBACK={t:"I'm not sure I caught that \u2014 but I can help with our products (AIShorts, DISHA, AI University, GREEN\u2011LLM Index, HARMONIA), what's coming next, pricing, privacy, or how to get in touch. You can also explore the full atlas right here on the page.",c:["What's live now?","Pricing","Contact"]};
 function botReply(q){const s=q.toLowerCase();for(const it of BOT_INTENTS){if(it.k.some(k=>hit(s,k)))return it.r;}return BOT_FALLBACK;}
 
 const botBody=document.getElementById("botBody");
@@ -1107,7 +1116,7 @@ const MODALS={
       <li>The visitor counter records an anonymous visit once per session — no cookies that identify you, no cross-site tracking.</li>
     </ul>
     <h4>Our products</h4>
-    <p>DISHA Career Lab runs its assessment entirely on your device — a student's answers and results never leave the browser. AIShorts and AI University follow the same principle. Each product links out to its own site; please review the notice there.</p>
+    <p>DISHA Career Lab runs its assessment entirely on your device — a student's answers and results never leave the browser. AIShorts and AI University follow the same principle. The GREEN‑LLM Index and HARMONIA run entirely in your browser on this site — what you type into them is never sent to us or stored. Products hosted elsewhere link out to their own site; please review the notice there.</p>
     <h4>If you contact us</h4>
     <p>When you email us, we use your message only to reply. We never sell or rent data — to anyone, ever.</p>
     <h4>Your rights</h4>
@@ -1124,7 +1133,7 @@ const MODALS={
     </ul>
     <h4>Managing it</h4>
     <p>You can clear this storage anytime through your browser settings — the site will simply forget your theme and count your next visit fresh. Nothing here follows you across other websites.</p>
-    <p>Links to our products (AIShorts, DISHA, AI University) open external sites that keep their own cookie notices.</p>
+    <p>Links to our products (AIShorts, DISHA, AI University) open external sites that keep their own cookie notices. The GREEN‑LLM Index and HARMONIA are pages of this site and set no cookies of their own.</p>
     <p style="font-size:.82rem;color:var(--dim)">Questions? <a href="mailto:maheshwari1382@gmail.com">maheshwari1382@gmail.com</a></p>`}
 };
 const mBack=document.getElementById("modalBack"),mTitle=document.getElementById("modalTitle"),mBody=document.getElementById("modalBody");
