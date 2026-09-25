@@ -568,8 +568,27 @@ textarea,select,.tabs{border-color:var(--hair-strong)!important;}
 .b-busy{font-size:12.5px;font-style:italic;}
 @media print{ #banner{display:none!important;} }
 </style>
+<style>
+/* ---- World of AI ribbon (site-wide chrome) ---- */
+.woa-ribbon{background:#070C16;border-bottom:1px solid rgba(236,229,211,.14)}
+.woa-in{max-width:1080px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font:500 10.5px/1.4 "JetBrains Mono","IBM Plex Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#9AA6B8}
+.woa-in a{color:#E2C381;text-decoration:none;border-bottom:1px solid rgba(226,195,129,.35)}
+.woa-in a:hover{border-bottom-color:#E2C381}
+.woa-mark{width:15px;height:15px;flex:0 0 auto;opacity:.85}
+.woa-sep{opacity:.4}
+.woa-right{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+@media (max-width:560px){.woa-right{margin-left:0;width:100%}}
+</style>
 </head>
 <body>
+<div class="woa-ribbon">
+  <div class="woa-in">
+    <svg class="woa-mark" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="5"/><ellipse cx="50" cy="50" rx="45" ry="13" fill="none" stroke="currentColor" stroke-width="4" opacity=".55"/><circle cx="50" cy="50" r="9" fill="#C9A24B"/></svg>
+    <span>An instrument of <a href="index.html">World&nbsp;of&nbsp;AI</a><span class="woa-sep"> &nbsp;·&nbsp; </span>planetAI&nbsp;LLP</span>
+    <span class="woa-right"><a href="index.html">←&nbsp;The atlas</a><span class="woa-sep">·</span><a href="green-llm.html">GREEN‑LLM</a><span class="woa-sep">·</span><a href="assay.html">Assay</a></span>
+  </div>
+</div>
 <div id="banner" hidden><div class="b-in">
   <span class="b-tag" id="b-tag">Upcoming</span>
   <span class="b-text" id="b-text"></span>
