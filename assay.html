@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Assay · LLM claim validation · World of AI</title>
+<meta name="description" content="Assay, a World of AI product from planetAI LLP: every LLM launch claim, tested against independent measurement and stamped Hallmarked, Plated or Fool's gold.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+<style>
+/* Assay "Luminous Ledger" palette, carried into World of AI */
+:root{
+  --bg:#F3F4F8; --panel:#FFFFFF; --ink:#12163A; --muted:#565C7D; --line:#DADDEA;
+  --blue:#2F3FD9; --blue-soft:#E7E9FC; --signal:#E8601F;
+  --ok:#2F8A58; --part:#C9601B; --bad:#C2366B; --na:#7F7168;
+  --stone:#0E1233; --stone-ink:#EEF0FF; --stone-muted:#A9AFD6; --stone-line:#2A3063;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B0E24; --panel:#141836; --ink:#E8EAFA; --muted:#A0A6CC; --line:#262B55;
+    --blue:#7B88FF; --blue-soft:#1E2352; --signal:#FF8A4C;
+    --ok:#5DC08A; --part:#FF8A4C; --bad:#F06AA0; --na:#B3A294;
+    --stone:#060817; --stone-line:#20264F;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B0E24; --panel:#141836; --ink:#E8EAFA; --muted:#A0A6CC; --line:#262B55;
+  --blue:#7B88FF; --blue-soft:#1E2352; --signal:#FF8A4C;
+  --ok:#5DC08A; --part:#FF8A4C; --bad:#F06AA0; --na:#B3A294;
+  --stone:#060817; --stone-line:#20264F;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.6 "Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Newsreader",Georgia,serif;line-height:1.08;margin:0;font-weight:600}
+p{margin:0}
+a{color:var(--blue)}
+:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* World of AI ribbon: the site-wide chrome every instrument carries */
+.woa-ribbon{background:#05070F;border-bottom:1px solid #1E2440}
+.woa-in{max-width:1080px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font:500 11px/1.4 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.06em;color:#9AA6C2}
+.woa-in a{color:#E8B85C;text-decoration:none;border-bottom:1px solid rgba(232,184,92,.35)}
+.woa-in a:hover{border-bottom-color:#E8B85C}
+.woa-mark{width:15px;height:15px;flex:none}
+.woa-sep{opacity:.45}
+.woa-right{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+@media (max-width:620px){.woa-right{margin-left:0;width:100%}}
+
+/* Hero */
+.hero{background:radial-gradient(900px 300px at 90% -20%,rgba(47,63,217,.55),transparent 65%),radial-gradient(460px 200px at 4% 120%,rgba(232,96,31,.22),transparent 70%),var(--stone);color:var(--stone-ink);padding:40px 0 44px}
+.hero-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:end}
+@media (max-width:860px){.hero-grid{grid-template-columns:1fr;gap:28px}}
+.wordmark{display:flex;align-items:center;gap:14px}
+.wordmark svg{width:52px;height:52px;flex:none}
+.wordmark h1{font-size:clamp(48px,9vw,76px);letter-spacing:-.025em;line-height:.9}
+.endorse{margin-top:12px;font-size:13.5px;color:var(--stone-muted)}
+.endorse b{color:#E8B85C;font-weight:600}
+.thesis{font-family:"Newsreader",Georgia,serif;font-size:clamp(20px,2.6vw,25px);line-height:1.35;margin-top:22px;max-width:30ch;color:var(--stone-ink)}
+.thesis-sub{color:var(--stone-muted);margin-top:14px;max-width:56ch}
+.ctas{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:9px;padding:11px 16px;font:600 14px/1 "Instrument Sans",sans-serif;text-decoration:none;cursor:pointer;border:1px solid transparent}
+.btn.primary{background:var(--signal);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:var(--stone-line);color:var(--stone-ink);background:rgba(255,255,255,.03)}
+.btn.ghost:hover{border-color:var(--stone-muted)}
+
+/* Tally: the hero's live instrument */
+.tally{background:rgba(255,255,255,.04);border:1px solid var(--stone-line);border-radius:14px;padding:18px}
+.tally-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;color:var(--stone-muted)}
+.tally-head b{color:var(--stone-ink);font-weight:600}
+.tally-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+@media (max-width:460px){.tally-grid{grid-template-columns:repeat(2,1fr)}}
+.tcell{background:none;border:1px solid transparent;border-radius:10px;padding:8px 4px 10px;color:var(--stone-ink);cursor:pointer;text-align:center;font:inherit;transition:border-color .2s,background .2s}
+.tcell:hover{background:rgba(255,255,255,.04)}
+.tcell[aria-pressed="true"]{border-color:var(--stone-muted);background:rgba(255,255,255,.06)}
+.tcell .stamp{width:74px;margin:0 auto}
+.tcell .n{display:block;font:600 26px/1 "Newsreader",serif;margin-top:6px}
+.tcell .l{display:block;font-size:11.5px;color:var(--stone-muted);margin-top:3px}
+.status{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:12.5px;color:var(--stone-muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--na);flex:none}
+.dot.live{background:#5DC08A;box-shadow:0 0 0 0 rgba(93,192,138,.6);animation:pulse 2.2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(93,192,138,0)}100%{box-shadow:0 0 0 0 rgba(93,192,138,0)}}
+@media (prefers-reduced-motion:reduce){.dot.live{animation:none}}
+
+/* Sections */
+section.band{padding:52px 0 8px}
+.band-head{max-width:66ch;margin-bottom:22px}
+.band-head h2{font-size:clamp(28px,4vw,38px);letter-spacing:-.012em}
+.band-head p{color:var(--muted);margin-top:10px}
+
+/* Ledger */
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.fchip{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 12px;font:500 13px/1 "Instrument Sans",sans-serif;cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+.fchip i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.fchip[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.fcount{color:var(--muted);font-size:13px;margin-left:auto}
+.scen{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px}
+.scen-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.scen h3{font-size:23px}
+.meta{font-size:12.5px;color:var(--muted)}
+.scen-sum{color:var(--muted);margin-top:8px;max-width:78ch}
+.claim{display:grid;grid-template-columns:78px 1fr;gap:16px;align-items:start;border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+@media (max-width:560px){.claim{grid-template-columns:60px 1fr;gap:12px}}
+.claim .stamp{width:100%;height:auto;display:block}
+.ctext{font-weight:600;line-height:1.4}
+.tagk{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--blue-soft);color:var(--blue);margin-left:6px;vertical-align:2px;white-space:nowrap}
+.cnote{color:var(--muted);font-size:13.5px;margin-top:6px}
+.cflag{color:var(--bad);font-size:13.5px;margin-top:4px}
+.bar{width:100%;height:auto;display:block;margin-top:10px;overflow:visible}
+details.more{margin-top:8px;font-size:13.5px}
+details.more summary{cursor:pointer;color:var(--blue);font-weight:500}
+details.more ul{margin:8px 0 0;padding-left:18px;color:var(--muted)}
+details.more li{margin:3px 0}
+.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}
+
+/* Verdict scale explainer */
+.scale-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+.scale-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.scale-row{grid-template-columns:1fr}}
+.ctrl label{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;margin-top:12px}
+.ctrl label span{font-weight:500;color:var(--muted)}
+.ctrl input[type=range]{width:100%;accent-color:var(--blue);margin-top:6px}
+.ctrl .check{display:flex;gap:8px;align-items:center;font-weight:500;margin-top:14px;font-size:13.5px}
+.outcome{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center}
+.outcome .stamp{width:120px}
+.outcome p{color:var(--muted);font-size:14px}
+.outcome b{color:var(--ink)}
+
+/* Watch */
+.watch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:760px){.watch-grid{grid-template-columns:1fr}}
+.wcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.wcard h3{font-size:19px}
+.wcard .big{font:600 34px/1 "Newsreader",serif;margin-top:10px}
+.wcard p{color:var(--muted);font-size:13.5px;margin-top:6px}
+.plist{list-style:none;padding:0;margin:10px 0 0;font:13px/1.7 "JetBrains Mono",ui-monospace,monospace;color:var(--muted)}
+.plist b{color:var(--ink);font-family:"Instrument Sans",sans-serif;font-weight:600}
+
+footer{margin-top:56px;border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);font-size:13px}
+footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap}
+footer a{color:var(--muted)}
+.theme-btn{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 10px;font:500 12.5px/1 inherit;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="woa-ribbon">
+  <div class="woa-in">
+    <svg class="woa-mark" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="5"/><ellipse cx="50" cy="50" rx="45" ry="13" fill="none" stroke="currentColor" stroke-width="4" opacity=".55"/><circle cx="50" cy="50" r="9" fill="#E8B85C"/></svg>
+    <span>A <a href="index.html">World&nbsp;of&nbsp;AI</a> product<span class="woa-sep"> · </span>planetAI&nbsp;LLP</span>
+    <span class="woa-right"><a href="index.html#atlas">← The atlas</a><span class="woa-sep">·</span><a href="green-llm.html">GREEN‑LLM</a><span class="woa-sep">·</span><a href="harmonia.html">HARMONIA</a></span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="wordmark">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><defs><radialGradient id="wm" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#8E9BFF"/><stop offset="1" stop-color="#2F3FD9"/></radialGradient></defs><circle cx="24" cy="24" r="21" fill="none" stroke="url(#wm)" stroke-width="3"/><path d="M24 3 A21 21 0 0 1 44.2 29" fill="none" stroke="#E8601F" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="24" r="6" fill="url(#wm)"/></svg>
+        <h1>Assay</h1>
+      </div>
+      <p class="endorse">LLM claim validation · a <b>World of AI</b> product by planetAI LLP</p>
+      <p class="thesis">Every model launch arrives with a number. Assay checks whether that number survives independent measurement.</p>
+      <p class="thesis-sub">Vendor says 40% cheaper, 30% faster, half the tokens. Assay sets each claim against third-party benchmarks and your own test tasks, then strikes a hallmark: the gain is real, partly real, or marketing.</p>
+      <div class="ctas">
+        <a class="btn primary" id="labLink" href="#" target="_blank" rel="noopener">Open the lab ↗</a>
+        <a class="btn ghost" id="pdfLink" href="#" target="_blank" rel="noopener">Latest audit report (PDF)</a>
+        <a class="btn ghost" href="#ledger">Read the ledger ↓</a>
+      </div>
+    </div>
+    <div class="tally" aria-live="polite">
+      <div class="tally-head"><span>Claims assayed to date</span><b id="tTotal">–</b></div>
+      <div class="tally-grid" id="tally"></div>
+      <div class="status"><span class="dot" id="srcDot"></span><span id="srcText">Loading the ledger…</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="band" id="ledger">
+    <div class="wrap">
+      <div class="band-head">
+        <h2>The public ledger</h2>
+        <p>Each release Assay has examined, claim by claim. The dashed line is what the vendor promised; the bar is what independent measurement delivered. Tap a hallmark above or a filter below to narrow the list.</p>
+      </div>
+      <div class="filterbar" id="filters"></div>
+      <div id="scenarios"></div>
+    </div>
+  </section>
+
+  <section class="band" id="scale">
+    <div class="wrap">
+      <div class="band-head">
+        <h2>How a hallmark is struck</h2>
+        <p>Assay divides the measured gain by the claimed gain. Deliver at least 80% of the promise and the claim is hallmarked; 40 to 80% is plated; under 40%, or a move in the wrong direction, is fool's gold. A gain that costs measured quality is capped at plated. Try it.</p>
+      </div>
+      <div class="scale-card">
+        <div class="scale-row">
+          <div class="ctrl">
+            <label for="sClaim">Vendor claims an improvement of <span id="vClaim">40%</span></label>
+            <input type="range" id="sClaim" min="5" max="100" step="1" value="40">
+            <label for="sMeas">Independent measurement shows <span id="vMeas">30%</span></label>
+            <input type="range" id="sMeas" min="-30" max="120" step="1" value="30">
+            <label class="check"><input type="checkbox" id="sGuard"> Quality benchmark fell by 2 points or more</label>
+          </div>
+          <div>
+            <svg class="bar" id="simBar" viewBox="0 0 600 70" role="img" aria-label="Claimed versus measured"></svg>
+            <div class="outcome" style="margin-top:12px"><div id="simStamp"></div><p id="simText"></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="watch">
+    <div class="wrap">
+      <div class="band-head">
+        <h2>The release watch</h2>
+        <p>Every Monday at 09:00 IST a GitHub Actions job lists new models from OpenAI, Anthropic and Google, reads their release notes, runs the test packs within a call budget and publishes a fresh audit report.</p>
+      </div>
+      <div class="watch-grid">
+        <div class="wcard"><h3>Last watch run</h3><div class="big" id="wLast">–</div><p id="wNew">–</p></div>
+        <div class="wcard"><h3>Models under watch</h3><div class="big" id="wCount">–</div><ul class="plist" id="wList"></ul></div>
+        <div class="wcard"><h3>Take it further</h3><p>Bring your own API keys to the lab and run the live packs on your own tasks. Keys stay in your browser.</p><div class="ctas" style="margin-top:14px"><a class="btn primary" id="labLink2" href="#" target="_blank" rel="noopener">Open the lab ↗</a></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Assay is a World of AI product by planetAI LLP. Ledger data is read live from the <a id="repoLink" href="#" target="_blank" rel="noopener">Assay repository</a>; nothing you do on this page is sent anywhere.</span>
+    <button class="theme-btn" id="themeBtn" aria-label="Switch colour theme">Theme: auto</button>
+  </div>
+</footer>
+
+<script>
+/* ---------- Where the subsidiary lives. Change these if Assay moves. ---------- */
+const ASSAY = {
+  lab:  "https://pawan-maheshwari.github.io/assay/",
+  repo: "https://github.com/pawan-maheshwari/assay",
+  raw:  "https://raw.githubusercontent.com/pawan-maheshwari/assay/main/",
+  pdf:  "https://github.com/pawan-maheshwari/assay/blob/main/reports/latest.pdf"
+};
+/* Snapshot of the ledger, used when the live repo cannot be reached. */
+const SNAPSHOT = {"scenarios":[{"id":"anthropic-opus-5-5","title":"Claude Opus 5.5 against Opus 5","vendor":"Anthropic","released":"2026-09-22","checked":"2026-09-25","summary":"Anthropic cut Opus prices by 20% and says Opus 5.5 costs about 40% less to run than Opus 5 at default effort, while generating output more than 30% faster. Independent measurements support the claim at the default medium effort. At max effort the story reverses: Opus 5.5 writes far more tokens and costs about the same per task.","vendorSource":"vp","sources":[{"id":"vp","label":"Introducing Claude Opus 5.5","publisher":"Anthropic","url":"https://www.anthropic.com/claude-opus-5-5","date":"2026-09-22","type":"vendor"},{"id":"v","label":"Launch coverage summarising Anthropic's claims","publisher":"Coursiv","url":"https://coursiv.io/blog/claude-opus-5-5","date":"2026-09-22","type":"secondary"},{"id":"a1","label":"Claude Opus 5 (medium) measurements","publisher":"Artificial Analysis","url":"https://artificialanalysis.ai/models/claude-opus-5-medium","date":"2026-07-24","type":"independent"},{"id":"a2","label":"Claude Opus 5.5 (medium) measurements","publisher":"Artificial Analysis","url":"https://artificialanalysis.ai/models/claude-opus-5-5-medium","date":"2026-09-23","type":"independent"},{"id":"a3","label":"Claude Opus 5 (max) measurements","publisher":"Artificial Analysis","url":"https://artificialanalysis.ai/models/claude-opus-5","date":"2026-07-24","type":"independent"},{"id":"a4","label":"Claude Opus 5.5 (max) measurements","publisher":"Artificial Analysis","url":"https://artificialanalysis.ai/models/claude-opus-5-5","date":"2026-09-23","type":"independent"},{"id":"a5","label":"Opus 5.5 launch analysis (output tokens per task)","publisher":"Artificial Analysis","url":"https://artificialanalysis.ai/articles/claude-opus-5-5","date":"2026-09-23","type":"independent"}],"claims":[{"id":"c1","text":"Costs about 40% less to run than Opus 5 on typical workloads at default effort","claimedBy":"Anthropic","metric":"cost_task","claimed":40,"scope":"in","ref":{"baseline":2.19,"candidate":1.34,"unit":"$ per index task","sources":["a1","a2"],"note":"Artificial Analysis Intelligence Index v4.3.2, both at medium effort."},"guard":{"baseline":45,"candidate":51,"label":"Intelligence Index","sources":["a1","a2"]}},{"id":"c2","text":"The same 40% saving, checked at max effort","claimedBy":"Anthropic","metric":"cost_task","claimed":40,"scope":"outside","scopeNote":"Anthropic's claim is for default effort. This row shows what happens if you run both at max.","kind":"stress","ref":{"baseline":5.86,"candidate":5.98,"unit":"$ per index task","sources":["a3","a4"],"note":"Artificial Analysis Intelligence Index v4.3.2, both at max effort."},"guard":{"baseline":51,"candidate":58,"label":"Intelligence Index","sources":["a3","a4"]}},{"id":"c3","text":"Generates output more than 30% faster than Opus 5","claimedBy":"Anthropic","metric":"output_speed","claimed":30,"scope":"in","ref":{"baseline":55,"candidate":75,"unit":"output tokens per second","sources":["a1","a2"],"note":"Measured on Anthropic's API at medium effort."}},{"id":"c4","text":"Uses fewer tokens per task (customer reports range from 20% to 66% fewer)","claimedBy":"Anthropic, quoting customers","metric":"out_tokens","claimed":20,"scope":"in","scopeNote":"Tested against the lowest customer figure, 20%.","ref":{"baseline":49,"candidate":38,"unit":"million tokens across the index","sources":["a1","a2"],"note":"Total tokens generated on the index at medium effort."}},{"id":"c5","text":"Fewer tokens per task, checked at max effort","claimedBy":"Anthropic, quoting customers","metric":"out_tokens","claimed":20,"scope":"outside","scopeNote":"The token claim is not specific to max effort. This row shows the setting where it breaks.","kind":"stress","ref":{"baseline":73,"candidate":119,"unit":"thousand output tokens per task","sources":["a5"],"note":"Roughly 1.6 times the output tokens per task."}}]},{"id":"openai-gpt-6-sol-luna","title":"GPT-6 Sol and Luna against GPT-5.6","vendor":"OpenAI","released":"2026-09-22","checked":"2026-09-25","summary":"OpenAI halved token prices for its mid and low tiers. Independent measurement confirms cost per task roughly halves, driven entirely by price: both models use slightly more output tokens than before, and Luna's benchmark score dropped two points.","vendorSource":"vp","sources":[{"id":"vp","label":"Introducing GPT-6 Sol and Luna","publisher":"OpenAI","url":"https://openai.com/index/introducing-gpt-6-sol-and-luna/","date":"2026-09-22","type":"vendor"},{"id":"v","label":"Launch coverage summarising OpenAI's claims","publisher":"Coursiv","url":"https://coursiv.io/blog/gpt-6-sol-luna","date":"2026-09-22","type":"secondary"},{"id":"a1","label":"GPT-6 Sol and Luna cost-efficiency analysis","publisher":"Artificial Analysis","url":"https://artificialanalysis.ai/articles/gpt-6-sol-and-luna-push-the-cost-efficiency-frontier","date":"2026-09-23","type":"independent"},{"id":"a2","label":"Key takeaways post (tokens per task, eval regressions)","publisher":"Artificial Analysis on X","url":"https://x.com/ArtificialAnlys/status/2102462962758033624","date":"2026-09-23","type":"independent"},{"id":"a3","label":"GPT-5.6 Sol (max) measurements","publisher":"Artificial Analysis","url":"https://artificialanalysis.ai/models/gpt-5-6-sol","date":"2026-07-09","type":"independent"},{"id":"a4","label":"GPT-6 Sol (max) measurements","publisher":"Artificial Analysis","url":"https://artificialanalysis.ai/models/gpt-6-sol","date":"2026-09-23","type":"independent"}],"claims":[{"id":"c1","text":"GPT-6 Sol costs half as much as GPT-5.6 Sol","claimedBy":"OpenAI","metric":"cost_task","claimed":50,"scope":"in","scopeNote":"OpenAI states the cut per token; this checks it per completed task.","ref":{"baseline":1.99,"candidate":1.06,"unit":"$ per index task","sources":["a1"],"note":"Artificial Analysis Intelligence Index v4.3.2, both at max effort."},"guard":{"baseline":47,"candidate":48,"label":"Intelligence Index","sources":["a3","a4"]}},{"id":"c2","text":"GPT-6 Luna cuts prices by about half","claimedBy":"OpenAI","metric":"cost_task","claimed":50,"scope":"in","ref":{"baseline":0.18,"candidate":0.07,"unit":"$ per index task","sources":["a1"],"note":"Artificial Analysis Intelligence Index v4.3.2, both at max effort."},"guard":{"baseline":43,"candidate":41,"label":"Intelligence Index","sources":["a1"]}},{"id":"c3","text":"Sol makes about half as many factual mistakes as GPT-5.6 Sol","claimedBy":"OpenAI","metric":"accuracy","claimed":0,"scope":"in","noRefNote":"OpenAI's figure comes from its own set of user-flagged conversations. Artificial Analysis reports its knowledge and hallucination index rising from 22 to 27, which points the same way but measures something different. Test it with a factual task set of your own."}]},{"id":"google-gemini-3-8-flash","title":"Gemini 3.8 Flash against 3.7 Flash","vendor":"Google","released":"2026-09-02","checked":"2026-09-25","summary":"Same price, same limits, three weeks apart. Google leads with a customer saying 3.8 Flash completed more than three times as many tasks. Independent indexes show a real but much smaller gain in agentic work, flat coding, and a slower first token.","vendorSource":"vp","sources":[{"id":"vp","label":"Introducing Gemini 3.8 Flash and 3.8 Flash Cyber","publisher":"Google","url":"https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber/","date":"2026-09-02","type":"vendor"},{"id":"v","label":"Gemini 3.8 Flash guide separating vendor and independent figures","publisher":"Codersera","url":"https://codersera.com/blog/gemini-3-8-flash-complete-guide-2026/","date":"2026-09-03","type":"secondary"},{"id":"p","label":"Agent Platform pricing (introductory rates)","publisher":"Google Cloud","url":"https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing","date":"2026-09","type":"vendor"},{"id":"r","label":"Coverage quoting Google's note on token use at higher effort","publisher":"The Register","url":"https://www.theregister.com/ai-and-ml/2026/09/02/with-gemini-38-flash-google-reminds-everyone-its-still-in-the-race/5294049","date":"2026-09-02","type":"secondary"}],"claims":[{"id":"c1","text":"Completed more than three times as many tasks as 3.7 Flash","claimedBy":"Customer quote on Google's Flash page","metric":"score_rel","claimed":200,"scope":"proxy","scopeNote":"The quote comes from one company's document-heavy evaluation. The reference is an independent agentic index, so it is a proxy, not a replication.","ref":{"baseline":45.1,"candidate":50.0,"unit":"Agentic Index points","sources":["v"],"note":"Artificial Analysis Agentic Index."}},{"id":"c2","text":"Agentic video understanding uses up to 88% fewer tokens on long-form content","claimedBy":"Google","metric":"total_tokens","claimed":88,"scope":"in","noRefNote":"No independent measurement found. Build a long-video task set and run it live; note the claim says up to 88%, so a typical figure will be lower."}]},{"id":"anthropic-opus-4-5-tokens","title":"Claude Opus 4.5 token efficiency against Sonnet 4.5","vendor":"Anthropic","released":"2025-11-24","checked":"2026-09-25","summary":"A widely repeated efficiency claim from late 2025 that was measured on one benchmark under the vendor's own harness. There is no matching independent number, so this scenario is a live test pack only.","vendorSource":"v","sources":[{"id":"v","label":"Launch coverage of the effort parameter and token claims","publisher":"VentureBeat","url":"https://venturebeat.com/ai/anthropics-claude-opus-4-5-is-here-cheaper-ai-infinite-chats-and-coding","date":"2025-11-24","type":"secondary"},{"id":"i","label":"Model ID and pricing reference","publisher":"ITECS","url":"https://itecsonline.com/post/opus-4-5-features","date":"2025-11-25","type":"secondary"}],"claims":[{"id":"c1","text":"At medium effort, matches Sonnet 4.5 on SWE-bench Verified with 76% fewer output tokens","claimedBy":"Anthropic","metric":"out_tokens","claimed":76,"scope":"in","noRefNote":"The figure is from one coding benchmark on Anthropic's harness. The live pack tests whether the saving carries over to short, general tasks, where it is likely to be smaller."},{"id":"c2","text":"Cheaper per task than Sonnet 4.5 despite higher token prices","claimedBy":"Implied by the token and price claims","metric":"cost_task","claimed":20,"scope":"in","kind":"hypothesis","noRefNote":"Opus 4.5 costs $5/$25 against Sonnet 4.5's $3/$15, so it only wins per task if it really writes far fewer tokens. The 20% target here is illustrative."}]}],"watch":{"updated":"2026-09-25","models":[{"provider":"anthropic","id":"claude-opus-5"},{"provider":"anthropic","id":"claude-opus-5-5"},{"provider":"openai","id":"gpt-5.6-sol"},{"provider":"openai","id":"gpt-6-sol"},{"provider":"openai","id":"gpt-5.6-luna"},{"provider":"openai","id":"gpt-6-luna"},{"provider":"gemini","id":"gemini-3.7-flash"},{"provider":"gemini","id":"gemini-3.8-flash"},{"provider":"anthropic","id":"claude-sonnet-4-5"},{"provider":"anthropic","id":"claude-opus-4-5-20251101"}]},"latest":{"generatedAt":"2026-09-25T03:21:46.258Z","newModels":[]}};
+
+/* ---------- Verdict logic: ported from Assay's refVerdict so both surfaces agree ---------- */
+const METRICS = {
+  accuracy:{unit:"pp",higher:true}, cost_task:{unit:"%"}, cost_correct:{unit:"%"}, latency:{unit:"%"},
+  out_tokens:{unit:"%"}, total_tokens:{unit:"%"}, output_speed:{unit:"%",higher:true},
+  score_rel:{unit:"%",higher:true}, index_points:{unit:"pts",higher:true}
+};
+const VERDICTS = {
+  ok:   { word:"Hallmarked", sub:"VERIFIED",       color:"var(--ok)",   label:"Hallmarked" },
+  part: { word:"Plated",     sub:"PARTLY TRUE",    color:"var(--part)", label:"Plated" },
+  bad:  { word:"Fool's gold",sub:"MARKETING",      color:"var(--bad)",  label:"Fool's gold" },
+  noref:{ word:"Unassayed",  sub:"NO PUBLIC DATA", color:"var(--na)",   label:"Unassayed" }
+};
+const DIR_WORDS = { cost_task:["cheaper","more expensive"], cost_correct:["cheaper","more expensive"], latency:["faster","slower"], output_speed:["faster","slower"], out_tokens:["fewer tokens","more tokens"], total_tokens:["fewer tokens","more tokens"], score_rel:["higher score","lower score"], accuracy:["points higher","points lower"], index_points:["points higher","points lower"] };
+
+function delta(metric, oldV, newV){
+  const M = METRICS[metric]; if(!M) return NaN;
+  if(M.higher && M.unit !== "%") return newV - oldV;
+  if(!isFinite(oldV) || !isFinite(newV) || oldV <= 0) return NaN;
+  return M.higher ? (newV - oldV) / oldV * 100 : (oldV - newV) / oldV * 100;
+}
+function refVerdict(c){
+  if(!c.ref) return { key:"noref", note: c.noRefNote || "No independent measurement yet. Run the live pack in the lab." };
+  const point = delta(c.metric, Number(c.ref.baseline), Number(c.ref.candidate));
+  const claimed = Number(c.claimed);
+  if(!isFinite(point)) return { key:"noref", note:"The reference numbers could not be compared." };
+  let key, note, flag = "", ratio = NaN;
+  if(point < 0){ key = "bad"; note = "It moved the wrong way."; }
+  else { ratio = point / claimed; key = ratio >= .8 ? "ok" : ratio >= .4 ? "part" : "bad"; note = "Delivered " + Math.round(ratio * 100) + "% of the claimed improvement."; }
+  if(c.guard){
+    const g = Number(c.guard.candidate) - Number(c.guard.baseline);
+    if(g <= -2){ flag = `${c.guard.label} fell from ${c.guard.baseline} to ${c.guard.candidate}, so the gain came with lower measured quality.`; if(key === "ok") key = "part"; }
+    else note += ` ${c.guard.label}: ${c.guard.baseline} → ${c.guard.candidate}.`;
+  }
+  return { key, note, flag, ratio, point };
+}
+
+/* ---------- Helpers ---------- */
+const esc = s => String(s ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+function phrase(metric, v){
+  if(!isFinite(v)) return "n/a";
+  const [up, down] = DIR_WORDS[metric] || ["better","worse"], a = Math.abs(v), n = a < 10 ? a.toFixed(1).replace(/\.0$/,"") : Math.round(a);
+  const unit = METRICS[metric] && METRICS[metric].unit === "%" ? "%" : "";
+  return `${n}${unit} ${v >= 0 ? up : down}`;
+}
+function fmtDate(iso){ const t = Date.parse(iso); if(!isFinite(t)) return String(iso || "–"); return new Date(t).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"UTC"}); }
+let stampSeq = 0;
+function stamp(key){
+  const v = VERDICTS[key]; const id = "arc" + (stampSeq++); const long = v.word.length > 9;
+  return `<svg class="stamp" viewBox="0 0 120 120" role="img" aria-label="${esc(v.word)}: ${esc(v.sub.toLowerCase())}">
+    <g transform="rotate(-9 60 60)" fill="none" stroke="${v.color}">
+      <circle cx="60" cy="60" r="55" stroke-width="3"/><circle cx="60" cy="60" r="47" stroke-width="1.2"/>
+      <path id="${id}" d="M 20 60 A 40 40 0 0 1 100 60" stroke="none"/>
+      <text font-size="9.5" letter-spacing="2" fill="${v.color}" stroke="none" font-family="Instrument Sans,system-ui,sans-serif" font-weight="600"><textPath href="#${id}" startOffset="50%" text-anchor="middle">${esc(v.sub)}</textPath></text>
+      <text x="60" y="${long ? 70 : 72}" text-anchor="middle" font-size="${long ? 16 : 19}" font-weight="700" fill="${v.color}" stroke="none" font-family="Newsreader,Georgia,serif">${esc(v.word)}</text>
+    </g></svg>`;
+}
+/* Claimed-vs-delivered bar: dashed line = promise, filled bar = what was measured */
+function bar(metric, claimed, measured, key){
+  const W = 600, L = 8, R = 592, col = VERDICTS[key].color;
+  let min = Math.min(0, measured, claimed), max = Math.max(0, measured, claimed);
+  const span = (max - min) || 1; min -= span * .06; max += span * .06;
+  const x = v => L + (v - min) / (max - min) * (R - L);
+  const anchor = px => px < 120 ? "start" : px > 480 ? "end" : "middle";
+  const a = Math.min(x(0), x(measured)), w = Math.max(2, Math.abs(x(measured) - x(0)));
+  return `<line x1="${L}" y1="36" x2="${R}" y2="36" stroke="var(--line)"/>
+    <line x1="${x(0)}" y1="24" x2="${x(0)}" y2="48" stroke="var(--muted)"/>
+    <rect x="${a}" y="29" width="${w}" height="14" rx="3" fill="${col}" opacity=".88"/>
+    <line x1="${x(claimed)}" y1="16" x2="${x(claimed)}" y2="56" stroke="var(--blue)" stroke-width="2.5" stroke-dasharray="5 4"/>
+    <text x="${x(claimed)}" y="11" font-size="12.5" font-weight="600" fill="var(--blue)" text-anchor="${anchor(x(claimed))}">Claimed ${esc(phrase(metric, claimed))}</text>
+    <text x="${x(measured)}" y="68" font-size="12.5" font-weight="600" fill="${col}" text-anchor="${anchor(x(measured))}">Measured ${esc(phrase(metric, measured))}</text>`;
+}
+
+/* ---------- State ---------- */
+let DATA = null, FILTER = "all";
+
+function scoredClaims(){
+  const rows = [];
+  for(const sc of DATA.scenarios) for(const c of (sc.claims || [])) rows.push({ sc, c, v: refVerdict(c) });
+  return rows;
+}
+function renderTally(){
+  const rows = scoredClaims(), counts = { ok:0, part:0, bad:0, noref:0 };
+  rows.forEach(r => counts[r.v.key] = (counts[r.v.key] || 0) + 1);
+  document.getElementById("tTotal").textContent = rows.length + " claims · " + DATA.scenarios.length + " releases";
+  document.getElementById("tally").innerHTML = ["ok","part","bad","noref"].map(k =>
+    `<button class="tcell" data-f="${k}" aria-pressed="${FILTER === k}">${stamp(k)}<span class="n">${counts[k]}</span><span class="l">${VERDICTS[k].sub.toLowerCase()}</span></button>`).join("");
+  document.getElementById("filters").innerHTML =
+    `<button class="fchip" data-f="all" aria-pressed="${FILTER === "all"}">All claims</button>` +
+    ["ok","part","bad","noref"].map(k => `<button class="fchip" data-f="${k}" aria-pressed="${FILTER === k}"><i style="background:${VERDICTS[k].color}"></i>${VERDICTS[k].label}</button>`).join("") +
+    `<span class="fcount" id="fcount"></span>`;
+}
+function renderLedger(){
+  const out = [], sorted = [...DATA.scenarios].sort((a, b) => String(b.released).localeCompare(String(a.released)));
+  let shown = 0;
+  for(const sc of sorted){
+    const claims = (sc.claims || []).map(c => ({ c, v: refVerdict(c) })).filter(r => FILTER === "all" || r.v.key === FILTER);
+    if(!claims.length && FILTER !== "all") continue;
+    shown += claims.length;
+    const src = id => (sc.sources || []).find(s => s.id === id);
+    const rows = claims.map(({ c, v }) => {
+      const kind = c.kind === "stress" || c.scope === "outside" ? "Assay stress test" : c.scope === "proxy" ? "Proxy measure" : "";
+      const refs = c.ref && c.ref.sources ? c.ref.sources.map(src).filter(Boolean) : [];
+      return `<div class="claim">
+        ${stamp(v.key)}
+        <div>
+          <div class="ctext">${esc(c.text)}${kind ? `<span class="tagk">${kind}</span>` : ""}</div>
+          ${c.ref && isFinite(v.point) ? `<svg class="bar" viewBox="0 0 600 72" role="img" aria-label="Claimed ${esc(phrase(c.metric, Number(c.claimed)))}, measured ${esc(phrase(c.metric, v.point))}">${bar(c.metric, Number(c.claimed), v.point, v.key)}</svg>` : ""}
+          <p class="cnote">${esc(v.note)}</p>
+          ${v.flag ? `<p class="cflag">${esc(v.flag)}</p>` : ""}
+          ${(c.ref || c.scopeNote || refs.length) ? `<details class="more"><summary>Evidence</summary><ul>
+            ${c.ref ? `<li>Reference: ${esc(c.ref.baseline)} → ${esc(c.ref.candidate)} ${esc(c.ref.unit || "")}${c.ref.note ? ". " + esc(c.ref.note) : ""}</li>` : ""}
+            ${c.scopeNote ? `<li>${esc(c.scopeNote)}</li>` : ""}
+            ${refs.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>, ${esc(s.publisher)}, ${esc(fmtDate(s.date))}</li>`).join("")}
+          </ul></details>` : ""}
+        </div></div>`;
+    }).join("");
+    const vs = src(sc.vendorSource);
+    out.push(`<article class="scen">
+      <div class="scen-top"><h3>${esc(sc.title)}</h3><span class="meta">${esc(sc.vendor)} · released ${esc(fmtDate(sc.released))} · checked ${esc(fmtDate(sc.checked))}</span></div>
+      <p class="scen-sum">${esc(sc.summary)}${vs ? ` <a href="${esc(vs.url)}" target="_blank" rel="noopener">Vendor announcement ↗</a>` : ""}</p>
+      ${rows || `<p class="cnote" style="margin-top:14px">No claims with this hallmark in this release.</p>`}
+    </article>`);
+  }
+  document.getElementById("scenarios").innerHTML = out.join("") || `<div class="empty">No claims carry this hallmark yet.</div>`;
+  const fc = document.getElementById("fcount"); if(fc) fc.textContent = shown + (shown === 1 ? " claim shown" : " claims shown");
+}
+function renderWatch(){
+  const w = DATA.watch || {}, l = DATA.latest || {};
+  document.getElementById("wLast").textContent = fmtDate(l.generatedAt || w.updated);
+  const nm = (l.newModels || []).length;
+  document.getElementById("wNew").textContent = nm ? `${nm} new model${nm > 1 ? "s" : ""} found on the last run.` : "No new models on the last run. The next run is on Monday.";
+  const models = w.models || [], by = {};
+  models.forEach(m => (by[m.provider] = by[m.provider] || []).push(m.id));
+  document.getElementById("wCount").textContent = models.length;
+  const names = { openai:"OpenAI", anthropic:"Anthropic", gemini:"Google", google:"Google" };
+  document.getElementById("wList").innerHTML = Object.keys(by).map(p => `<li><b>${esc(names[p] || p)}</b> ${by[p].map(esc).join(", ")}</li>`).join("");
+}
+function renderAll(){ renderTally(); renderLedger(); renderWatch(); }
+
+/* ---------- Load: live from the Assay repo, snapshot as fallback ---------- */
+async function getJSON(path){ const r = await fetch(ASSAY.raw + path, { cache:"no-store" }); if(!r.ok) throw new Error(path + " " + r.status); return r.json(); }
+async function loadLive(){
+  const idx = await getJSON("scenarios/index.json");
+  const files = idx.scenarios || [];
+  const scen = (await Promise.all(files.map(f => getJSON("scenarios/" + encodeURIComponent(f)).catch(() => null)))).filter(s => s && s.id);
+  if(!scen.length) throw new Error("empty ledger");
+  const [watch, latest] = await Promise.all([ getJSON("watch/known-models.json").catch(() => SNAPSHOT.watch), getJSON("results/latest.json").catch(() => SNAPSHOT.latest) ]);
+  return { scenarios: scen, watch, latest };
+}
+function setSource(live){
+  document.getElementById("srcDot").className = "dot" + (live ? " live" : "");
+  document.getElementById("srcText").textContent = live
+    ? "Live from the Assay repository · updated every Monday"
+    : "Showing the " + fmtDate(SNAPSHOT.latest.generatedAt) + " snapshot · live data unavailable";
+}
+
+/* ---------- Interaction ---------- */
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-f]"); if(!b || !DATA) return;
+  FILTER = (FILTER === b.dataset.f && b.classList.contains("tcell")) ? "all" : b.dataset.f;
+  renderTally(); renderLedger();
+  if(b.classList.contains("tcell")) document.getElementById("ledger").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+});
+
+/* Verdict simulator */
+function sim(){
+  const claimed = +document.getElementById("sClaim").value, meas = +document.getElementById("sMeas").value, fell = document.getElementById("sGuard").checked;
+  document.getElementById("vClaim").textContent = claimed + "%";
+  document.getElementById("vMeas").textContent = (meas > 0 ? "+" : "") + meas + "%";
+  const c = { metric:"cost_task", claimed, ref:{ baseline:100, candidate:100 - meas }, guard: fell ? { label:"Quality index", baseline:50, candidate:47 } : null };
+  const v = refVerdict(c);
+  document.getElementById("simBar").innerHTML = bar("cost_task", claimed, meas, v.key);
+  document.getElementById("simStamp").innerHTML = stamp(v.key);
+  document.getElementById("simText").innerHTML = `<b>${esc(VERDICTS[v.key].word)}.</b> ${esc(v.note)}${v.flag ? " " + esc(v.flag) : ""}`;
+}
+["sClaim","sMeas","sGuard"].forEach(id => document.getElementById(id).addEventListener("input", sim));
+
+/* Theme toggle */
+(function(){
+  const btn = document.getElementById("themeBtn"), modes = ["auto","light","dark"]; let i = 0;
+  try{ const s = localStorage.getItem("assay-woa-theme"); if(s && modes.includes(s)) i = modes.indexOf(s); }catch(e){}
+  const apply = () => { const m = modes[i]; if(m === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", m); btn.textContent = "Theme: " + m; };
+  btn.addEventListener("click", () => { i = (i + 1) % 3; try{ localStorage.setItem("assay-woa-theme", modes[i]); }catch(e){} apply(); });
+  apply();
+})();
+
+/* Links */
+["labLink","labLink2"].forEach(id => document.getElementById(id).href = ASSAY.lab);
+document.getElementById("pdfLink").href = ASSAY.pdf;
+document.getElementById("repoLink").href = ASSAY.repo;
+
+/* Boot: paint the snapshot at once, then swap in live data */
+DATA = SNAPSHOT; renderAll(); sim(); setSource(false);
+document.getElementById("srcText").textContent = "Checking the Assay repository for the latest ledger…";
+loadLive().then(d => { DATA = d; renderAll(); setSource(true); }).catch(() => setSource(false));
+</script>
+</body>
+</html>
