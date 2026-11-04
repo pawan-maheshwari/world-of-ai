@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Origin Lens · AI content detector · World of AI</title>
+<meta name="description" content="Origin Lens, a World of AI instrument from planetAI LLP: scores text and images 0–100 for AI likelihood and highlights where the signal sits.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='44' cy='44' r='30' fill='none' stroke='%23E8B85C' stroke-width='9'/><path d='M66 66l24 24' stroke='%23E8B85C' stroke-width='11' stroke-linecap='round'/></svg>">
+<style>
+/* Layout: planetAI atlas chrome — WoA ribbon, star-chart hero with mode dial, two-pane bench (specimen | reading), architecture as a chart view, branded footer */
+:root{
+  --void:#05070F; --deep:#080C1A; --panel:#0C1122; --raise:#121A31; --line:#212B45; --line-soft:#18213A;
+  --paper:#F2EFE6; --mist:#9AA6C2; --dim:#5A688B; --gold:#E8B85C; --gold-deep:#B8863A;
+  --human:#4FC3B0; --mid:#E39A3B; --ai:#F06A8E; --on-gold:#05070F;
+  --ink:var(--paper); --muted:var(--mist); --sunk:var(--deep);
+  --f-display:"Fraunces", Georgia, "Times New Roman", serif;
+  --f-body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --void:#EFE9DA; --deep:#E7DFCB; --panel:#F8F4E8; --raise:#FCF8ED; --line:#D9CEB2; --line-soft:#E6DDC7;
+  --paper:#20242F; --mist:#585E74; --dim:#8A8368; --gold:#A9721E; --gold-deep:#C7A968;
+  --human:#1E8574; --mid:#B5641A; --ai:#C2365F; --on-gold:#FFFBF1; color-scheme:light}}
+:root[data-theme="light"]{
+  --void:#EFE9DA; --deep:#E7DFCB; --panel:#F8F4E8; --raise:#FCF8ED; --line:#D9CEB2; --line-soft:#E6DDC7;
+  --paper:#20242F; --mist:#585E74; --dim:#8A8368; --gold:#A9721E; --gold-deep:#C7A968;
+  --human:#1E8574; --mid:#B5641A; --ai:#C2365F; --on-gold:#FFFBF1; color-scheme:light}
+
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--void);color:var(--paper);font:15px/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.12;margin:0;text-wrap:balance}
+h2{font-size:clamp(22px,2.6vw,28px);letter-spacing:-.01em}
+h3{font-size:17px}
+p{margin:0}
+a{color:var(--gold)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto}
+.eyebrow{font:500 10.5px/1.2 var(--f-mono);letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
+.muted{color:var(--mist)}
+.note{font-size:13px;color:var(--mist);max-width:72ch}
+
+/* World of AI ribbon — fixed dark band shared by every instrument */
+.woa-ribbon{background:#05070F;border-bottom:1px solid #1E2440}
+.woa-in{max-width:1180px;margin:0 auto;padding-block:9px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font:500 11px/1.4 var(--f-mono);letter-spacing:.06em;color:#9AA6C2}
+.woa-in a{color:#E8B85C;text-decoration:none;border-bottom:1px solid rgba(232,184,92,.35)}
+.woa-mark{width:15px;height:15px;flex:none;color:#9AA6C2}
+.woa-sep{opacity:.45}
+.woa-right{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+@media (max-width:620px){.woa-right{margin-left:0;width:100%}}
+
+/* Hero: star chart */
+.hero{position:relative;overflow:hidden;background:
+  radial-gradient(700px 320px at 88% -10%,color-mix(in srgb,var(--gold) 16%,transparent),transparent 70%),
+  radial-gradient(520px 260px at 0% 110%,color-mix(in srgb,var(--ai) 12%,transparent),transparent 70%),var(--deep);border-bottom:1px solid var(--line)}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;background-image:
+  radial-gradient(1px 1px at 12% 22%,var(--mist),transparent 60%),radial-gradient(1px 1px at 34% 70%,var(--mist),transparent 60%),
+  radial-gradient(1.2px 1.2px at 58% 18%,var(--gold),transparent 60%),radial-gradient(1px 1px at 76% 54%,var(--mist),transparent 60%),
+  radial-gradient(1px 1px at 91% 82%,var(--mist),transparent 60%),radial-gradient(1px 1px at 46% 40%,var(--dim),transparent 60%),
+  radial-gradient(1px 1px at 22% 88%,var(--dim),transparent 60%),radial-gradient(1px 1px at 68% 90%,var(--dim),transparent 60%)}
+.hero-in{position:relative;padding-block:34px 0;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:36px;align-items:end}
+@media (max-width:860px){.hero-in{grid-template-columns:minmax(0,1fr);gap:24px}}
+.wordmark{display:flex;align-items:center;gap:14px}
+.wordmark svg{width:54px;height:54px;flex:none}
+.wordmark h1{font-size:clamp(42px,8vw,72px);letter-spacing:-.025em;line-height:.92;font-weight:600}
+.wordmark h1 i{font-style:italic;font-weight:500;color:var(--gold)}
+.endorse{margin-top:12px;font:500 11px/1.5 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--mist)}
+.endorse b{color:var(--gold);font-weight:500}
+.thesis{font-family:var(--f-display);font-size:clamp(19px,2.4vw,24px);line-height:1.38;margin-top:18px;max-width:34ch}
+.thesis em{color:var(--gold)}
+.spectrum{background:color-mix(in srgb,var(--panel) 80%,transparent);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px}
+.spectrum-bar{height:10px;border-radius:5px;background:linear-gradient(90deg,var(--human),var(--human) 20%,color-mix(in srgb,var(--human) 50%,var(--mid)) 30%,var(--mid) 50%,color-mix(in srgb,var(--ai) 60%,var(--mid)) 70%,var(--ai))}
+.bands{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;font:11px/1.35 var(--f-mono);color:var(--mist)}
+.bands b{display:block;color:var(--paper);font-weight:500;font-variant-numeric:tabular-nums}
+@media (max-width:420px){.bands{font-size:10px}}
+.coord{font:10.5px var(--f-mono);letter-spacing:.2em;color:var(--dim)}
+
+/* Mode dial (tabs) sits on the hero's lower edge */
+.dial{grid-column:1/-1;display:flex;gap:2px;margin-top:6px;overflow-x:auto}
+.dial a{flex:none;display:flex;align-items:center;gap:8px;padding:12px 18px;font:500 14px var(--f-body);color:var(--mist);text-decoration:none;border:1px solid transparent;border-bottom:0;border-radius:10px 10px 0 0}
+.dial a[aria-selected="true"]{background:var(--void);color:var(--paper);border-color:var(--line)}
+.dial a[aria-selected="true"] .dot{background:var(--gold)}
+.dial .dot{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.dial a:hover{color:var(--paper)}
+
+/* Bench */
+main{padding-block:22px 40px}
+.bench{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:900px){.bench{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.src{font:11px var(--f-mono);color:var(--mist);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+textarea{width:100%;min-height:240px;resize:vertical;border:1px solid var(--line);border-radius:10px;background:var(--deep);color:var(--paper);font:14.5px/1.65 var(--f-body);padding:14px}
+textarea::placeholder{color:var(--dim)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,.btn{font:500 13px var(--f-body);border-radius:9px;padding:9px 14px;cursor:pointer;border:1px solid var(--line);background:var(--raise);color:var(--paper);white-space:nowrap}
+button:hover,.btn:hover{border-color:var(--gold-deep)}
+button.primary{background:var(--gold);border-color:var(--gold);color:var(--on-gold);font-weight:600}
+button.primary:hover{filter:brightness(1.06)}
+button.quiet{background:none}
+button:disabled{opacity:.55;cursor:default}
+.count{margin-left:auto;font:12px var(--f-mono);color:var(--mist);font-variant-numeric:tabular-nums}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.sub-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--line-soft)}
+
+/* Reading */
+.readout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:18px;align-items:center}
+@media (max-width:480px){.readout{grid-template-columns:minmax(0,1fr)}}
+.gauge{width:100%;max-width:250px;justify-self:center}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.stat{border:1px solid var(--line-soft);border-radius:10px;padding:10px 12px;background:var(--deep)}
+.stat b{display:block;font:600 24px/1.1 var(--f-display);font-variant-numeric:tabular-nums}
+.stat span{font-size:11.5px;color:var(--mist)}
+.verdict{display:inline-flex;align-items:center;gap:8px;font:600 14px var(--f-body);padding:6px 13px;border-radius:999px;border:1px solid currentColor;width:fit-content;color:var(--mist)}
+.verdict::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.v-human{color:var(--human)} .v-mid{color:var(--mid)} .v-ai{color:var(--ai)}
+.scale{display:flex;flex-direction:column;gap:4px}
+.scale-bar{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--human),var(--human) 20%,color-mix(in srgb,var(--human) 50%,var(--mid)) 30%,var(--mid) 50%,color-mix(in srgb,var(--ai) 60%,var(--mid)) 70%,var(--ai))}
+.scale-lbl{display:flex;justify-content:space-between;font:10.5px var(--f-mono);color:var(--dim)}
+
+.judge{display:flex;flex-direction:column;gap:10px;border:1px solid color-mix(in srgb,var(--gold) 40%,var(--line));border-radius:12px;padding:14px;background:color-mix(in srgb,var(--gold) 6%,var(--panel))}
+.judge .eyebrow{display:flex;align-items:center;gap:8px}
+.cues{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px;font-size:13.5px}
+.cues:empty{display:none}
+.cues li{display:flex;gap:9px;align-items:baseline}
+.cues li::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;transform:translateY(-1px)}
+.cues .c-ai::before{background:var(--ai)} .cues .c-hu::before{background:var(--human)}
+
+.sigs{display:flex;flex-direction:column;gap:13px}
+.sig{display:flex;flex-direction:column;gap:5px}
+.sig-h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sig-n{font-weight:600;font-size:14px}
+.sig-v{font:11.5px var(--f-mono);color:var(--mist);font-variant-numeric:tabular-nums}
+.bar{height:5px;border-radius:3px;background:var(--deep);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px}
+.sig-note{font-size:12.5px;color:var(--mist)}
+
+.hl{font:15px/1.85 var(--f-body);max-width:74ch;max-height:520px;overflow:auto;padding-right:6px}
+.hl p+p{margin-top:12px}
+.hl b{font-family:var(--f-display);font-size:16px}
+.hl .s{border-radius:3px;padding:1px 0;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.hl mark.tell{background:none;color:inherit;text-decoration:underline wavy var(--ai);text-underline-offset:3px;text-decoration-thickness:1px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--mist)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:22px;height:10px;border-radius:2px;display:inline-block}
+
+/* Image */
+label.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;border:1.5px dashed var(--line);border-radius:12px;padding:20px;cursor:pointer;background:var(--deep)}
+label.drop.over,label.drop:hover{border-color:var(--gold)}
+label.drop:focus-within{outline:2px solid var(--gold);outline-offset:2px}
+.stage{position:relative;border-radius:10px;overflow:hidden;background:var(--deep);border:1px solid var(--line)}
+.stage canvas{display:block;width:100%;height:auto}
+.stage canvas#ovl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.toggle{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--mist)}
+table.kv{width:100%;border-collapse:collapse;font-size:13px}
+table.kv td{padding:7px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
+table.kv td:first-child{color:var(--mist);width:42%;padding-right:10px}
+table.kv td:last-child{font-family:var(--f-mono);font-size:12px;word-break:break-word}
+.spec{display:grid;grid-template-columns:140px minmax(0,1fr);gap:14px;align-items:center}
+.spec canvas{width:140px;height:140px;border-radius:8px;border:1px solid var(--line);image-rendering:pixelated;background:#000}
+@media (max-width:420px){.spec{grid-template-columns:minmax(0,1fr)}}
+
+/* Key box (website only) */
+.keybox{margin-top:18px}
+.keybox input{flex:1 1 220px;min-width:0;font:13px var(--f-mono);padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--deep);color:var(--paper)}
+
+/* Architecture */
+.chart{display:flex;flex-direction:column;gap:18px}
+.flow{display:flex;flex-direction:column}
+.stagebox{display:grid;grid-template-columns:46px minmax(0,1fr) minmax(0,230px);gap:16px;align-items:start;padding:16px 0;border-top:1px solid var(--line-soft)}
+.stagebox:first-child{border-top:0}
+.num{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font:600 16px var(--f-display);border:1px solid var(--gold);color:var(--gold)}
+.stagebox p{color:var(--mist);font-size:14px}
+.synth{font-size:12.5px;border-left:2px solid var(--gold-deep);padding-left:10px;color:var(--mist)}
+.synth b{display:block;font:500 10px var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+@media (max-width:640px){.stagebox{grid-template-columns:40px minmax(0,1fr)}.synth{grid-column:2}}
+.lanes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+@media (max-width:540px){.lanes{grid-template-columns:minmax(0,1fr)}}
+.lane{border:1px solid var(--line-soft);border-radius:10px;padding:11px 13px;background:var(--deep);font-size:13px}
+.lane ul{margin:6px 0 0;padding-left:18px}
+.tbl{overflow-x:auto}
+table.cmp{border-collapse:collapse;width:100%;min-width:560px;font-size:13.5px}
+table.cmp th,table.cmp td{text-align:left;padding:10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+table.cmp th{font:500 10.5px var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+table.cmp td:first-child{font-weight:600}
+
+/* Footer */
+footer{border-top:1px solid var(--line);background:var(--deep);padding-block:26px calc(26px + env(safe-area-inset-bottom,0px))}
+.foot{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:center;justify-content:space-between}
+.pai{display:flex;align-items:center;gap:10px;color:var(--paper);text-decoration:none}
+.pai svg{width:38px;height:38px;flex:none}
+.pai .wm{font-family:var(--f-display);font-weight:600;font-size:18px;line-height:1}
+.pai .wm i{color:var(--gold);font-style:italic}
+.pai .llp{display:block;font:9px var(--f-mono);letter-spacing:.44em;color:var(--dim);margin-top:4px}
+.foot p{font-size:12.5px;color:var(--mist);max-width:60ch}
+.foot-r{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font:11px var(--f-mono);color:var(--dim)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--paper);color:var(--void);padding:9px 15px;border-radius:9px;font-size:13px;z-index:20}
+@media (prefers-reduced-motion:no-preference){.needle{transition:transform .7s cubic-bezier(.2,.8,.2,1)}}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<script>(function(){try{var t=localStorage.getItem('woa-theme');if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();</script>
+</head>
+<body>
+<div class="woa-ribbon gut">
+  <div class="woa-in">
+    <svg class="woa-mark" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="5"/><ellipse cx="50" cy="50" rx="45" ry="13" fill="none" stroke="currentColor" stroke-width="4" opacity=".55"/><circle cx="50" cy="50" r="9" fill="#E8B85C"/></svg>
+    <span>A <a href="https://world-of-ai.co.in/" data-site="index.html">World&nbsp;of&nbsp;AI</a> instrument<span class="woa-sep"> · </span>planetAI&nbsp;LLP</span>
+    <span class="woa-right"><a href="https://world-of-ai.co.in/#atlas" data-site="index.html#atlas">← The atlas</a><span class="woa-sep">·</span><a href="https://world-of-ai.co.in/assay.html" data-site="assay.html">Assay</a><span class="woa-sep">·</span><a href="https://world-of-ai.co.in/harmonia.html" data-site="harmonia.html">HARMONIA</a></span>
+  </div>
+</div>
+
+<header class="hero gut">
+  <div class="wrap hero-in">
+    <div>
+      <div class="wordmark">
+        <svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="none" style="stroke:var(--paper)" stroke-width="2.4"/><ellipse cx="24" cy="24" rx="17" ry="5.5" fill="none" style="stroke:var(--line)" stroke-width="1.4"/><path d="M11.5 19.5A14 14 0 0 1 24 10" fill="none" style="stroke:var(--gold)" stroke-width="2.6" stroke-linecap="round"/><circle cx="24" cy="24" r="3.4" style="fill:var(--gold)"/><path d="M36.5 36.5L48 48" style="stroke:var(--paper)" stroke-width="4" stroke-linecap="round"/></svg>
+        <h1>Origin <i>Lens</i></h1>
+      </div>
+      <p class="endorse">A World of AI instrument · by <b>planetAI LLP</b></p>
+      <p class="thesis">How much of this was made by AI? Read a score from 0 to 100, and see <em>exactly where</em> the signal sits.</p>
+    </div>
+    <div class="spectrum" aria-label="Score bands">
+      <div class="panel-h"><span class="eyebrow">The scale</span><span class="coord">33.9°S 18.4°E</span></div>
+      <div class="spectrum-bar"></div>
+      <div class="bands"><span><b>0–19</b>Likely human</span><span><b>20–39</b>Mostly human</span><span><b>40–59</b>Uncertain</span><span><b>60–79</b>AI-assisted</span><span><b>80–100</b>Likely AI</span></div>
+      <p class="note">Text and images are analysed in your browser. Nothing leaves the page unless you run the Claude check.</p>
+    </div>
+    <nav class="dial" aria-label="Mode">
+      <a href="#text" id="tab-text" aria-selected="true"><span class="dot"></span>Text</a>
+      <a href="#image" id="tab-image" aria-selected="false"><span class="dot"></span>Image</a>
+      <a href="#architecture" id="tab-architecture" aria-selected="false"><span class="dot"></span>How it works</a>
+    </nav>
+  </div>
+</header>
+
+<main class="gut">
+<div class="wrap">
+  <!-- TEXT -->
+  <section id="view-text" class="bench">
+    <div class="panel">
+      <div class="panel-h"><span class="eyebrow">I · Specimen</span><span class="src" id="tx-src">Example: AI-style text</span></div>
+      <textarea id="txt" aria-label="Text to analyse" spellcheck="false" placeholder="Paste text here, or drop a Word, PDF, Excel or text file."></textarea>
+      <p class="note" id="tx-filenote" hidden></p>
+      <div class="row">
+        <button class="primary" id="tx-run">Analyse text</button>
+        <label class="btn" for="tx-file">Open document</label><input type="file" id="tx-file" accept=".txt,.md,.csv,.docx,.pdf,.xlsx,.xls,.ods,text/plain,application/pdf">
+        <button class="quiet" id="tx-clear">Clear</button>
+        <span class="count" id="tx-count">0 words</span>
+      </div>
+      <div class="row"><span class="muted" style="font-size:12.5px">Examples:</span><button class="quiet" id="tx-ai">AI-style</button><button class="quiet" id="tx-hu">Human</button></div>
+      <div class="sub-h"><span class="eyebrow">Where the signal sits</span>
+        <div class="legend"><span><i class="sw" style="background:color-mix(in srgb,var(--ai) 50%,transparent)"></i>AI-like sentence</span><span><i class="sw" style="border-bottom:2px dotted var(--ai);border-radius:0;height:6px"></i>AI-typical phrase</span></div>
+      </div>
+      <div class="hl" id="tx-hl"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><span class="eyebrow">II · Reading</span><button class="quiet" id="tx-copy">Copy report</button></div>
+      <div class="readout">
+        <svg class="gauge" id="tx-gauge" viewBox="0 0 220 132" role="img" aria-label="AI likelihood gauge"></svg>
+        <div class="stats">
+          <div class="stat"><b id="tx-score">–</b><span>AI likelihood / 100</span></div>
+          <div class="stat"><b id="tx-extent">–</b><span>Share of text flagged</span></div>
+          <div class="stat"><b id="tx-conf">–</b><span>Confidence</span></div>
+          <div class="stat"><b id="tx-sents">–</b><span>Sentences flagged</span></div>
+        </div>
+      </div>
+      <span class="verdict" id="tx-verdict">–</span>
+      <div class="scale"><div class="scale-bar"></div><div class="scale-lbl"><span>0 human</span><span>40</span><span>60</span><span>100 AI</span></div></div>
+      <div class="judge" id="tx-judge" hidden>
+        <span class="eyebrow">Claude check</span>
+        <div class="row"><button class="primary" id="tx-judge-btn">Ask Claude to judge the writing</button><span class="muted" id="tx-judge-st" style="font-size:13px"></span></div>
+        <ul class="cues" id="tx-judge-cues"></ul>
+        <p class="note" id="tx-judge-note">Uses your Claude usage. Long documents are sent as excerpts from the start, middle and end.</p>
+      </div>
+      <h3>Signals</h3>
+      <div class="sigs" id="tx-sigs"></div>
+    </div>
+  </section>
+
+  <!-- IMAGE -->
+  <section id="view-image" class="bench" hidden>
+    <div class="panel">
+      <div class="panel-h"><span class="eyebrow">I · Specimen</span><span class="src" id="im-src">–</span></div>
+      <label class="drop" id="drop" for="im-file">
+        <b>Drop an image, paste one, or tap to choose</b>
+        <span class="muted" style="font-size:13px">JPEG, PNG or WebP. The file never leaves this page unless you run the Claude check.</span>
+      </label>
+      <input type="file" id="im-file" accept="image/*">
+      <div class="row">
+        <span class="muted" style="font-size:12.5px">Examples:</span><button class="quiet" id="im-a">Smooth render</button><button class="quiet" id="im-b">Camera-like photo</button>
+        <label class="toggle" style="margin-left:auto"><input type="checkbox" id="im-ovl" checked> Heatmap</label>
+      </div>
+      <div class="stage"><canvas id="prev" width="10" height="10"></canvas><canvas id="ovl" width="10" height="10"></canvas></div>
+      <p class="note">Tinted tiles are regions whose noise texture looks synthetic. The examples are drawn in the page to show the two ends of the scale.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><span class="eyebrow">II · Reading</span><button class="quiet" id="im-copy">Copy report</button></div>
+      <div class="readout">
+        <svg class="gauge" id="im-gauge" viewBox="0 0 220 132" role="img" aria-label="AI likelihood gauge"></svg>
+        <div class="stats">
+          <div class="stat"><b id="im-score">–</b><span>AI likelihood / 100</span></div>
+          <div class="stat"><b id="im-extent">–</b><span>Share of image flagged</span></div>
+          <div class="stat"><b id="im-conf">–</b><span>Confidence</span></div>
+          <div class="stat"><b id="im-dim">–</b><span>Pixels analysed</span></div>
+        </div>
+      </div>
+      <span class="verdict" id="im-verdict">–</span>
+      <div class="scale"><div class="scale-bar"></div><div class="scale-lbl"><span>0 human</span><span>40</span><span>60</span><span>100 AI</span></div></div>
+      <div class="judge" id="im-judge" hidden>
+        <span class="eyebrow">Claude check</span>
+        <div class="row"><button class="primary" id="im-judge-btn">Ask Claude to inspect the content</button><span class="muted" id="im-judge-st" style="font-size:13px"></span></div>
+        <ul class="cues" id="im-judge-cues"></ul>
+        <p class="note" id="im-judge-note">Uses your Claude usage. The image is downsized and its metadata stripped before it is sent.</p>
+      </div>
+      <h3>Signals</h3>
+      <div class="sigs" id="im-sigs"></div>
+      <h3>Provenance record</h3>
+      <table class="kv" id="im-meta"></table>
+      <h3>Frequency fingerprint</h3>
+      <div class="spec"><canvas id="spec" width="256" height="256"></canvas>
+        <p class="note">Log spectrum of the noise residual from a 256 px crop at native resolution. Bright off-centre dots on the ringed points are periodic patterns that generator upsampling layers tend to leave. JPEG's 8×8 blocks can create similar dots, so this signal counts less for JPEGs.</p></div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section id="view-architecture" class="chart" hidden>
+    <div class="panel">
+      <span class="eyebrow">How it works</span>
+      <h2>A pipeline modelled on SynthID Detector</h2>
+      <p class="note">SynthID Detector follows three steps: upload content, scan it for an embedded SynthID watermark, then show the result with the most likely watermarked portions highlighted. Origin Lens keeps that shape and the idea of highlighting portions, but replaces the watermark key, which only Google holds, with open signals that work on content from any generator.</p>
+      <div class="flow">
+        <div class="stagebox"><span class="num">1</span><div><h3>Ingest</h3><p>Paste text or open a Word, PDF or Excel file; drop, paste or choose an image. Files are read in the page, never uploaded.</p></div><div class="synth"><b>SynthID</b>Upload content</div></div>
+        <div class="stagebox"><span class="num">2</span><div><h3>Normalise</h3><p>Text: rejoin PDF lines, drop page numbers, set headings apart, split into sentences and words. Image: read metadata sections, convert to luminance, cut a 32 px tile grid, take native-resolution patches.</p></div><div class="synth"><b>SynthID</b>Prepare media for the detector</div></div>
+        <div class="stagebox"><span class="num">3</span><div><h3>Extract signals in parallel</h3><p>Independent detectors each return a 0–1 AI-likelihood with an explanation.</p>
+          <div class="lanes">
+            <div class="lane"><b>Text lane</b><ul><li>Sentence-length rhythm</li><li>AI-typical phrase lexicon</li><li>Transition-word openers</li><li>Punctuation fingerprint (em dashes, "not only… but")</li><li>Word length and paragraph uniformity</li><li>Human markers (contractions, first person, casual tone)</li><li>Claude writing check: polish, cadence, generic framing; flags passages</li></ul></div>
+            <div class="lane"><b>Image lane</b><ul><li>Declared provenance: C2PA manifest, IPTC "trained algorithmic media", generator tags</li><li>Camera capture data in EXIF</li><li>Sensor-noise residual per tile</li><li>Spectral peaks from upsampling</li><li>Generator-native dimensions and camera-shaped frames</li><li>Claude vision check: anatomy, lettering, lighting, AI motifs</li></ul></div>
+          </div></div><div class="synth"><b>SynthID</b>Scan for the watermark</div></div>
+        <div class="stagebox"><span class="num">4</span><div><h3>Fuse and calibrate</h3><p>Weighted logistic fusion maps signals to 0–100. A declared AI provenance tag sets the score to 95 (80 for AI composites); camera exposure data scales it down. Pixel statistics alone are capped at 50. When the Claude check runs it carries 70% of the score.</p></div><div class="synth"><b>SynthID</b>Watermark detected or not</div></div>
+        <div class="stagebox"><span class="num">5</span><div><h3>Localise</h3><p>Each sentence and image tile gets its own score, blended with the overall one and with the passages Claude flags. Their share answers "how much of this is AI".</p></div><div class="synth"><b>SynthID</b>Highlight the portions most likely watermarked</div></div>
+        <div class="stagebox"><span class="num">6</span><div><h3>Report</h3><p>Score band, share flagged, confidence, signal breakdown, provenance record and a copyable plain-text report.</p></div><div class="synth"><b>SynthID</b>View results</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>SynthID Detector and Origin Lens side by side</h2>
+      <div class="tbl"><table class="cmp">
+        <thead><tr><th></th><th>SynthID Detector</th><th>Origin Lens</th></tr></thead>
+        <tbody>
+          <tr><td>Method</td><td>Reads an invisible watermark embedded at generation time</td><td>Statistical fingerprints, provenance metadata and an optional Claude check</td></tr>
+          <tr><td>Coverage</td><td>Content from Google models and partners that embed SynthID</td><td>Content from any source</td></tr>
+          <tr><td>Certainty</td><td>High when a watermark is found; no watermark does not prove human origin</td><td>Probabilistic estimate; best used as triage, not proof</td></tr>
+          <tr><td>Output</td><td>Watermark present or not, with highlighted portions</td><td>0–100 score, share flagged, highlighted sentences or tiles</td></tr>
+          <tr><td>Where it runs</td><td>Google's portal (early access)</td><td>In your browser; the Claude check sends only what you choose to check</td></tr>
+        </tbody></table></div>
+      <p class="note">Limits: paraphrasing, heavy editing, recompression or screenshots can fool any detector, and polished human writing can score high. Treat a score as one piece of evidence, never as the sole basis for an academic or employment decision.</p>
+    </div>
+  </section>
+
+  <section class="panel keybox" id="keybox" hidden>
+    <span class="eyebrow">Claude check settings</span>
+    <h3>Use your own Anthropic API key</h3>
+    <p class="note">On this site the Claude check runs on your own key. It is kept only in this browser and sent only to api.anthropic.com with each check you run. Each check costs a few cents of API credit at most.</p>
+    <div class="row"><input type="password" id="key-in" placeholder="sk-ant-…" autocomplete="off" aria-label="Anthropic API key"><button class="primary" id="key-save">Save key</button><button class="quiet" id="key-forget">Forget key</button></div>
+    <p class="note" id="key-st"></p>
+  </section>
+</div>
+</main>
+
+<footer class="gut">
+  <div class="wrap foot">
+    <a class="pai" href="https://world-of-ai.co.in/" data-site="index.html" aria-label="planetAI LLP, World of AI">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="none" style="stroke:var(--paper)" stroke-width="2.2"/><ellipse cx="50" cy="38" rx="42" ry="9" fill="none" style="stroke:var(--line)" stroke-width="1.3"/><ellipse cx="50" cy="50" rx="46" ry="12" fill="none" style="stroke:var(--line)" stroke-width="1.3"/><ellipse cx="50" cy="62" rx="42" ry="9" fill="none" style="stroke:var(--line)" stroke-width="1.3"/><polygon points="50,30 68,44 61,66 39,66 32,44" fill="none" style="stroke:var(--gold)" stroke-width="1.7"/><line x1="50" y1="30" x2="50" y2="72" style="stroke:var(--gold)" stroke-width="1.5"/><circle cx="50" cy="30" r="3.6" style="fill:var(--paper)"/><circle cx="68" cy="44" r="3.6" style="fill:var(--paper)"/><circle cx="61" cy="66" r="3.6" style="fill:var(--paper)"/><circle cx="39" cy="66" r="3.6" style="fill:var(--paper)"/><circle cx="32" cy="44" r="3.6" style="fill:var(--paper)"/><circle cx="50" cy="72" r="4.6" style="fill:var(--gold)"/></svg>
+      <span><span class="wm"><b>planet</b><i>AI</i></span><span class="llp">LLP</span></span>
+    </a>
+    <p>Origin Lens is a World of AI instrument by planetAI LLP. Scores are heuristic estimates, not proof of origin.</p>
+    <div class="foot-r"><span>© 2026 planetAI LLP</span><button class="quiet" id="themeBtn" hidden>Theme: night</button></div>
+  </div>
+</footer>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+
+const $=s=>document.querySelector(s);
+const IN_VIEWER=!!window.claude;
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const sig=x=>1/(1+Math.exp(-x));
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const escH=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const pct=x=>Math.round(x*100);
+const last={};
+
+/* ---------- routing ---------- */
+const VIEWS=['text','image','architecture'];
+function show(){
+  let v=location.hash.slice(1); if(!VIEWS.includes(v)) v='text';
+  VIEWS.forEach(k=>{$('#view-'+k).hidden=k!==v; $('#tab-'+k).setAttribute('aria-selected',String(k===v));});
+}
+addEventListener('hashchange',show);
+
+/* ---------- shared UI ---------- */
+function band(s,kind){
+  const w=kind==='image'?'made':'written';
+  if(s<20) return ['Likely human-'+w,'human'];
+  if(s<40) return ['Mostly human','human'];
+  if(s<60) return ['Mixed or uncertain','mid'];
+  if(s<80) return ['Likely AI-assisted','ai'];
+  return ['Likely AI-generated','ai'];
+}
+function pt(t,r){const a=Math.PI-Math.PI*t;return [110+r*Math.cos(a),112-r*Math.sin(a)];}
+function arc(t0,t1,r){const p=pt(t0,r),q=pt(t1,r);return `M${p[0].toFixed(2)} ${p[1].toFixed(2)} A${r} ${r} 0 0 1 ${q[0].toFixed(2)} ${q[1].toFixed(2)}`;}
+function gauge(el,score){
+  const segs=[[0,.2,'var(--human)'],[.2,.4,'color-mix(in srgb,var(--human) 55%,var(--mid))'],[.4,.6,'var(--mid)'],[.6,.8,'color-mix(in srgb,var(--ai) 65%,var(--mid))'],[.8,1,'var(--ai)']];
+  let h=segs.map(([a,b,c])=>`<path d="${arc(a+.006,b-.006,88)}" fill="none" style="stroke:${c}" stroke-width="16"/>`).join('');
+  [0,20,40,60,80,100].forEach(v=>{const p=pt(v/100,68);h+=`<text x="${p[0]}" y="${p[1]+4}" text-anchor="middle" style="fill:var(--muted);font:10px var(--f-mono)">${v}</text>`;});
+  if(score==null){h+=`<text x="110" y="100" text-anchor="middle" style="fill:var(--muted);font:700 28px var(--f-display)">–</text>`;el.innerHTML=h;return;}
+  const ang=-90+180*(score/100);
+  h+=`<g class="needle" style="transform-origin:110px 112px;transform:rotate(${ang}deg)"><path d="M107 112 L110 34 L113 112 Z" style="fill:var(--ink)"/></g><circle cx="110" cy="112" r="8" style="fill:var(--gold)"/><circle cx="110" cy="112" r="3" style="fill:var(--void)"/>`;
+  h+=`<text x="110" y="100" text-anchor="middle" style="fill:var(--ink);font:700 28px var(--f-display)">${score}</text>`;
+  el.innerHTML=h;
+}
+function barColor(v,dir){ if(dir==='human') return 'var(--human)'; return v>.6?'var(--ai)':v>.35?'var(--mid)':'var(--human)'; }
+function renderSignals(el,list){
+  el.innerHTML=list.map(s=>`<div class="sig"><div class="sig-h"><span class="sig-n">${s.name}</span><span class="sig-v">${escH(s.detail)}</span></div>
+    <div class="bar" aria-hidden="true"><i style="width:${Math.max(2,pct(s.val))}%;background:${barColor(s.val,s.dir)}"></i></div>
+    <p class="sig-note">${s.dir==='human'?'Pulls toward human. ':''}${s.note}</p></div>`).join('');
+}
+function setVerdict(el,score,kind){const [t,c]=band(score,kind);el.textContent=t;el.className='verdict v-'+c;}
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,1800);}
+async function copyReport(kind){
+  const r=last[kind]; if(!r) return;
+  const lines=[`Origin Lens report (${kind})`,`Source: ${r.src}`,`AI likelihood: ${r.score}/100 — ${band(r.score,kind)[0]}`,`Share flagged: ${r.extent}%`,`Confidence: ${r.conf}`,'','Signals:',...r.signals.map(s=>`- ${s.name}: ${pct(s.val)}/100 (${s.detail})${s.dir==='human'?' [human marker]':''}`),'','Heuristic estimate; not proof of origin.'];
+  const txt=lines.join('\n');
+  try{await navigator.clipboard.writeText(txt);toast('Report copied');}
+  catch(e){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Report copied');}catch(_){toast('Copy blocked; select the text manually');}ta.remove();}
+}
+
+/* ---------- TEXT ---------- */
+const LEX=["in today's fast-paced","in today's digital","it's important to note","it is important to note","it's worth noting","it is worth noting","plays a crucial role","plays a pivotal role","plays a vital role","a testament to","in the realm of","at its core","let's dive","dive into","delve","delves","delving","tapestry","testament","intricate","multifaceted","nuanced","landscape","realm","pivotal","crucial","paramount","seamless","seamlessly","robust","leverage","leveraging","harness","harnessing","foster","fostering","underscore","underscores","elevate","embark","navigate","navigating","unlock","unleash","holistic","synergy","transformative","ever-evolving","game-changer","cutting-edge","catalyst","empower","empowers","streamline","comprehensive","meticulous","meticulously","commendable","invaluable","plethora","myriad","beacon","resonate","captivating","showcasing","bustling","vibrant","in conclusion","in summary","furthermore","moreover","additionally","notably","ultimately","strike a balance","delicate balance","well-positioned","key takeaways","boasts","a wide range of","a variety of","innovative","stakeholders","journey"];
+const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const LEX_RE=new RegExp('\\b('+LEX.slice().sort((a,b)=>b.length-a.length).map(reEsc).join('|')+')\\b','gi');
+const OPENER=/^["'(]?(however|additionally|moreover|furthermore|overall|in addition|ultimately|importantly|notably|in conclusion|in summary|consequently|as a result|that said|similarly|finally|lastly|by contrast)\b/i;
+const CONTR=/\b(\w+n't|i'm|i've|i'd|i'll|we're|we'll|they're|you're|that's|gonna|wanna|kinda)\b/gi;
+const FP=/\b(i|me|my|mine)\b/gi;
+const CASUAL=/\b(lol|haha|tbh|honestly|anyway|ugh|yeah|ok|okay)\b|!!|\?\?|:\)|\.\.\./gi;
+
+const AI_SAMPLE=`In today's fast-paced digital landscape, artificial intelligence plays a pivotal role in transforming how organizations operate. It's important to note that AI is not just a tool — it is a catalyst for innovation that empowers teams to unlock new levels of efficiency.
+
+Furthermore, businesses that leverage AI can streamline their workflows and foster a culture of continuous improvement. By harnessing robust data pipelines, leaders can navigate complex challenges with confidence. Moreover, AI enables seamless collaboration across departments, ensuring that insights are shared in a timely and comprehensive manner.
+
+Additionally, the ethical dimension of AI cannot be overlooked. Organizations must strike a delicate balance between innovation and responsibility, ensuring that their systems remain transparent, fair, and accountable. This holistic approach serves as a testament to their commitment to stakeholders.
+
+In conclusion, embracing AI is no longer optional. Companies that embark on this transformative journey will be well-positioned to thrive in an ever-evolving marketplace, while those that hesitate risk being left behind.`;
+const HU_SAMPLE=`Got back from the Cape Town site visit last night and I'm wiped. Flight was delayed two hours because of some issue with the catering truck, of all things.
+
+The workshop went better than I expected. Their ops lead kept pushing back on the store-level forecast. Fair enough, the numbers we showed for the Durban stores were off by a lot. I'd assumed the winter range would sell through like last year. It didn't. We'll redo it with the new promo calendar before Friday.
+
+One thing I didn't see coming: half the planners still keep their own Excel sheets on the side. Nobody trusts the system output. That's the real problem, not the model.
+
+Anyway. Need coffee, then the deck.`;
+
+function words(s){return s.toLowerCase().match(/[a-z][a-z'-]*/g)||[];}
+function splitSent(p){return (p.match(/[^.!?]+(?:[.!?]+["')\]]*|$)/g)||[]).map(s=>s.trim()).filter(s=>s.length>1);}
+function cv(a){if(a.length<2)return null;const m=a.reduce((x,y)=>x+y,0)/a.length;const v=a.reduce((x,y)=>x+(y-m)**2,0)/a.length;return m?Math.sqrt(v)/m:0;}
+
+const isHead=p=>words(p).length<=12&&!/[.!?:;"')\]]$/.test(p.trim());
+function analyzeText(raw){
+  const text=raw.replace(/[‘’]/g,"'").replace(/[“”]/g,'"').trim();
+  const paras=text.split(/\n\s*\n/).map(p=>p.replace(/\s*\n\s*/g,' ').trim()).filter(Boolean);
+  const sentByPara=paras.map(p=>isHead(p)?[p]:splitSent(p));
+  const body=sentByPara.filter((_,i)=>!isHead(paras[i])).flat();
+  const allW=words(text); const N=Math.max(1,allW.length);
+  // Rhythm uses body sentences only (no headings or fragments), trimmed of outliers.
+  let lens=body.map(s=>words(s).length).filter(n=>n>=4).sort((a,b)=>a-b);
+  if(lens.length>=20){const k=Math.floor(lens.length*.05);lens=lens.slice(k,lens.length-k);}
+  const meanLen=lens.reduce((a,b)=>a+b,0)/Math.max(1,lens.length);
+  const sCv=cv(lens); const fBurst=sCv===null?.4:clamp((0.65-sCv)/0.4);
+  const hits=(text.match(LEX_RE)||[]); const lexD=hits.length/N*100; const fLex=clamp(lexD/2.5);
+  const openers=body.filter(s=>OPENER.test(s)).length; const opF=openers/Math.max(1,body.length); const fOpen=clamp(opF/0.3);
+  const dashes=(text.match(/—|\s–\s|\s--\s/g)||[]).length; const notOnly=(text.match(/\bnot (only|just)\b[^.]{0,80}\b(but|it is|it's)\b/gi)||[]).length;
+  const pD=(dashes+1.5*notOnly)/N*100; const fPunct=clamp(pD/1.2);
+  const avgWL=allW.reduce((a,w)=>a+w.length,0)/N; const fWL=clamp((avgWL-4.3)/1.0);
+  const pLens=paras.filter(p=>!isHead(p)).map(p=>words(p).length).filter(n=>n>=25); const pCv=pLens.length>=3?cv(pLens):null; const fPara=pCv===null?.3:clamp((0.5-pCv)/0.4);
+  const contr=(text.match(CONTR)||[]).length/N*100, fp=(text.match(FP)||[]).length/N*100, cas=(text.match(CASUAL)||[]).length;
+  const human=clamp(clamp(contr/2.5)*.5+clamp(fp/4)*.3+(cas?0.3:0));
+  const rawScore=.22*fBurst+.26*fLex+.12*fOpen+.20*fPunct+.10*fWL+.10*fPara;
+  const s0=clamp(sig(8*(rawScore-0.36))*(1-0.55*human));
+  const items=sentByPara.map((ps,pi)=>ps.map(st=>{
+    const w=words(st); const n=Math.max(1,w.length); const head=isHead(paras[pi]);
+    const h=(st.match(LEX_RE)||[]).length;
+    const uni=1-clamp(Math.abs(n-meanLen)/(meanLen*0.6||1));
+    const dash=/—|\s–\s|\bnot (only|just)\b/i.test(st)?1:0;
+    const wl=clamp((w.reduce((a,x)=>a+x.length,0)/n-4.3)/1.0);
+    const c=(/\b(\w+n't|i'm|i've|i'd|i'll|we'll|that's)\b|\b(i|my|me)\b/i.test(st)||CASUAL.test(st))?1:0; CASUAL.lastIndex=0;
+    const local=head?0:clamp(.40*clamp(h/2)+.12*(OPENER.test(st)?1:0)+.13*uni+.20*dash+.15*wl-.30*c);
+    return {st,n:w.length,local,head,body:escH(st).replace(LEX_RE,m=>`<mark class="tell">${m}</mark>`)};
+  }));
+  const conf=N<60?'Low':N<150?'Medium':'High';
+  const base=[
+    {name:'Sentence rhythm',val:fBurst,detail:sCv===null?'too few sentences':`variation ${sCv.toFixed(2)}`,note:'People mix short and long sentences; models keep lengths even. Headings and fragments are left out.'},
+    {name:'AI-typical phrasing',val:fLex,detail:`${hits.length} hits · ${lexD.toFixed(1)} per 100 words`,note:'Words and stock phrases models overuse, such as "pivotal", "foster", "it\'s important to note". Underlined in the text. Newer models use fewer of these.'},
+    {name:'Transition openers',val:fOpen,detail:`${openers} of ${body.length} sentences`,note:'Sentences that open with "Furthermore", "Moreover", "Additionally" or "In conclusion".'},
+    {name:'Punctuation fingerprint',val:fPunct,detail:`${dashes} dashes · ${notOnly} "not only/just…but"`,note:'Heavy em-dash use and contrast framing are among the clearest habits of current models.'},
+    {name:'Word length',val:fWL,detail:`${avgWL.toFixed(2)} letters on average`,note:'Longer, Latinate vocabulary is more typical of model output than of everyday writing.'},
+    {name:'Paragraph uniformity',val:fPara,detail:pCv===null?'fewer than 3 full paragraphs':`variation ${pCv.toFixed(2)}`,note:'Evenly sized paragraphs suggest templated structure.'},
+    {name:'Human markers',val:human,dir:'human',detail:`${contr.toFixed(1)} contractions · ${fp.toFixed(1)} first-person per 100 words`,note:'Contractions, first-person detail and casual asides lower the score.'}
+  ];
+  return {text,s0,items,conf,base,words:allW.length,total:body.length,judge:null};
+}
+const normS=x=>x.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+function renderText(r){
+  const j=r.judge; const s=clamp(j?.7*j.p+.3*r.s0:r.s0); const score=Math.round(100*s);
+  const keys=j?j.passages.map(p=>normS(p).slice(0,48)).filter(k=>k.length>=15):[];
+  let flaggedW=0,flaggedS=0;
+  const html=r.items.map(ps=>'<p>'+ps.map(it=>{
+    if(it.head) return `<b>${it.body}</b>`;
+    let sc=.45*s+.55*it.local;
+    if(keys.length){const ns=normS(it.st); if(keys.some(k=>ns.startsWith(k)||ns.includes(k))) sc=Math.max(sc,.85);}
+    if(sc>.5){flaggedW+=it.n;flaggedS++;}
+    const a=sc>.35?Math.round(clamp((sc-.35)/.65)*55):0;
+    return `<span class="s" title="Sentence score ${Math.round(sc*100)}/100" style="background:${a?`color-mix(in srgb,var(--ai) ${a}%,transparent)`:'transparent'}">${it.body}</span>`;
+  }).join(' ')+'</p>').join('');
+  const hExt=flaggedW/Math.max(1,r.words);
+  const extent=Math.round(100*(j?.6*j.share+.4*hExt:hExt));
+  const conf=j?((j.p<.2||j.p>.8)&&r.words>=150?'High':'Medium'):r.conf;
+  const signals=[...r.base];
+  if(j) signals.unshift({name:'Writing check (Claude)',val:j.p,detail:`${pct(j.p)}/100 · ${j.verdict}`,note:'Claude read the writing for polish, cadence, generic framing and missing first-hand detail. Counts for 70% of the score. Passages it picked out are highlighted.'});
+  Object.assign(r,{score,extent,conf,signals,flaggedS});
+  gauge($('#tx-gauge'),score); $('#tx-score').textContent=score; $('#tx-extent').textContent=extent+'%';
+  $('#tx-conf').textContent=conf; $('#tx-sents').textContent=`${flaggedS}/${r.total}`;
+  setVerdict($('#tx-verdict'),score,'text'); renderSignals($('#tx-sigs'),signals); $('#tx-hl').innerHTML=html;
+}
+let TXT_SAMPLE=null, autoJudgeText=false, txCtl=null;
+function runText(srcLabel){
+  const v=$('#txt').value; if(srcLabel) $('#tx-src').textContent=srcLabel;
+  if(!v.trim()){toast('Paste some text or open a document first');return;}
+  txCtl?.abort();
+  const r=analyzeText(v); r.src=$('#tx-src').textContent; last.text=r;
+  $('#tx-judge-cues').innerHTML=''; $('#tx-judge-st').textContent=TXT_SAMPLE?'Not checked yet':(IN_VIEWER?'':'Needs an Anthropic API key'); $('#tx-judge-btn').disabled=false;
+  renderText(r);
+  if(TXT_SAMPLE&&autoJudgeText) runTextJudge();
+}
+function excerpt(t){ if(t.length<=24000) return {t,cut:false}; const m=Math.floor(t.length/2);
+  return {t:t.slice(0,10000)+'\n[…]\n'+t.slice(m-3500,m+3500)+'\n[…]\n'+t.slice(-7000),cut:true}; }
+async function runTextJudge(){
+  const r=last.text; if(!TXT_SAMPLE){if(!IN_VIEWER)openKeybox();return;} if(!r) return;
+  txCtl?.abort(); const ctl=txCtl=new AbortController();
+  const btn=$('#tx-judge-btn'),st=$('#tx-judge-st'); btn.disabled=true; st.textContent='Claude is reading the text…';
+  const ex=excerpt(r.text);
+  const prompt=`You are assessing whether a piece of writing was generated by an AI language model (ChatGPT, Claude, Gemini, Llama and similar) or written by a person, possibly with light AI editing.
+Weigh AI cues: uniform polish and cadence; heavy em-dash rhythm; tidy triads and parallel lists; "not X, but Y" framing; balanced, generic hedging; neat summarising conclusions; vocabulary typical of models; absence of first-hand detail, original data, idiosyncratic opinion or small errors.
+Weigh human cues: specific personal experience, uneven structure, informal asides, real typos, a distinctive voice, concrete verifiable detail.
+The text was extracted from a file and may contain headers, page numbers or broken lines; ignore those.${ex.cut?' The text is long, so you see excerpts from its start, middle and end.':''}
+Reply with only JSON in this shape:
+{"ai_likelihood": 0-100, "ai_share_percent": 0-100, "verdict": "under 8 words", "ai_cues": ["up to 4, each under 14 words"], "human_cues": ["up to 4, each under 14 words"], "ai_passages": ["up to 8 sentences that read most AI-generated, each copied exactly from the text; the first 12 words is enough"]}
+TEXT:
+<<<
+${ex.t}
+>>>`;
+  try{
+    const j=await TXT_SAMPLE.json(prompt,{signal:ctl.signal});
+    if(last.text!==r) return;
+    const num=v=>clamp((Number(v)||0)/100), list=(a,n)=>Array.isArray(a)?a.slice(0,n).map(String):[];
+    r.judge={p:num(j?.ai_likelihood),share:num(j?.ai_share_percent),verdict:String(j?.verdict||'').slice(0,60),ai:list(j?.ai_cues,4),hu:list(j?.human_cues,4),passages:list(j?.ai_passages,8)};
+    autoJudgeText=IN_VIEWER; st.textContent='Checked by Claude'+(IN_VIEWER?' · new text is checked automatically':'');
+    renderText(r); renderCuesTo('#tx-judge-cues',r.judge);
+  }catch(e){
+    if(e?.code==='cancelled') return;
+    if(['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'].includes(e?.code)){$('#tx-judge').hidden=true;TXT_SAMPLE=null;return;}
+    st.textContent={bad_key:'The API key was rejected. Check it in the Claude check settings below.',rate_limited:'Too many checks right now. Try again in a minute.',prompt_too_large:'This text is too long to send. Try a shorter section.',session_expired:'Sign in to Claude again, then try again.',invalid_json:'The answer came back in the wrong shape. Try again.',refused:'Claude declined to assess this text.'}[e?.code]||'The check did not finish. Try again.';
+  }finally{ if(txCtl===ctl) btn.disabled=false; }
+}
+function renderCuesTo(sel,j){const li=(a,c)=>a.map(x=>`<li class="${c}">${escH(x)}</li>`).join('');$(sel).innerHTML=li(j.ai,'c-ai')+li(j.hu,'c-hu');}
+function countWords(){$('#tx-count').textContent=(words($('#txt').value).length)+' words';}
+$('#txt').addEventListener('input',()=>{countWords();$('#tx-src').textContent='Your text';});
+$('#tx-run').onclick=()=>runText();
+$('#tx-ai').onclick=()=>{$('#txt').value=AI_SAMPLE;countWords();runText('Example: AI-style text');};
+$('#tx-hu').onclick=()=>{$('#txt').value=HU_SAMPLE;countWords();runText('Example: human text');};
+const LIBS={pdf:'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js',pdfw:'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js',
+  docx:'https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js',xlsx:'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'};
+const loaded={};
+function loadScript(src){return loaded[src]||(loaded[src]=new Promise((ok,no)=>{const t=document.createElement('script');t.src=src;t.onload=ok;t.onerror=()=>{delete loaded[src];no(new Error('lib'));};document.head.appendChild(t);}));}
+function cleanPdf(pages){
+  // Rejoin visual lines into paragraphs; keep short capitalised unpunctuated lines (headings) apart.
+  const cap=l=>/^[A-Z0-9"'“(]/.test(l);
+  const head=l=>l.split(/\s+/).length<=10&&!/[.!?:;,"')\]”]$/.test(l)&&cap(l);
+  return pages.map(pg=>{
+    const lines=pg.split('\n').map(l=>l.trim()).filter(l=>l&&!/^(page\s*)?\d{1,4}(\s*(of|\/)\s*\d+)?$/i.test(l));
+    const out=[]; let cur='', prev='';
+    for(const l of lines){
+      if(!cur){cur=l;prev=l;continue;}
+      if(/[A-Za-z]-$/.test(prev)&&/^[a-z]/.test(l)) cur=cur.slice(0,-1)+l;
+      else if((head(prev)&&cap(l))||(/[.!?"')”]$/.test(prev)&&head(l))){out.push(cur);cur=l;}
+      else cur+=' '+l;
+      prev=l;
+    }
+    if(cur) out.push(cur); return out.join('\n\n');
+  }).join('\n\n');
+}
+async function extractText(f){
+  const ext=(f.name.split('.').pop()||'').toLowerCase();
+  if(['txt','md','csv'].includes(ext)||f.type.startsWith('text/')) return {text:await f.text(),kind:'Text file'};
+  if(ext==='docx'){await loadScript(LIBS.docx);const r=await window.mammoth.extractRawText({arrayBuffer:await f.arrayBuffer()});return {text:r.value,kind:'Word document'};}
+  if(ext==='pdf'){
+    await loadScript(LIBS.pdfw); await loadScript(LIBS.pdf);
+    const lib=window.pdfjsLib; lib.GlobalWorkerOptions.workerSrc=LIBS.pdfw;
+    const doc=await lib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise; const pages=[];
+    for(let i=1;i<=doc.numPages;i++){const c=await (await doc.getPage(i)).getTextContent();pages.push(c.items.map(it=>it.str+(it.hasEOL?'\n':' ')).join('').replace(/[ \t]+\n/g,'\n'));}
+    const text=cleanPdf(pages); return {text,kind:`PDF · ${doc.numPages} page${doc.numPages>1?'s':''}`,note:text.trim()?'':'This PDF has no text layer (it is probably scanned), so there is nothing to analyse.'};
+  }
+  if(['xlsx','xls','ods'].includes(ext)){
+    await loadScript(LIBS.xlsx); const wb=window.XLSX.read(new Uint8Array(await f.arrayBuffer()),{type:'array'}); const cells=[];
+    for(const n of wb.SheetNames){for(const row of window.XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:false})){for(const v of row){const t=String(v??'').trim();if(t.split(/\s+/).length>=6)cells.push(t);}}}
+    return {text:cells.join('\n\n'),kind:`Spreadsheet · ${wb.SheetNames.length} sheet${wb.SheetNames.length>1?'s':''}`,note:'Only cells with a sentence or more of text (6+ words) are analysed; numbers and labels are skipped.'+(cells.length?'':' None were found in this file.')};
+  }
+  if(ext==='doc') throw new Error('Older .doc files are not supported. Save it as .docx and open that.');
+  throw new Error('Open a Word (.docx), PDF, Excel (.xlsx), CSV or text file.');
+}
+async function openDoc(f){
+  const note=$('#tx-filenote'); $('#tx-src').textContent='Reading '+f.name+'…'; note.hidden=true;
+  try{
+    const {text,kind,note:n}=await extractText(f);
+    const MAX=200000; const clipped=text.length>MAX;
+    $('#txt').value=text.slice(0,MAX).replace(/\r\n?/g,'\n').replace(/\n{3,}/g,'\n\n').trim(); countWords();
+    const msg=[kind,n,clipped?'Very long file: the first 200,000 characters are analysed.':''].filter(Boolean).join(' · ');
+    note.textContent=msg; note.hidden=false;
+    if($('#txt').value) runText(f.name); else {resetText(); $('#tx-src').textContent=f.name;}
+  }catch(e){
+    $('#tx-src').textContent='Could not read '+f.name;
+    note.textContent=e?.message==='lib'?'The document reader did not load. Check your connection and try again.':(e?.message||'This file could not be read.');
+    note.hidden=false;
+  }
+}
+function resetText(){
+  gauge($('#tx-gauge'),null); ['#tx-score','#tx-extent','#tx-conf','#tx-sents'].forEach(id=>$(id).textContent='–');
+  const v=$('#tx-verdict'); v.textContent='Waiting for text'; v.className='verdict';
+  $('#tx-sigs').innerHTML=''; $('#tx-hl').innerHTML='<p class="muted">Paste text or open a document, then tap Analyse text to see which sentences carry the signal.</p>';
+  txCtl?.abort(); $('#tx-judge-cues').innerHTML=''; $('#tx-judge-st').textContent=''; $('#tx-judge-btn').disabled=false;
+  delete last.text;
+}
+$('#tx-file').onchange=e=>{const f=e.target.files[0];if(f)openDoc(f);e.target.value='';};
+$('#tx-clear').onclick=()=>{$('#txt').value='';countWords();$('#tx-src').textContent='Your text';$('#tx-filenote').hidden=true;resetText();$('#txt').focus();};
+const ta=$('#txt');
+['dragenter','dragover'].forEach(ev=>ta.addEventListener(ev,e=>{if([...(e.dataTransfer?.types||[])].includes('Files'))e.preventDefault();}));
+ta.addEventListener('drop',e=>{const f=e.dataTransfer?.files?.[0];if(f){e.preventDefault();openDoc(f);}});
+$('#tx-copy').onclick=()=>copyReport('text');
+$('#tx-judge-btn').onclick=runTextJudge;
+
+/* ---------- IMAGE: metadata ---------- */
+function latin(buf,max){let s='';const n=Math.min(buf.length,max);for(let i=0;i<n;i+=8192)s+=String.fromCharCode.apply(null,buf.subarray(i,Math.min(n,i+8192)));return s;}
+function parseExif(b){
+  if(b[0]!==0xFF||b[1]!==0xD8) return null;
+  let o=2;
+  while(o+9<b.length){
+    if(b[o]!==0xFF) break;
+    const m=b[o+1], len=(b[o+2]<<8)|b[o+3];
+    if(m===0xE1&&b[o+4]===0x45&&b[o+5]===0x78&&b[o+6]===0x69&&b[o+7]===0x66) return parseTiff(b,o+10);
+    if(m===0xDA) break; o+=2+len;
+  }
+  return null;
+}
+function parseTiff(b,t){
+  const le=b[t]===0x49;
+  const u16=i=>le?b[i]|(b[i+1]<<8):(b[i]<<8)|b[i+1];
+  const u32=i=>(le?(b[i]|(b[i+1]<<8)|(b[i+2]<<16)|(b[i+3]<<24)):((b[i]<<24)|(b[i+1]<<16)|(b[i+2]<<8)|b[i+3]))>>>0;
+  const str=(p,n)=>{let s='';for(let i=0;i<n&&i<120;i++){const c=b[p+i];if(!c)break;s+=String.fromCharCode(c);}return s.trim();};
+  const out={}; const SZ={1:1,2:1,3:2,4:4,5:8,7:1,9:4,10:8};
+  function ifd(off,names){
+    if(t+off+2>b.length) return; const n=u16(t+off); if(n>500) return;
+    for(let k=0;k<n;k++){
+      const e=t+off+2+k*12; if(e+12>b.length) break;
+      const tag=u16(e),type=u16(e+2),cnt=u32(e+4),sz=(SZ[type]||1)*cnt;
+      const dp=sz>4?t+u32(e+8):e+8;
+      if(tag===0x8769){out._x=u32(e+8);continue;}
+      const nm=names[tag]; if(!nm||dp+Math.min(sz,8)>b.length) continue;
+      if(type===2) out[nm]=str(dp,cnt); else if(type===3) out[nm]=u16(dp); else if(type===4) out[nm]=u32(dp);
+      else if(type===5||type===10){const d=u32(dp+4);out[nm]=d?u32(dp)/d:0;}
+    }
+  }
+  ifd(u32(t+4),{0x010F:'Make',0x0110:'Model',0x0131:'Software',0x0132:'DateTime'});
+  if(out._x) ifd(out._x,{0x829A:'ExposureTime',0x829D:'FNumber',0x8827:'ISO',0x9003:'DateTimeOriginal',0x920A:'FocalLength',0xA434:'LensModel'});
+  delete out._x; return out;
+}
+const GENS=[[/\bmidjourney\b/i,'Midjourney'],[/\bDALL[-··.]?E\b/,'DALL·E'],[/\bOpenAI\b/,'OpenAI'],[/\bAdobe Firefly\b/i,'Adobe Firefly'],[/stable.?diffusion|\bSDXL\b|Steps: \d+, Sampler/i,'Stable Diffusion'],[/\bComfyUI\b|"class_type"/,'ComfyUI'],[/\bNovelAI\b/,'NovelAI'],[/Made with Google AI|\bImagen\b|\bGemini\b/,'Google AI'],[/leonardo\.ai/i,'Leonardo'],[/\bIdeogram\b/,'Ideogram'],[/\bFLUX\.1\b|Black Forest Labs/,'FLUX'],[/Bing Image Creator|Microsoft Designer/,'Microsoft Designer'],[/\bGrok\b|\bx\.ai\b/,'Grok']];
+/* Only metadata sections are searched. Compressed pixel data is random bytes and can spell short words by chance. */
+function metaText(b,fmt){
+  let s='';
+  const add=(a,z)=>{s+=latin(b.subarray(a,Math.min(z,b.length)),4e6)+'\n';};
+  if(fmt==='JPEG'){
+    let o=2;
+    while(o+4<b.length){
+      if(b[o]!==0xFF) break; const m=b[o+1];
+      if(m===0xD8||m===0x01||(m>=0xD0&&m<=0xD7)){o+=2;continue;}
+      if(m===0xDA||m===0xD9) break;
+      const len=(b[o+2]<<8)|b[o+3];
+      if((m>=0xE0&&m<=0xEF)||m===0xFE) add(o+4,o+2+len);
+      o+=2+len;
+    }
+  }else if(fmt==='PNG'){
+    let o=8;
+    while(o+8<=b.length){
+      const L=((b[o]<<24)|(b[o+1]<<16)|(b[o+2]<<8)|b[o+3])>>>0, ty=String.fromCharCode(b[o+4],b[o+5],b[o+6],b[o+7]);
+      if(['tEXt','iTXt','zTXt','caBX','eXIf'].includes(ty)) add(o+8,o+8+L);
+      if(ty==='caBX') s+='c2pa\n';
+      if(ty==='IEND') break; o+=12+L;
+    }
+  }else if(fmt==='WebP'){
+    let o=12;
+    while(o+8<=b.length){
+      const ty=String.fromCharCode(b[o],b[o+1],b[o+2],b[o+3]), L=(b[o+4]|(b[o+5]<<8)|(b[o+6]<<16)|(b[o+7]<<24))>>>0;
+      if(['EXIF','XMP ','C2PA'].includes(ty)) add(o+8,o+8+L);
+      o+=8+L+(L&1);
+    }
+  }
+  return s;
+}
+function readMeta(buf,file){
+  const fmt=buf[0]===0xFF&&buf[1]===0xD8?'JPEG':buf[0]===0x89&&buf[1]===0x50?'PNG':(buf[8]===0x57&&buf[9]===0x45&&buf[10]===0x42&&buf[11]===0x50)?'WebP':buf[0]===0x47&&buf[1]===0x49?'GIF':(file.type||'unknown');
+  const s=metaText(buf,fmt);
+  const exif=parseExif(buf)||{};
+  const c2pa=/c2pa/i.test(s);
+  const fullAI=/digitalsourcetype\/trainedAlgorithmicMedia/i.test(s);
+  const compAI=/digitalsourcetype\/(compositeWithTrainedAlgorithmicMedia|compositeSynthetic)/i.test(s);
+  const gens=[...new Set(GENS.filter(([re])=>re.test(s)).map(g=>g[1]))];
+  const tool=(s.match(/CreatorTool(?:="|>)([^"<]{2,80})/)||[])[1]||'';
+  const camera=!!(exif.Make&&(exif.ExposureTime||exif.FNumber||exif.ISO));
+  return {fmt,exif,c2pa,fullAI,compAI,gens,tool,camera,bytes:buf.length};
+}
+
+/* ---------- IMAGE: pixels ---------- */
+function fft(re,im){
+  const n=re.length;
+  for(let i=1,j=0;i<n;i++){let b=n>>1;for(;j&b;b>>=1)j^=b;j^=b;if(i<j){[re[i],re[j]]=[re[j],re[i]];[im[i],im[j]]=[im[j],im[i]];}}
+  for(let len=2;len<=n;len<<=1){const a=-2*Math.PI/len,wr=Math.cos(a),wi=Math.sin(a);
+    for(let i=0;i<n;i+=len){let cr=1,ci=0;for(let k=0;k<len/2;k++){const p=i+k,q=p+len/2;
+      const tr=re[q]*cr-im[q]*ci,ti=re[q]*ci+im[q]*cr;re[q]=re[p]-tr;im[q]=im[p]-ti;re[p]+=tr;im[p]+=ti;const nr=cr*wr-ci*wi;ci=cr*wi+ci*wr;cr=nr;}}}
+}
+function toGray(d,n){const g=new Float32Array(n);for(let i=0,j=0;i<n;i++,j+=4)g[i]=.299*d[j]+.587*d[j+1]+.114*d[j+2];return g;}
+function residual(g,W,H){
+  const r=new Float32Array(W*H);
+  for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){const i=y*W+x;
+    const m=(g[i-W-1]+g[i-W]+g[i-W+1]+g[i-1]+g[i+1]+g[i+W-1]+g[i+W]+g[i+W+1])/8; r[i]=g[i]-m;}
+  return r;
+}
+function spectrum(img){
+  const N=256, W0=img.naturalWidth, H0=img.naturalHeight;
+  if(Math.min(W0,H0)<N) return null;
+  const c=document.createElement('canvas');c.width=N;c.height=N;const x=c.getContext('2d',{willReadFrequently:true});
+  x.drawImage(img,Math.floor((W0-N)/2),Math.floor((H0-N)/2),N,N,0,0,N,N);
+  const g=toGray(x.getImageData(0,0,N,N).data,N*N); const r=residual(g,N,N);
+  const re=new Float64Array(N*N),im=new Float64Array(N*N);
+  for(let y=0;y<N;y++)for(let xx=0;xx<N;xx++){const w=(.5-.5*Math.cos(2*Math.PI*xx/(N-1)))*(.5-.5*Math.cos(2*Math.PI*y/(N-1)));re[y*N+xx]=r[y*N+xx]*w;}
+  const rr=new Float64Array(N),ii=new Float64Array(N);
+  for(let y=0;y<N;y++){for(let k=0;k<N;k++){rr[k]=re[y*N+k];ii[k]=im[y*N+k];}fft(rr,ii);for(let k=0;k<N;k++){re[y*N+k]=rr[k];im[y*N+k]=ii[k];}}
+  for(let k=0;k<N;k++){for(let y=0;y<N;y++){rr[y]=re[y*N+k];ii[y]=im[y*N+k];}fft(rr,ii);for(let y=0;y<N;y++){re[y*N+k]=rr[y];im[y*N+k]=ii[y];}}
+  const L=new Float32Array(N*N);for(let i=0;i<N*N;i++)L[i]=Math.log1p(Math.hypot(re[i],im[i]));
+  const at=(u,v)=>L[((v+N)%N)*N+((u+N)%N)];
+  const C=[0,64,128,192]; const peaks=[];
+  for(const u of C)for(const v of C){ if(!u&&!v) continue;
+    const ring=[];for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){if(Math.abs(dx)<=1&&Math.abs(dy)<=1)continue;ring.push(at(u+dx,v+dy));}
+    ring.sort((a,b)=>a-b); const med=ring[ring.length>>1];
+    const ctr=Math.max(at(u,v),at(u+1,v),at(u,v+1),at(u+1,v+1));
+    peaks.push({u,v,d:ctr-med});
+  }
+  peaks.sort((a,b)=>b.d-a.d); const top=(peaks[0].d+peaks[1].d+peaks[2].d)/3;
+  // draw shifted spectrum
+  let mn=1e9,mx=-1e9;for(const v of L){if(v<mn)mn=v;if(v>mx)mx=v;}
+  const sc=$('#spec').getContext('2d');const id=sc.createImageData(N,N);
+  for(let y=0;y<N;y++)for(let xx=0;xx<N;xx++){const v=at(xx-N/2,y-N/2);const q=Math.round(255*Math.pow((v-mn)/(mx-mn||1),1.6));const o=(y*N+xx)*4;id.data[o]=q;id.data[o+1]=q;id.data[o+2]=q;id.data[o+3]=255;}
+  sc.putImageData(id,0,0); sc.strokeStyle=css('--ai')||'#CC3366'; sc.lineWidth=1.5;
+  for(const p of peaks.slice(0,3)){const cx=((p.u+N/2)%N),cy=((p.v+N/2)%N);sc.beginPath();sc.arc(cx,cy,7,0,Math.PI*2);sc.stroke();}
+  return {top};
+}
+function pixelAnalysis(img){
+  const W0=img.naturalWidth,H0=img.naturalHeight; const k=Math.min(1,1024/Math.max(W0,H0));
+  const W=Math.max(32,Math.round(W0*k)),H=Math.max(32,Math.round(H0*k));
+  const pv=$('#prev'),ov=$('#ovl'); pv.width=ov.width=W; pv.height=ov.height=H;
+  const x=pv.getContext('2d',{willReadFrequently:true}); x.drawImage(img,0,0,W,H);
+  const g=toGray(x.getImageData(0,0,W,H).data,W*H); const r=residual(g,W,H);
+  // Noise is measured on native-resolution patches: downscaling averages real sensor grain away.
+  const T=32,nx=Math.max(1,Math.floor(W/T)),ny=Math.max(1,Math.floor(H/T)); const tiles=[];
+  const Tn=T/k, S=Math.max(16,Math.min(64,Math.floor(Tn)));
+  const pc=document.createElement('canvas');pc.width=pc.height=S;const pctx=pc.getContext('2d',{willReadFrequently:true});
+  for(let ty=0;ty<ny;ty++)for(let tx=0;tx<nx;tx++){
+    const sx=Math.round((tx+.5)*Tn-S/2), sy=Math.round((ty+.5)*Tn-S/2);
+    pctx.clearRect(0,0,S,S); pctx.drawImage(img,sx,sy,S,S,0,0,S,S);
+    const pg=toGray(pctx.getImageData(0,0,S,S).data,S*S), pr=residual(pg,S,S);
+    let s=0,s2=0,gr=0,n=0;
+    for(let y=1;y<S-1;y++)for(let xx=1;xx<S-1;xx++){const i=y*S+xx;const v=pr[i];s+=v;s2+=v*v;gr+=Math.abs(pg[i+1]-pg[i-1])+Math.abs(pg[i+S]-pg[i-S]);n++;}
+    const R=n?Math.sqrt(Math.max(0,s2/n-(s/n)**2)):0, G=n?gr/n:0;
+    tiles.push({tx,ty,R,G,ai:clamp((1.4-R)/1.1)*(G<18?1:0.65)});
+  }
+  const flat=tiles.slice().sort((a,b)=>a.G-b.G).slice(0,Math.max(1,Math.ceil(tiles.length*.4)));
+  const fSmooth=flat.reduce((a,t)=>a+clamp((1.4-t.R)/1.1),0)/flat.length;
+  const medR=flat.map(t=>t.R).sort((a,b)=>a-b)[flat.length>>1];
+  return {W,H,W0,H0,T,tiles,fSmooth,medR};
+}
+const GEN_SIDES=new Set([512,576,640,704,768,832,896,960,1024,1088,1152,1216,1280,1344,1408,1472,1536,1600,1664,1728,1792,1856,1920,2048]);
+function drawOverlay(px,s,full){
+  const ov=$('#ovl'),c=ov.getContext('2d'); c.clearRect(0,0,ov.width,ov.height);
+  if(!$('#im-ovl').checked) return; c.fillStyle=css('--ai')||'#CC3366';
+  for(const t of px.tiles){const v=full?1:.5*s+.5*t.ai; if(v<.45)continue; c.globalAlpha=clamp((v-.45)/.55)*.55; c.fillRect(t.tx*px.T,t.ty*px.T,px.T,px.T);}
+  c.globalAlpha=1;
+}
+function loadImg(url){return new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(new Error('decode'));i.src=url;});}
+
+let SAMPLE=null, autoJudge=false, judgeCtl=null;
+async function analyzeImage(file,label){
+  let img; const url=URL.createObjectURL(file);
+  try{img=await loadImg(url);}catch(e){toast('That file could not be read as an image. Try a JPEG, PNG or WebP.');return;}
+  const buf=new Uint8Array(await file.arrayBuffer());
+  const m=readMeta(buf,file); const px=pixelAnalysis(img); const sp=spectrum(img);
+  URL.revokeObjectURL(url);
+  const jpeg=m.fmt==='JPEG';
+  const fSpec=sp?clamp((sp.top-0.6)/1.6):0;
+  const bothGen=GEN_SIDES.has(px.W0)&&GEN_SIDES.has(px.H0), mult64=px.W0%64===0&&px.H0%64===0;
+  const fDims=bothGen?1:mult64?.6:0;
+  const fNoMeta=m.camera?0:(m.c2pa?.3:.5);
+  const ar=px.W0/px.H0, photoShape=!bothGen&&[4/3,3/4,3/2,2/3].some(r=>Math.abs(ar-r)/r<.012)&&px.W0*px.H0>=1.2e6;
+  const ws={sm:.25,sp:sp?(jpeg?.10:.25):0,dm:.20,nm:.15};
+  const raw=(ws.sm*px.fSmooth+ws.sp*fSpec+ws.dm*fDims+ws.nm*fNoMeta)/(ws.sm+ws.sp+ws.dm+ws.nm);
+  const sNoCap=sig(7*(raw-.45));
+  // Smooth flat areas alone are weak evidence (phones denoise skies); without a fingerprint, stay at or below "uncertain".
+  const fingerprint=fDims>=.6||fSpec>=.3;
+  let sCapped=fingerprint?sNoCap:Math.min(sNoCap,.5); if(photoShape) sCapped*=.75;
+  const declared=(m.fullAI||m.gens.length)?'full':m.compAI?'composite':null;
+  const base=[
+    {name:'Declared provenance',val:declared==='full'?1:declared==='composite'?.8:0,
+      detail:declared?(m.gens.join(', ')||(m.fullAI?'IPTC: trained algorithmic media':'IPTC: AI composite')):(m.c2pa?'C2PA manifest, no AI claim found':'none found'),
+      note:'Generators and editors can write a C2PA manifest or IPTC source type that declares AI. Strongest evidence when present; easily stripped by re-saving.'},
+    {name:'Camera capture data',val:m.camera?1:0,dir:'human',detail:m.camera?`${m.exif.Make||''} ${m.exif.Model||''}`.trim():'no exposure data',note:'Make, model and exposure settings in EXIF point to a real camera. Can be forged, and many platforms strip it.'},
+    {name:'Noise texture',val:px.fSmooth,detail:`flat-area noise σ ${px.medR.toFixed(2)} (native pixels)`,note:'Camera sensors leave grain even in flat areas. Phones smooth skies and designed graphics are clean too, so this signal is weak on its own. Shown as the heatmap.'},
+    {name:'Spectral peaks',val:fSpec,detail:sp?`peak strength ${sp.top.toFixed(2)}${jpeg?' · JPEG, down-weighted':''}`:'image under 256 px',note:'Periodic patterns left by upsampling layers in many generators.'},
+    {name:'Generator dimensions',val:fDims,detail:`${px.W0}×${px.H0}`,note:'Sizes such as 1024×1024 or 832×1216 are native outputs of common generators. Cameras rarely produce them.'},
+    {name:'Camera-shaped frame',val:photoShape?1:0,dir:'human',detail:`${px.W0}×${px.H0} · ratio ${ar.toFixed(3)}`,note:'Large 4:3 or 3:2 frames match phone and camera sensors; generators mostly output other sizes.'},
+    {name:'Missing capture metadata',val:fNoMeta,detail:m.camera?'present':'absent',note:'Weak signal: AI images usually lack camera data, but so do screenshots and photos shared through WhatsApp or picked via the iOS photo picker, which strip EXIF.'}
+  ];
+  const e=m.exif; const rows=[['File',label],['Format',`${m.fmt} · ${(m.bytes/1024).toFixed(0)} KB`],['Dimensions',`${px.W0}×${px.H0}`],
+    ['Camera',e.Make?`${e.Make} ${e.Model||''}`:'—'],['Exposure',e.ExposureTime?`1/${Math.round(1/e.ExposureTime)} s · f/${(e.FNumber||0).toFixed(1)} · ISO ${e.ISO||'—'}`:'—'],
+    ['Captured',e.DateTimeOriginal||e.DateTime||'—'],['Software',e.Software||m.tool||'—'],['C2PA manifest',m.c2pa?'present (signature not verified here)':'not found'],
+    ['IPTC source type',m.fullAI?'trainedAlgorithmicMedia':m.compAI?'compositeWithTrainedAlgorithmicMedia':'not found'],['Generator tags',m.gens.join(', ')||'none']];
+  $('#im-meta').innerHTML=rows.map(([k,v])=>`<tr><td>${k}</td><td>${escH(String(v))}</td></tr>`).join('');
+  if(!sp){const c=$('#spec').getContext('2d');c.fillStyle='#000';c.fillRect(0,0,256,256);}
+  $('#im-src').textContent=label;
+  judgeCtl?.abort();
+  const r={file,label,src:label,m,px,sNoCap,sCapped,fingerprint,declared,base,judge:null};
+  last.image=r;
+  $('#im-judge-cues').innerHTML=''; $('#im-judge-st').textContent=SAMPLE?'Not checked yet':(IN_VIEWER?'':'Needs an Anthropic API key'); $('#im-judge-btn').disabled=false;
+  renderImage(r);
+  if(SAMPLE&&autoJudge) runJudge();
+}
+function renderImage(r){
+  const {m,px,declared,judge}=r;
+  const jScore=judge?.7*judge.p+.3*r.sNoCap:0;
+  let s;
+  if(declared==='full') s=.95;
+  else if(declared==='composite') s=Math.max(.8,jScore);
+  else if(judge){ s=jScore; if(m.camera) s*=.6; }
+  else { s=r.sCapped; if(m.camera) s*=.35; }
+  s=clamp(s);
+  const score=Math.round(100*s);
+  const tileExt=px.tiles.filter(t=>.5*s+.5*t.ai>.55).length/px.tiles.length;
+  const extent=declared==='full'?100:Math.round(100*(judge?.6*judge.share+.4*tileExt:tileExt));
+  const conf=(declared||m.camera||(judge&&(judge.p<.2||judge.p>.8)))?'High':((judge||px.W0*px.H0>250000)?'Medium':'Low');
+  const signals=[...r.base];
+  if(judge) signals.unshift({name:'Vision check (Claude)',val:judge.p,detail:`${pct(judge.p)}/100 · ${judge.verdict}`,note:'Claude looked at the content itself: anatomy, lettering, lighting, textures and typical AI motifs. Counts for 70% of the score unless a provenance tag decides it.'});
+  else if(!r.fingerprint&&!declared) signals.unshift({name:'No generator fingerprint',val:0,dir:'human',detail:'score capped at 50',note:'No spectral peaks and no generator-native size, so pixel statistics alone cannot go above "uncertain".'+(SAMPLE?' Run the vision check to judge the content itself.':'')});
+  Object.assign(r,{score,extent,conf,signals,s,full:declared==='full'});
+  gauge($('#im-gauge'),score); $('#im-score').textContent=score; $('#im-extent').textContent=extent+'%';
+  $('#im-conf').textContent=conf; $('#im-dim').textContent=`${px.W}×${px.H}`;
+  setVerdict($('#im-verdict'),score,'image'); renderSignals($('#im-sigs'),signals);
+  drawOverlay(px,s,r.full);
+}
+const JUDGE_PROMPT=`You are an image-forensics analyst. Decide how likely this image was generated or substantially made by an AI image model (Midjourney, DALL·E, Imagen, Stable Diffusion, FLUX and similar) rather than captured by a camera or designed by a person with ordinary tools.
+Check: hands, teeth, eyes, ears and skin; legibility of any text (garbled or melting lettering is a strong AI cue); lighting, shadows and reflections that disagree; repeating, smeared or melting textures; implausible geometry; a hyper-clean rendered look; stock AI motifs such as glowing wireframe brains, neural-network particle dust and holographic heads. Also weigh cues of real capture: natural grain, motion blur, lens flare, ordinary clutter, coherent signage.
+The image may be cropped, resized or a collage. If it has several panels, judge each and report the share of the image that looks AI-made.
+Reply with only JSON in this shape:
+{"ai_likelihood": 0-100, "ai_share_percent": 0-100, "verdict": "under 8 words", "ai_cues": ["up to 4 cues, each under 12 words"], "human_cues": ["up to 4 cues, each under 12 words"]}`;
+async function runJudge(){
+  const r=last.image; if(!SAMPLE){if(!IN_VIEWER)openKeybox();return;} if(!r) return;
+  judgeCtl?.abort(); const ctl=judgeCtl=new AbortController();
+  const btn=$('#im-judge-btn'),st=$('#im-judge-st'); btn.disabled=true; st.textContent='Claude is looking at the image…';
+  try{
+    const j=await SAMPLE.json(JUDGE_PROMPT,{images:r.file,signal:ctl.signal});
+    if(last.image!==r) return;
+    const num=v=>clamp((Number(v)||0)/100), list=a=>Array.isArray(a)?a.slice(0,4).map(String):[];
+    r.judge={p:num(j?.ai_likelihood),share:num(j?.ai_share_percent),verdict:String(j?.verdict||'').slice(0,60),ai:list(j?.ai_cues),hu:list(j?.human_cues)};
+    autoJudge=IN_VIEWER; st.textContent='Checked by Claude'+(IN_VIEWER?' · new images are checked automatically':'');
+    renderImage(r); renderCues(r.judge);
+  }catch(e){
+    if(e?.code==='cancelled') return;
+    if(['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed','images_unavailable'].includes(e?.code)){$('#im-judge').hidden=true;SAMPLE=null;if(last.image)renderImage(last.image);return;}
+    st.textContent={bad_key:'The API key was rejected. Check it in the Claude check settings below.',rate_limited:'Too many checks right now. Try again in a minute.',image_rejected:'Claude could not read this file. Try a JPEG or PNG under 20 MB.',session_expired:'Sign in to Claude again, then try again.',invalid_json:'The answer came back in the wrong shape. Try again.',refused:'Claude declined to assess this image.'}[e?.code]||'The check did not finish. Try again.';
+  }finally{ if(judgeCtl===ctl) btn.disabled=false; }
+}
+function renderCues(j){
+  const li=(a,c)=>a.map(x=>`<li class="${c}">${escH(x)}</li>`).join('');
+  $('#im-judge-cues').innerHTML=li(j.ai,'c-ai')+li(j.hu,'c-hu');
+}
+$('#im-judge-btn').onclick=runJudge;
+(async()=>{try{
+  if(!window.claude?.use){setTimeout(siteSetup,0);return;}
+  const sm=await window.claude.use('sample'); if(!sm) return;
+  TXT_SAMPLE=sm; $('#tx-judge').hidden=false; if(last.text) $('#tx-judge-st').textContent='Not checked yet';
+  const lim=await sm.limits().catch(()=>null); if(!lim?.images) return;
+  SAMPLE=sm; $('#im-judge').hidden=false;
+  if(last.image){$('#im-judge-st').textContent='Not checked yet';renderImage(last.image);}
+}catch(e){}})();
+
+/* ---------- IMAGE: examples drawn in-page ---------- */
+function makeSample(kind){
+  return new Promise(res=>{
+    const W=kind==='a'?1024:1200,H=kind==='a'?1024:900;
+    const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+    const sky=x.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#3a5fa8');sky.addColorStop(.55,'#e8a86a');sky.addColorStop(1,'#5a3a4a');x.fillStyle=sky;x.fillRect(0,0,W,H);
+    const sun=x.createRadialGradient(W*.62,H*.5,10,W*.62,H*.5,W*.22);sun.addColorStop(0,'rgba(255,240,200,1)');sun.addColorStop(1,'rgba(255,200,140,0)');x.fillStyle=sun;x.fillRect(0,0,W,H);
+    x.fillStyle='#2b2f4a';x.beginPath();x.moveTo(0,H*.72);x.bezierCurveTo(W*.3,H*.55,W*.55,H*.82,W,H*.66);x.lineTo(W,H);x.lineTo(0,H);x.fill();
+    x.fillStyle='#1b1d30';x.beginPath();x.moveTo(0,H*.86);x.bezierCurveTo(W*.4,H*.74,W*.7,H*.95,W,H*.84);x.lineTo(W,H);x.lineTo(0,H);x.fill();
+    if(kind==='b'){
+      const d=x.getImageData(0,0,W,H),p=d.data;
+      for(let i=0;i<p.length;i+=4){const n=(Math.random()+Math.random()+Math.random()-1.5)*9;p[i]=clamp(p[i]+n+(Math.random()-.5)*4,0,255);p[i+1]=clamp(p[i+1]+n,0,255);p[i+2]=clamp(p[i+2]+n+(Math.random()-.5)*5,0,255);}
+      x.putImageData(d,0,0);
+    }
+    c.toBlob(b=>res(new File([b],kind==='a'?'example-smooth-render.png':'example-camera-like.jpg',{type:b.type})),kind==='a'?'image/png':'image/jpeg',.9);
+  });
+}
+$('#im-a').onclick=async()=>analyzeImage(await makeSample('a'),'Example: smooth render (drawn in-page)');
+$('#im-b').onclick=async()=>analyzeImage(await makeSample('b'),'Example: camera-like photo (drawn in-page)');
+$('#im-file').onchange=e=>{const f=e.target.files[0];if(f)analyzeImage(f,f.name);e.target.value='';};
+$('#im-ovl').onchange=()=>{const r=last.image;if(r)drawOverlay(r.px,r.s,r.full);};
+$('#im-copy').onclick=()=>copyReport('image');
+const drop=$('#drop');
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))analyzeImage(f,f.name);});
+document.addEventListener('paste',e=>{const it=[...(e.clipboardData?.items||[])].find(i=>i.type.startsWith('image/'));if(it){location.hash='image';analyzeImage(it.getAsFile(),'Pasted image');}});
+
+/* ---------- Claude check on the website: visitor's own Anthropic key ---------- */
+const MODEL='claude-sonnet-5-5', KEY_STORE='origin-lens-anthropic-key';
+let MEMKEY='';
+function getKey(){try{return localStorage.getItem(KEY_STORE)||MEMKEY;}catch(e){return MEMKEY;}}
+function setKey(k){MEMKEY=k;try{k?localStorage.setItem(KEY_STORE,k):localStorage.removeItem(KEY_STORE);}catch(e){}}
+async function toJpegB64(blob){
+  const u=URL.createObjectURL(blob);
+  try{
+    const im=await loadImg(u); const W=im.naturalWidth,H=im.naturalHeight;
+    const k=Math.min(1,1568/Math.max(W,H),Math.sqrt(1.15e6/(W*H)));
+    const c=document.createElement('canvas'); c.width=Math.max(1,Math.round(W*k)); c.height=Math.max(1,Math.round(H*k));
+    const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(im,0,0,c.width,c.height);
+    return c.toDataURL('image/jpeg',.86).split(',')[1];
+  }finally{URL.revokeObjectURL(u);}
+}
+const KEY_JUDGE={async json(prompt,o={}){
+  const key=getKey(); if(!key) throw {code:'bad_key'};
+  const content=[];
+  if(o.images) content.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:await toJpegB64(o.images)}});
+  content.push({type:'text',text:prompt});
+  let res;
+  try{
+    res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:o.signal,
+      headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:MODEL,max_tokens:1500,messages:[{role:'user',content}]})});
+  }catch(e){throw {code:e?.name==='AbortError'?'cancelled':'upstream_error'};}
+  if(res.status===401||res.status===403) throw {code:'bad_key'};
+  if(res.status===429||res.status===529) throw {code:'rate_limited'};
+  if(!res.ok) throw {code:'upstream_error'};
+  const d=await res.json(); const t=(d.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('');
+  const a=t.indexOf('{'), z=t.lastIndexOf('}'); if(a<0||z<a) throw {code:'invalid_json'};
+  try{return JSON.parse(t.slice(a,z+1));}catch(e){throw {code:'invalid_json'};}
+}};
+function useKey(k){
+  SAMPLE=TXT_SAMPLE=k?KEY_JUDGE:null;
+  $('#tx-judge-btn').textContent=k?'Ask Claude to judge the writing':'Set up the Claude check';
+  $('#im-judge-btn').textContent=k?'Ask Claude to inspect the content':'Set up the Claude check';
+  const msg=k?'Not checked yet':'Needs an Anthropic API key';
+  if(last.text&&!last.text.judge) $('#tx-judge-st').textContent=msg;
+  if(last.image&&!last.image.judge) $('#im-judge-st').textContent=msg;
+  $('#key-st').textContent=k?`A key ending in ${k.slice(-4)} is saved in this browser.`:'No key saved.';
+  if(last.image) renderImage(last.image);
+}
+function openKeybox(){const kb=$('#keybox');kb.hidden=false;kb.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>$('#key-in').focus(),350);}
+function siteSetup(){
+  $('#keybox').hidden=false; $('#tx-judge').hidden=false; $('#im-judge').hidden=false;
+  $('#tx-judge-note').textContent='Sends the text to Anthropic with your API key. Long documents go as excerpts from the start, middle and end.';
+  $('#im-judge-note').textContent='Sends a downsized copy, with metadata stripped, to Anthropic with your API key.';
+  useKey(getKey());
+}
+$('#key-save').onclick=()=>{
+  const v=$('#key-in').value.trim();
+  if(!/^sk-ant-/.test(v)){$('#key-st').textContent='That does not look like an Anthropic API key. Keys start with sk-ant-.';return;}
+  setKey(v); $('#key-in').value=''; useKey(v); toast('Key saved in this browser');
+};
+$('#key-forget').onclick=()=>{setKey('');useKey('');toast('Key removed');};
+
+/* ---------- Website chrome: shared World of AI theme and relative links ---------- */
+if(!IN_VIEWER){
+  document.querySelectorAll('a[data-site]').forEach(a=>a.href=a.dataset.site);
+  const b=$('#themeBtn'); b.hidden=false; let t='';
+  try{t=localStorage.getItem('woa-theme')||'';}catch(e){}
+  if(!t) t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+  const ap=()=>{document.documentElement.dataset.theme=t;b.textContent='Theme: '+(t==='light'?'day':'night');};
+  ap(); b.onclick=()=>{t=t==='light'?'dark':'light';try{localStorage.setItem('woa-theme',t);}catch(e){}ap();};
+}
+
+/* ---------- boot ---------- */
+show();
+$('#txt').value=AI_SAMPLE; countWords(); runText('Example: AI-style text');
+makeSample('a').then(f=>analyzeImage(f,'Example: smooth render (drawn in-page)'));
+
+</script>
+
+</body>
+</html>
