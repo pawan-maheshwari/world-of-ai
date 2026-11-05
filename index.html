@@ -25,6 +25,7 @@
     --harm:#6FB3B8;
     --assay:#7B88FF;
     --lens:#F06A8E;
+    --studio:#4FC1B4;
     --paper:#F2EFE6;   /* warm star-chart white */
     --mist:#9AA6C2;
     --dim:#5A688B;
@@ -42,6 +43,7 @@
     --harm:#2E7B80;
     --assay:#2F3FD9;
     --lens:#C2365F;
+    --studio:#0D6B6A;
     --paper:#20242F; --mist:#585E74; --dim:#8A8368;
     --glass:rgba(244,240,226,.86);
     color-scheme:light;
@@ -185,6 +187,34 @@
   .r-go{display:inline-flex;align-items:center;gap:7px;margin-top:12px;font-family:"Fraunces",serif;font-weight:600;font-size:.95rem;color:var(--paper);transition:gap .3s var(--e)}
   .row.live:hover .r-go{gap:12px}
   .r-go .ar{color:var(--gold)}
+  .r-stat.premium{color:#1a1206;background:linear-gradient(90deg,var(--gold),var(--gold-bright))}
+  html[data-theme="light"] .r-stat.premium{color:#FCF8ED}
+  .row.premium .r-idx b{color:var(--studio)}
+  .row.premium:hover{background:rgba(79,193,180,.04)}
+  .row.premium:hover::after{width:100%}
+  .row.premium:hover .r-go{gap:12px}
+  .row.premium .r-go .ar{color:var(--studio)}
+  .row.premium .r-go{display:flex;justify-content:flex-end}
+  .bp-status.premium{color:#1a1206;background:linear-gradient(90deg,var(--gold),var(--gold-bright))}
+  nav.links a.prem{color:var(--studio)}
+  /* ---------------- PREMIUM SOFTWARE ---------------- */
+  .prem-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center;margin-bottom:44px}
+  .prem-film{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#0E1211;box-shadow:0 30px 80px -30px rgba(0,0,0,.55)}
+  .prem-film video{display:block;width:100%;aspect-ratio:16/9;background:#0E1211}
+  .prem-cap{margin-top:10px;font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--dim);letter-spacing:.04em}
+  .prem-copy .tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#1a1206;background:linear-gradient(90deg,var(--gold),var(--gold-bright));padding:4px 10px;border-radius:2px}
+  html[data-theme="light"] .prem-copy .tag{color:#FCF8ED}
+  .prem-copy h3{font-family:"Fraunces",serif;font-weight:600;font-size:2rem;line-height:1.08;margin-top:14px}
+  .prem-copy h3 em{color:var(--studio)}
+  .prem-copy p{color:var(--mist);margin-top:12px;font-size:.98rem}
+  .prem-copy ul{list-style:none;margin-top:16px;color:var(--mist);font-size:.92rem}
+  .prem-copy li{padding:6px 0;border-top:1px solid var(--line-soft)}
+  .prem-copy li::before{content:"\25C6";color:var(--studio);font-size:.6rem;margin-right:10px;vertical-align:2px}
+  .prem-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+  .prem-ctas a{font-family:"JetBrains Mono",monospace;font-size:.76rem;letter-spacing:.05em;padding:11px 16px;border-radius:2px;border:1px solid var(--line);transition:.25s var(--e)}
+  .prem-ctas a.pri{background:#0D6B6A;border-color:#0D6B6A;color:#fff}
+  .prem-ctas a:hover{border-color:var(--studio)}
+  @media(max-width:940px){.prem-grid{grid-template-columns:1fr;gap:28px}}
   .r-soon{margin-top:12px;font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--dim)}
 
   .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--e),transform .8s var(--e)}
@@ -408,6 +438,7 @@
     <a href="harmonia.html">HARMONIA</a>
     <a href="assay.html">Assay</a>
     <a href="origin-lens.html">Origin Lens</a>
+    <a class="prem" href="range-studio.html">Range Studio</a>
     <a href="#horizon">Horizon</a>
     <a href="#about">About</a>
     <a href="#mission">Mission</a>
@@ -431,14 +462,14 @@
         <span class="a serif">The World</span>
         <span class="b serif">of <em>AI</em></span>
       </h1>
-      <p class="lead">Practical, ethical AI for India's next billion — mapped as one connected planet. Spin the world to find each beacon: seven lit today, three rising on the horizon.</p>
+      <p class="lead">Practical, ethical AI for India's next billion — mapped as one connected planet. Spin the world to find each beacon: seven lit today, one premium beacon for retail, three rising on the horizon.</p>
       <div class="instr"><span class="dot"></span> Drag the planet · tap a beacon to travel</div>
       <p class="by">DEVELOPED BY <b>planetAI LLP</b> · 12.97°N 77.59°E · BENGALURU</p>
     </div>
 
     <div class="planet-col">
       <div class="stage">
-        <canvas id="globe" role="img" aria-label="An interactive planet. Nine beacons mark planetAI products; explore the full list in The Atlas section below."></canvas>
+        <canvas id="globe" role="img" aria-label="An interactive planet. Eleven beacons mark planetAI products; explore the full list in The Atlas section below."></canvas>
         <svg class="compass" viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="50" r="46" fill="none" stroke="var(--line)" stroke-width="1"/>
           <path d="M50 8 L56 50 L50 46 L44 50 Z" fill="var(--gold)"/>
@@ -471,6 +502,45 @@
       <p>News to build awareness. Education to build skill. Guidance to make the decision. Accounting to keep the intelligence itself honest, a tuning fork for when its use falls out of key, and an assayer for the claims made about it. Free where it should be, radically affordable where it counts.</p>
     </div>
     <div class="gaz" id="gazLive"></div>
+  </div>
+</section>
+
+<!-- =============== PREMIUM SOFTWARE =============== -->
+<section class="band" id="premium" style="padding-top:0">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <span class="eyebrow">Premium software · licensed</span>
+      <h2>Enterprise tools, built from two decades inside retail planning.</h2>
+      <p>The free beacons build awareness and skill. Premium software pays for them: licensed products that run on a customer's own machines, with governance built in.</p>
+    </div>
+    <div class="prem-grid reveal">
+      <div>
+        <div class="prem-film">
+          <video controls playsinline preload="none" poster="media/range-studio-film-poster.jpg" aria-label="Range Studio launch film, 60 seconds">
+            <source src="media/range-studio-launch-film.mp4" type="video/mp4" />
+            <a href="media/range-studio-launch-film.mp4">Download the Range Studio launch film (MP4)</a>
+          </video>
+        </div>
+        <div class="prem-cap">Range Studio · launch film · 60 s</div>
+      </div>
+      <div class="prem-copy">
+        <span class="tag">◆ Premium</span>
+        <h3>planetAI Range Studio. Plan by <em>evidence</em>, not by habit.</h3>
+        <p>Agentic range planning for retailers. A supervisor and seven specialist agents build a cluster-level range plan, explain every recommendation, and wait for a planner to approve it.</p>
+        <ul>
+          <li>Stores clustered by how they actually sell</li>
+          <li>Back-tested on past seasons before you trust it</li>
+          <li>Week-3 early read: chase the winners, release the rest</li>
+          <li>Oracle RMS, Blue Yonder / JDA, PLM and Excel connectors</li>
+          <li>Desktop (Windows, macOS) or on-prem server, fully offline</li>
+        </ul>
+        <div class="prem-ctas">
+          <a class="pri" href="range-studio.html">Explore Range Studio →</a>
+          <a href="mailto:maheshwari1382@gmail.com?subject=Range%20Studio%20%E2%80%94%20pilot%20request">Request a pilot ↗</a>
+        </div>
+      </div>
+    </div>
+    <div class="gaz" id="gazPremium"></div>
   </div>
 </section>
 
@@ -639,6 +709,7 @@
         <a href="harmonia.html">HARMONIA Index</a>
         <a href="assay.html">Assay</a>
         <a href="origin-lens.html">Origin Lens</a>
+        <a href="range-studio.html">Range Studio · Premium</a>
         <a href="#horizon">On the horizon</a>
       </div>
       <div class="fc">
@@ -740,6 +811,10 @@ const BEACONS=[
    coord:"33.9\u00B0S 18.4\u00B0E",lat:-33.9,lon:18.4,accent:"var(--lens)",
    desc:"AI content detection \u2014 scores text, documents and images from 0 to 100 for AI likelihood, shows how much of the content is flagged and highlights the exact sentences or regions behind the score.",
    tags:["Text & documents","Images","0\u2013100 score"],action:"Check a sample"},
+  {id:"rangestudio",name:"Range Studio",dom:"world-of-ai.co.in/range-studio \u00B7 premium",url:"range-studio.html",status:"premium",
+   coord:"26.2\u00B0S 28.0\u00B0E",lat:-26.2,lon:28.0,accent:"var(--studio)",
+   desc:"Premium agentic range planning for retailers \u2014 seven specialist agents cluster stores, build the range, set the buy and flag exceptions, then wait for a planner to approve. Back-tested on past seasons; runs on your own desktop or servers.",
+   tags:["7 agents","Back-tested","Desktop & on-prem"],action:"Watch the film"},
   {id:"arcade",name:"AI Games Arcade",dom:"Computational thinking · at play",url:"",status:"rising",
    coord:"51.0°N 100.0°W",lat:51,lon:-100,accent:"var(--ice)",
    desc:"Procedurally generated games that turn computational thinking into something kids actually want to play.",
@@ -761,6 +836,8 @@ function renderRows(target,list,startIdx){
     const n=String(startIdx+i).padStart(2,"0");
     const act=b.status==="live"
       ? `<span class="r-stat live">Live</span><a class="r-go" href="${b.url}" target="_blank" rel="noopener">${b.action} <span class="ar">→</span></a>`
+      : b.status==="premium"
+      ? `<span class="r-stat premium">◆ Premium</span><a class="r-go" href="${b.url}">${b.action} <span class="ar">→</span></a>`
       : `<span class="r-stat rising">Rising</span><div class="r-soon">◇ In development</div>`;
     return `<div class="row ${b.status} reveal">
       <div class="r-idx"><b>${n}</b>${b.coord}</div>
@@ -771,7 +848,8 @@ function renderRows(target,list,startIdx){
   }).join("");
 }
 renderRows("gazLive",BEACONS.filter(b=>b.status==="live"),1);
-renderRows("gazHorizon",BEACONS.filter(b=>b.status==="rising"),BEACONS.filter(b=>b.status==="live").length+1);
+renderRows("gazPremium",BEACONS.filter(b=>b.status==="premium"),BEACONS.filter(b=>b.status==="live").length+1);
+renderRows("gazHorizon",BEACONS.filter(b=>b.status==="rising"),BEACONS.filter(b=>b.status!=="rising").length+1);
 
 /* ---------------- BEACON PANEL ---------------- */
 function selectBeacon(b){
@@ -779,14 +857,14 @@ function selectBeacon(b){
   p.style.setProperty("--accent",b.accent);
   document.getElementById("pCoord").textContent=b.coord;
   const st=document.getElementById("pStatus");
-  st.textContent=b.status==="live"?"Live":"Rising";
-  st.className="bp-status "+(b.status==="live"?"live":"rising");
+  st.textContent=b.status==="live"?"Live":b.status==="premium"?"◆ Premium":"Rising";
+  st.className="bp-status "+b.status;
   document.getElementById("pName").textContent=b.name;
   const dom=document.getElementById("pDom");dom.textContent=b.dom;dom.style.color=b.accent;
   document.getElementById("pDesc").textContent=b.desc;
   const foot=document.getElementById("pFoot");
   const tags=`<div class="bp-tags">${b.tags.map(t=>`<span>${t}</span>`).join("")}</div>`;
-  foot.innerHTML=(b.status==="live"
+  foot.innerHTML=(b.status!=="rising"
     ? `<a class="bp-link serif" href="${b.url}" target="_blank" rel="noopener">${b.action} <span class="ar">→</span></a>`
     : `<span class="bp-coord">◇ In development</span>`)+tags;
   selected=b.id;
@@ -871,7 +949,7 @@ function draw(){
   }
 
   // great-circle arcs between live beacons
-  const live=BEACONS.filter(b=>b.status==="live");
+  const live=BEACONS.filter(b=>b.status!=="rising");
   ctx.lineWidth=1.1;
   for(let i=0;i<live.length;i++){
     const a=live[i].v, b=live[(i+1)%live.length].v;
@@ -898,7 +976,7 @@ function draw(){
   BEACONS.forEach(b=>{
     const p=rot(b.v);const sx=cx+p[0]*R,sy=cy-p[1]*R,z=p[2];
     b._sx=sx;b._sy=sy;b._front=z>0.02;
-    const gold=b.status==="live";
+    const gold=b.status!=="rising";
     const col=gold?T.live:T.rise;
     if(z>0.02){
       const glow=ctx.createRadialGradient(sx,sy,0,sx,sy,gold?16:11);
@@ -1012,16 +1090,17 @@ const BOT_INTENTS=[
   {k:["arcade","game","games","play"],r:{t:"<b>AI Games Arcade</b> is rising on the horizon \u{1F3AE} \u2014 procedurally generated games that make computational thinking something kids actually want to play. In development now.",c:["What else is coming?","What's live now?"]}},
   {k:["library","book","books","ebook","e-book","reading","hindi"],r:{t:"<b>AI Library</b> is coming soon \u{1F4DA} \u2014 a curated shelf of AI e-books and explainers in English and Hindi, free to explore.",c:["What else is coming?","What's live now?"]}},
   {k:["vitals","health","bmi","heart","ppg","fitness","wellness"],r:{t:"<b>AI BMI Vitals</b> is on the way \u2764\uFE0F \u2014 a privacy-first health companion with camera-based heart-rate sensing, BMI insight and a GenAI wellness chat, all on-device.",c:["What else is coming?","What's live now?"]}},
-  {k:["price","pricing","cost","fee","much","rupee","pay","paid","money","charge"],r:{t:"Pricing is built to stay accessible. AIShorts, AI University's core, the GREEN\u2011LLM Index, HARMONIA, Assay and Origin Lens are <b>free</b>, no login walls. DISHA's full 5-D assessment is <b>\u20B92,499</b> (the market charges \u20B910,000+). For schools, licenses run \u20B9250\u2013300 per student.",c:["What is DISHA?","Contact"]}},
+  {k:["range studio","range","studio","premium","retail","retailer","assortment","merchandise","merchandising","range planning","buying","otb","open to buy","planner","enterprise","licence","license","pilot"],r:{t:"<b>Range Studio</b> is our premium software for retailers \u2014 a supervisor and seven specialist agents cluster stores by how they sell, build the range, set the buy against open-to-buy and flag exceptions, then wait for a planner to approve. It back-tests on past seasons first, connects to Oracle RMS, Blue Yonder/JDA, PLM and Excel, and runs on your own desktop or servers. <a href='range-studio.html'>Watch the launch film \u2192</a>",c:["Pricing","What's live now?","Contact"]}},
+  {k:["price","pricing","cost","fee","much","rupee","pay","paid","money","charge"],r:{t:"Pricing is built to stay accessible. AIShorts, AI University's core, the GREEN\u2011LLM Index, HARMONIA, Assay and Origin Lens are <b>free</b>, no login walls. DISHA's full 5-D assessment is <b>\u20B92,499</b> (the market charges \u20B910,000+). For schools, licenses run \u20B9250\u2013300 per student. <b>Range Studio</b>, our premium retail software, is licensed per seat or as an enterprise server licence, priced on request, with a free evaluation mode.",c:["What is DISHA?","Contact"]}},
   {k:["free"],r:{t:"Plenty is free: AIShorts daily news, AI University's core lessons, the GREEN\u2011LLM Index, HARMONIA, Assay's public ledger, Origin Lens, and DISHA's basic exploration \u2014 all with no login walls. Only DISHA's full 5-D report is paid, at \u20B92,499.",c:["What is DISHA?","What's live now?"]}},
   {k:["coming","next","horizon","roadmap","future","soon","else","rising"],r:{t:"Three beacons are rising on the horizon: <b>AI Games Arcade</b> (learn by play), <b>AI Library</b> (e-books in English + Hindi), and <b>AI BMI Vitals</b> (on-device health). Each grows stronger as the DISHA audience does.",c:["AI Games Arcade","AI Library","AI BMI Vitals"]}},
-  {k:["live","now","products","offer","charted","apps","available"],r:{t:"Seven products are live today: <b>AIShorts</b> (daily AI news), <b>DISHA Career Lab</b> (5-D career guidance), <b>AI University</b> (open AI education), the <b>GREEN\u2011LLM Index</b> (environmental accounting for AI use), <b>HARMONIA</b> (the ethical-AI harmonic index), <b>Assay</b> (LLM claim validation) and <b>Origin Lens</b> (AI content detection). Spin the planet up top to explore each beacon.",c:["What is DISHA?","GREEN-LLM Index","What is HARMONIA?"]}},
+  {k:["live","now","products","offer","charted","apps","available"],r:{t:"Seven products are live today: <b>AIShorts</b> (daily AI news), <b>DISHA Career Lab</b> (5-D career guidance), <b>AI University</b> (open AI education), the <b>GREEN\u2011LLM Index</b> (environmental accounting for AI use), <b>HARMONIA</b> (the ethical-AI harmonic index), <b>Assay</b> (LLM claim validation) and <b>Origin Lens</b> (AI content detection). Plus one premium beacon for retailers: <b>Range Studio</b> (agentic range planning). Spin the planet up top to explore each beacon.",c:["What is DISHA?","GREEN-LLM Index","What is HARMONIA?"]}},
   {k:["mission","about","world of ai","planetai","who","vision","why"],r:{t:"planetAI's mission is simple: <em>AI for every planet \u2014 intelligence accessible to all.</em> We build practical, ethical AI for India's next billion \u2014 the students, parents and citizens the AI revolution keeps skipping.",c:["What's live now?","Contact"]}},
   {k:["contact","email","reach","founder","pawan","talk","connect","invest","fund","raise","partner"],r:{t:"You can reach the team at <a href='mailto:maheshwari1382@gmail.com'>maheshwari1382@gmail.com</a>, or explore the work on <a href='https://github.com/pawanmaheshwari' target='_blank' rel='noopener'>GitHub</a>. For investors, the same email is the fastest route.",c:["Mission","What's live now?"]}},
   {k:["privacy","private","data","secure","safe"],r:{t:"Privacy is architectural, not a setting: DISHA runs its ML on-device, so student data never leaves the browser. That's the privacy-first principle across the whole ecosystem.",c:["What is DISHA?","Pricing"]}},
   {k:["thanks","thank","great","cool","nice","awesome","ok","okay"],r:{t:"Anytime! Spin the planet to explore more, or ask me about any beacon. \u{1F30D}",c:["What's live now?","What's coming next?"]}}
 ];
-const BOT_FALLBACK={t:"I'm not sure I caught that \u2014 but I can help with our products (AIShorts, DISHA, AI University, GREEN\u2011LLM Index, HARMONIA, Assay, Origin Lens), what's coming next, pricing, privacy, or how to get in touch. You can also explore the full atlas right here on the page.",c:["What's live now?","Pricing","Contact"]};
+const BOT_FALLBACK={t:"I'm not sure I caught that \u2014 but I can help with our products (AIShorts, DISHA, AI University, GREEN\u2011LLM Index, HARMONIA, Assay, Origin Lens, and our premium Range Studio), what's coming next, pricing, privacy, or how to get in touch. You can also explore the full atlas right here on the page.",c:["What's live now?","Pricing","Contact"]};
 function botReply(q){const s=q.toLowerCase();for(const it of BOT_INTENTS){if(it.k.some(k=>hit(s,k)))return it.r;}return BOT_FALLBACK;}
 
 const botBody=document.getElementById("botBody");
@@ -1134,7 +1213,7 @@ const MODALS={
       <li>The visitor counter records an anonymous visit once per session — no cookies that identify you, no cross-site tracking.</li>
     </ul>
     <h4>Our products</h4>
-    <p>DISHA Career Lab runs its assessment entirely on your device — a student's answers and results never leave the browser. AIShorts and AI University follow the same principle. The GREEN‑LLM Index and HARMONIA run entirely in your browser on this site — what you type into them is never sent to us or stored. Assay's ledger page only reads its public data from GitHub; the Assay lab keeps any API keys you enter in your own browser and sends requests only to the model providers you choose. Origin Lens analyses text, documents and images in your browser; only if you run its optional Claude check is the content sent, with your own API key, directly to Anthropic, and the key stays in your browser. Products hosted elsewhere link out to their own site; please review the notice there.</p>
+    <p>DISHA Career Lab runs its assessment entirely on your device — a student's answers and results never leave the browser. AIShorts and AI University follow the same principle. The GREEN‑LLM Index and HARMONIA run entirely in your browser on this site — what you type into them is never sent to us or stored. Assay's ledger page only reads its public data from GitHub; the Assay lab keeps any API keys you enter in your own browser and sends requests only to the model providers you choose. Origin Lens analyses text, documents and images in your browser; only if you run its optional Claude check is the content sent, with your own API key, directly to Anthropic, and the key stays in your browser. Range Studio, our premium software, is installed on a customer's own computers or servers and sends nothing to planetAI; its page here only plays the launch film from this site. Products hosted elsewhere link out to their own site; please review the notice there.</p>
     <h4>If you contact us</h4>
     <p>When you email us, we use your message only to reply. We never sell or rent data — to anyone, ever.</p>
     <h4>Your rights</h4>

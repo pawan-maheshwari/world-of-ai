@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Range Studio · agentic range planning · World of AI</title>
+<meta name="description" content="planetAI Range Studio, premium software from World of AI: seven specialist agents build a cluster-level range plan, explain every recommendation, and wait for a planner to approve it. Runs on your own desktop or servers." />
+<meta property="og:title" content="planetAI Range Studio — plan by evidence, not by habit" />
+<meta property="og:description" content="Agentic range planning for retailers. Seven agents build the range; your planners approve it. Desktop or on-prem." />
+<meta property="og:image" content="media/range-studio-film-poster.jpg" />
+<meta property="og:video" content="media/range-studio-launch-film.mp4" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect x='2' y='2' width='44' height='44' rx='11' fill='%230D6B6A'/><rect x='11' y='15' width='22' height='4' rx='2' fill='white'/><rect x='11' y='23' width='16' height='4' rx='2' fill='white'/><rect x='11' y='31' width='10' height='4' rx='2' fill='%23E8B85C'/><circle cx='37' cy='10' r='3' fill='white'/></svg>" />
+<script>(function(){try{var t=localStorage.getItem('woa-theme');if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();</script>
+<style>
+  :root{
+    --void:#05070F; --deep:#080C1A; --panel:#0C1122; --raise:#121A31;
+    --line:#212B45; --line-soft:#18213A;
+    --gold:#E8B85C; --gold-bright:#F7D799; --gold-deep:#B8863A;
+    --studio:#4FC1B4; --studio-deep:#0D6B6A; --studio-soft:rgba(79,193,180,.12);
+    --ice:#A8C4EC; --warn:#F0A35E; --bad:#F06A8E; --ok:#8FB86A;
+    --paper:#F2EFE6; --mist:#9AA6C2; --dim:#5A688B;
+    --maxw:1180px; --e:cubic-bezier(.2,.7,.3,1);
+    color-scheme:dark;
+  }
+  html[data-theme="light"]{
+    --void:#EFE9DA; --deep:#E7DFCB; --panel:#F5F0E2; --raise:#FCF8ED;
+    --line:#D9CEB2; --line-soft:#E6DDC7;
+    --gold:#A9721E; --gold-bright:#7E560F; --gold-deep:#C7A968;
+    --studio:#0D6B6A; --studio-deep:#0A5352; --studio-soft:rgba(13,107,106,.09);
+    --ice:#3B5A86; --warn:#B25E14; --bad:#C2365F; --ok:#3F6B2E;
+    --paper:#20242F; --mist:#585E74; --dim:#8A8368;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--void);color:var(--paper);font-family:"Inter",system-ui,sans-serif;line-height:1.62;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+    transition:background-color .5s var(--e),color .5s var(--e);
+    background-image:radial-gradient(1000px 640px at 85% -8%,rgba(79,193,180,.07),transparent 60%),radial-gradient(900px 600px at 5% 105%,rgba(232,184,92,.05),transparent 60%)}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 30px}
+  .serif{font-family:"Fraunces",Georgia,serif}
+  .mono{font-family:"JetBrains Mono",monospace}
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:var(--studio);display:inline-flex;align-items:center;gap:12px}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--studio);opacity:.6}
+
+  /* ribbon */
+  .woa-ribbon{background:var(--deep);border-bottom:1px solid var(--line-soft)}
+  .woa-in{max-width:var(--maxw);margin:0 auto;padding:10px 30px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font:500 11px/1.4 "JetBrains Mono",monospace;letter-spacing:.06em;color:var(--mist)}
+  .woa-in a{color:var(--gold);border-bottom:1px solid rgba(232,184,92,.35)}
+  .woa-in a:hover{border-bottom-color:var(--gold)}
+  .woa-mark{width:15px;height:15px;flex:none}
+  .woa-sep{opacity:.45}
+  .woa-right{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .theme-btn{background:none;border:1px solid var(--line);color:var(--mist);border-radius:3px;padding:4px 9px;font:500 10.5px/1 "JetBrains Mono",monospace;letter-spacing:.06em;cursor:pointer}
+  .theme-btn:hover{color:var(--paper);border-color:var(--mist)}
+
+  /* hero */
+  .hero{padding:84px 0 40px}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+  .lockup{display:flex;align-items:center;gap:16px;margin-top:22px}
+  .lockup svg{width:58px;height:58px;flex:none}
+  .lockup h1{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(2.6rem,6vw,4.2rem);line-height:1;letter-spacing:-.025em}
+  .lockup h1 small{display:block;font-family:"JetBrains Mono",monospace;font-weight:400;font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+  .premium-tag{display:inline-flex;align-items:center;gap:8px;margin-top:22px;font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:#1a1206;background:linear-gradient(90deg,var(--gold),var(--gold-bright));padding:5px 11px;border-radius:2px}
+  html[data-theme="light"] .premium-tag{color:#FCF8ED}
+  .thesis{font-family:"Fraunces",serif;font-size:clamp(1.35rem,2.6vw,1.8rem);line-height:1.25;margin-top:22px;max-width:24ch}
+  .thesis em{color:var(--studio);font-style:italic}
+  .sub{color:var(--mist);margin-top:16px;max-width:52ch}
+  .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:"JetBrains Mono",monospace;font-size:.78rem;letter-spacing:.05em;padding:12px 18px;border-radius:2px;border:1px solid var(--line);color:var(--paper);transition:.25s var(--e);cursor:pointer;background:none}
+  .btn:hover{border-color:var(--studio);color:var(--studio)}
+  .btn.primary{background:var(--studio-deep);border-color:var(--studio-deep);color:#fff}
+  .btn.primary:hover{background:var(--studio);border-color:var(--studio);color:#05110f}
+  html[data-theme="light"] .btn.primary:hover{color:#fff}
+
+  /* film */
+  .film{position:relative;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#0E1211;box-shadow:0 30px 80px -30px rgba(0,0,0,.6)}
+  .film video{display:block;width:100%;aspect-ratio:16/9;background:#0E1211}
+  .film-cap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--dim);letter-spacing:.04em}
+  .film-cap a{color:var(--studio)}
+
+  /* bands */
+  .band{padding:96px 0;border-top:1px solid var(--line-soft)}
+  .band-head{margin-bottom:44px;max-width:62ch}
+  .band-head h2{font-family:"Fraunces",serif;font-weight:600;letter-spacing:-.02em;font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.06;margin-top:14px}
+  .band-head p{color:var(--mist);margin-top:14px}
+
+  /* stats strip */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:4px;margin-top:56px}
+  .stat{padding:20px 22px;border-left:1px solid var(--line)}
+  .stat:first-child{border-left:none}
+  .stat b{display:block;font-family:"Fraunces",serif;font-size:2rem;font-weight:600;color:var(--studio);line-height:1}
+  .stat span{display:block;font-size:.84rem;color:var(--mist);margin-top:8px}
+
+  /* agent pipeline */
+  .pipe{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:start}
+  .pipe-map{border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:22px}
+  .sup{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:1px dashed var(--studio);border-radius:4px;padding:12px 14px;margin-bottom:18px}
+  .sup .nm{font-family:"Fraunces",serif;font-weight:600;font-size:1.08rem}
+  .sup .ds{font-size:.8rem;color:var(--mist)}
+  .agents{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;position:relative}
+  .agent{position:relative;text-align:left;background:var(--raise);border:1px solid var(--line);border-radius:4px;padding:12px 12px 14px;cursor:pointer;color:var(--paper);font:inherit;transition:border-color .25s,transform .25s var(--e),background .25s}
+  .agent:hover{border-color:var(--mist)}
+  .agent .n{font-family:"JetBrains Mono",monospace;font-size:.62rem;letter-spacing:.14em;color:var(--dim)}
+  .agent .t{display:block;font-family:"Fraunces",serif;font-weight:600;font-size:.98rem;line-height:1.15;margin-top:6px}
+  .agent .st{position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--line)}
+  .agent.sel{border-color:var(--studio);background:var(--studio-soft)}
+  .agent.run .st{background:var(--gold);box-shadow:0 0 0 4px rgba(232,184,92,.2);animation:pulse 1s infinite}
+  .agent.done .st{background:var(--studio)}
+  @keyframes pulse{50%{box-shadow:0 0 0 7px rgba(232,184,92,0)}}
+  .flow-note{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px}
+  .flow-note .lbl{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--dim)}
+  .log{margin-top:14px;border-top:1px solid var(--line-soft);padding-top:12px;font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--mist);min-height:132px;max-height:180px;overflow:auto}
+  .log div{padding:2px 0}
+  .log b{color:var(--studio);font-weight:500}
+  .detail{border:1px solid var(--line);border-radius:6px;padding:24px;background:var(--panel);position:sticky;top:20px}
+  .detail .n{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.18em;color:var(--studio);text-transform:uppercase}
+  .detail h3{font-family:"Fraunces",serif;font-size:1.6rem;font-weight:600;margin-top:8px;line-height:1.1}
+  .detail p{color:var(--mist);margin-top:12px;font-size:.95rem}
+  .detail .out{margin-top:16px;padding-top:14px;border-top:1px solid var(--line-soft)}
+  .detail .out span{display:block;font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;margin-bottom:6px}
+  .detail .out div{font-size:.9rem}
+
+  /* autonomy */
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:3px;overflow:hidden;flex-wrap:wrap}
+  .seg button{background:none;border:none;border-left:1px solid var(--line);color:var(--mist);font:500 .78rem "JetBrains Mono",monospace;padding:11px 16px;cursor:pointer;letter-spacing:.03em}
+  .seg button:first-child{border-left:none}
+  .seg button[aria-pressed="true"]{background:var(--studio-deep);color:#fff}
+  .auto-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:28px;margin-top:26px;align-items:start}
+  .auto-copy p{color:var(--mist)}
+  .auto-copy h3{font-family:"Fraunces",serif;font-size:1.35rem;font-weight:600;margin-bottom:10px}
+  .queue{border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+  .q-row{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:13px 16px;border-top:1px solid var(--line-soft);font-size:.9rem}
+  .q-row:first-child{border-top:none}
+  .q-row small{display:block;color:var(--dim);font-family:"JetBrains Mono",monospace;font-size:.66rem;margin-top:2px}
+  .pill{font-family:"JetBrains Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;padding:4px 9px;border-radius:2px;white-space:nowrap;transition:.3s}
+  .pill.wait{color:var(--warn);border:1px solid var(--warn)}
+  .pill.auto{color:#05110f;background:var(--studio)}
+  html[data-theme="light"] .pill.auto{color:#fff}
+  .pill.info{color:var(--mist);border:1px solid var(--line)}
+  .gov{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:40px}
+  .gov div{border-top:2px solid var(--studio);padding-top:14px}
+  .gov h4{font-family:"Fraunces",serif;font-size:1.08rem;font-weight:600}
+  .gov p{color:var(--mist);font-size:.88rem;margin-top:6px}
+
+  /* evidence */
+  .ev{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:start}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th,td{text-align:right;padding:11px 12px;border-bottom:1px solid var(--line-soft)}
+  th:first-child,td:first-child{text-align:left}
+  th{font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:500}
+  td.best{color:var(--studio);font-weight:600}
+  .tbl{border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:8px 10px;overflow-x:auto}
+  .bars{margin-top:18px}
+  .bar-lbl{display:flex;justify-content:space-between;font-size:.82rem;color:var(--mist);margin-top:12px}
+  .bar{height:10px;background:var(--line-soft);border-radius:2px;margin-top:6px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--studio);transition:width 1.2s var(--e)}
+  .bar i.base{background:var(--dim)}
+  .honest{border-left:2px solid var(--gold);padding:4px 0 4px 18px}
+  .honest h3{font-family:"Fraunces",serif;font-size:1.2rem;font-weight:600}
+  .honest ul{margin-top:12px;padding-left:18px;color:var(--mist);font-size:.9rem}
+  .honest li{margin-top:8px}
+
+  /* connectors */
+  .conn{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .card{border:1px solid var(--line);border-radius:6px;padding:20px;background:var(--panel)}
+  .card h4{font-family:"Fraunces",serif;font-size:1.1rem;font-weight:600}
+  .card p{color:var(--mist);font-size:.86rem;margin-top:8px}
+  .card .k{font-family:"JetBrains Mono",monospace;font-size:.62rem;letter-spacing:.16em;color:var(--studio);text-transform:uppercase}
+
+  /* editions */
+  .eds{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .ed{border:1px solid var(--line);border-radius:6px;padding:26px;background:var(--panel);display:flex;flex-direction:column}
+  .ed.feat{border-color:var(--studio);box-shadow:0 0 0 1px var(--studio) inset}
+  .ed h3{font-family:"Fraunces",serif;font-size:1.5rem;font-weight:600;margin-top:8px}
+  .ed .price{font-family:"JetBrains Mono",monospace;font-size:.78rem;color:var(--gold);margin-top:6px}
+  .ed ul{list-style:none;margin-top:16px;font-size:.9rem;color:var(--mist);flex:1}
+  .ed li{padding:7px 0;border-top:1px solid var(--line-soft)}
+  .ed li::before{content:"◆";color:var(--studio);font-size:.6rem;margin-right:10px;vertical-align:2px}
+  .ed .btn{margin-top:20px;justify-content:center}
+
+  /* pilot steps */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;counter-reset:s;border-top:1px solid var(--line)}
+  .step{padding:22px 20px 0 0;position:relative}
+  .step::before{counter-increment:s;content:"0" counter(s);font-family:"JetBrains Mono",monospace;color:var(--studio);font-size:1.3rem;display:block}
+  .step::after{content:"";position:absolute;top:-4px;left:0;width:7px;height:7px;border-radius:50%;background:var(--studio)}
+  .step h4{font-family:"Fraunces",serif;font-size:1.08rem;margin-top:8px;font-weight:600}
+  .step p{color:var(--mist);font-size:.88rem;margin-top:6px}
+
+  /* closing */
+  .closing{text-align:center;padding:110px 0}
+  .closing h2{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(2rem,5vw,3.3rem);line-height:1.1;max-width:20ch;margin:0 auto}
+  .closing h2 em{color:var(--studio)}
+  .closing .ctas{justify-content:center}
+  footer{border-top:1px solid var(--line-soft);padding:30px 0 40px;font-size:.82rem;color:var(--dim)}
+  footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  footer a{color:var(--gold)}
+
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .8s var(--e),transform .8s var(--e)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:960px){
+    .hero-grid,.pipe,.auto-grid,.ev{grid-template-columns:1fr}
+    .detail{position:static}
+    .conn,.gov{grid-template-columns:1fr 1fr}
+    .eds{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr 1fr;row-gap:20px}
+    .stats{grid-template-columns:1fr 1fr}
+    .stat:nth-child(3){border-left:none}
+    .stat:nth-child(n+3){border-top:1px solid var(--line)}
+  }
+  @media(max-width:600px){
+    .wrap,.woa-in{padding-left:16px;padding-right:16px}
+    .woa-right{margin-left:0;width:100%}
+    .agents{grid-template-columns:1fr 1fr}
+    .conn,.gov,.steps{grid-template-columns:1fr}
+    .band{padding:70px 0}
+    .seg button{padding:10px 11px;font-size:.72rem}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div class="woa-ribbon">
+  <div class="woa-in">
+    <svg class="woa-mark" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="5"/><ellipse cx="50" cy="50" rx="45" ry="13" fill="none" stroke="currentColor" stroke-width="4" opacity=".55"/><circle cx="50" cy="50" r="9" fill="#E8B85C"/></svg>
+    <span>A <a href="index.html">World&nbsp;of&nbsp;AI</a> premium product<span class="woa-sep"> · </span>planetAI&nbsp;LLP</span>
+    <span class="woa-right"><a href="index.html#premium">← Premium software</a><span class="woa-sep">·</span><a href="index.html#atlas">The atlas</a><button class="theme-btn" id="themeBtn" aria-label="Toggle light and dark mode">Day / night</button></span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Premium software · agentic range planning</span>
+      <div class="lockup">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="2" width="44" height="44" rx="11" fill="#0D6B6A"/><rect x="11" y="15" width="22" height="4" rx="2" fill="#fff"/><rect x="11" y="23" width="16" height="4" rx="2" fill="#fff"/><rect x="11" y="31" width="10" height="4" rx="2" fill="#E8B85C"/><circle cx="37" cy="10" r="3" fill="#fff"/></svg>
+        <h1><small>planetAI</small>Range Studio</h1>
+      </div>
+      <span class="premium-tag">◆ Premium · licensed</span>
+      <p class="thesis">Every season, a retailer makes a bet. Plan it <em>by evidence, not by habit.</em></p>
+      <p class="sub">A supervisor and seven specialist agents build a cluster-level range plan, explain every recommendation, and wait for a planner to approve it. It runs on your own desktop or your own servers, and your data never leaves the building.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#film">▶ Watch the launch film</a>
+        <a class="btn" id="pilotTop" href="#">Request a pilot ↗</a>
+        <a class="btn" href="#agents">See the agents ↓</a>
+      </div>
+    </div>
+    <div id="film">
+      <div class="film">
+        <video id="filmVideo" controls playsinline preload="metadata" poster="media/range-studio-film-poster.jpg" aria-label="Range Studio launch film, 60 seconds">
+          <source src="media/range-studio-launch-film.mp4" type="video/mp4" />
+          Your browser cannot play this video. <a href="media/range-studio-launch-film.mp4">Download the launch film (MP4)</a>.
+        </video>
+      </div>
+      <div class="film-cap"><span>Launch film · 60 s · 1080p</span><a href="media/range-studio-launch-film.mp4" download>Download MP4</a></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="stats reveal">
+      <div class="stat"><b>7 + 1</b><span>specialist agents under one supervisor</span></div>
+      <div class="stat"><b>4</b><span>source systems out of the box: Oracle RMS, Blue Yonder / JDA, PLM, Excel</span></div>
+      <div class="stat"><b>0</b><span>calls to the internet. Runs air-gapped on desktop or on-prem</span></div>
+      <div class="stat"><b>100%</b><span>of recommendations decided by a person before the plan locks</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- AGENTS -->
+<section class="band" id="agents">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <span class="eyebrow">How it works</span>
+      <h2>Seven agents build the range. A supervisor keeps them honest.</h2>
+      <p>Tap an agent to see what it does, or run the sequence on the sample category (women's knitwear, AW26) to watch a plan come together.</p>
+    </div>
+    <div class="pipe reveal">
+      <div class="pipe-map">
+        <div class="sup">
+          <div><div class="nm">Supervisor</div><div class="ds">Sequences the run and enforces the autonomy policy</div></div>
+          <span class="pill info" id="supState">Idle</span>
+        </div>
+        <div class="agents" id="agentGrid"></div>
+        <div class="flow-note">
+          <span class="lbl">Illustrative run · sample dataset shipped with the product</span>
+          <button class="btn primary" id="runBtn">▶ Run the agents</button>
+        </div>
+        <div class="log" id="log" aria-live="polite"><div>Press <b>Run the agents</b> to start a plan.</div></div>
+      </div>
+      <aside class="detail" id="detail" aria-live="polite"></aside>
+    </div>
+  </div>
+</section>
+
+<!-- GOVERNANCE -->
+<section class="band" id="governance">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <span class="eyebrow">Governance built in</span>
+      <h2>You decide how much the agents may do on their own.</h2>
+      <p>Pick an autonomy policy and see which recommendations apply straight away and which wait for an approver. Critical items always wait for a person.</p>
+    </div>
+    <div class="reveal">
+      <div class="seg" role="group" aria-label="Autonomy policy">
+        <button data-mode="advise" aria-pressed="false">Advise only</button>
+        <button data-mode="approve" aria-pressed="true">Act with approval</button>
+        <button data-mode="guard" aria-pressed="false">Guardrailed autonomy</button>
+      </div>
+      <div class="auto-grid">
+        <div class="auto-copy"><h3 id="modeTitle"></h3><p id="modeDesc"></p></div>
+        <div class="queue" id="queue"></div>
+      </div>
+    </div>
+    <div class="gov reveal">
+      <div><h4>Maker and checker</h4><p>Planners edit and run. Approvers decide and lock, but cannot edit ranges, so the two duties stay separate.</p></div>
+      <div><h4>Versions</h4><p>A working plan locks as the original plan only with zero critical exceptions and every recommendation decided.</p></div>
+      <div><h4>Audit trail</h4><p>Append-only: every sign-in, import, edit, approval, lock, export and licence change, with the user's email.</p></div>
+      <div><h4>Single sign-on</h4><p>OpenID Connect with Entra ID, Okta, Ping, Google Workspace, Keycloak or ADFS. Roles follow your groups.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- EVIDENCE -->
+<section class="band" id="evidence">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <span class="eyebrow">Proven on past seasons first</span>
+      <h2>Back-test before you trust it.</h2>
+      <p>Range Studio plans a past season from its history, then scores the plan against what actually sold, next to a "repeat last year in the same space" baseline. Below is the built-in out-of-sample check: learned on one season, scored on the next.</p>
+    </div>
+    <div class="ev reveal">
+      <div>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>Season 2 (unseen)</th><th>Agents, learned</th><th>+ week-3 early read</th><th>Repeat last year</th></tr></thead>
+            <tbody>
+              <tr><td>Return on inventory</td><td class="best">1.23</td><td>1.22</td><td>0.91</td></tr>
+              <tr><td>Residual stock at cost</td><td class="best">R180k</td><td>R194k</td><td>R534k</td></tr>
+              <tr><td>Lost sales</td><td>R298k</td><td class="best">R132k</td><td>—</td></tr>
+              <tr><td>New-line forecast error</td><td>26.0%</td><td class="best">10.6%</td><td>27.6%</td></tr>
+              <tr><td>All-lines forecast error</td><td class="best">14.3%</td><td>—</td><td>14.7%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bars" id="bars">
+          <div class="bar-lbl"><span>Residual stock at cost · agents</span><span>R180k</span></div><div class="bar"><i data-w="33.7"></i></div>
+          <div class="bar-lbl"><span>Residual stock at cost · repeat last year</span><span>R534k</span></div><div class="bar"><i class="base" data-w="100"></i></div>
+        </div>
+      </div>
+      <div class="honest">
+        <h3>What this shows, and what it doesn't</h3>
+        <ul>
+          <li>The sample seasons are synthetic. They prove the machinery works, not that it works for your business.</li>
+          <li>The big gains are in decisions (which lines, how deep, what to hold back), not point forecasts. Carryover accuracy is a tie.</li>
+          <li>Every pre-season method under-forecast new lines by about 20% in season 2. Only the week-3 early read corrected it.</li>
+          <li>The early read assumed even weekly selling. Real launches spike or start slow, so real gains will be smaller.</li>
+          <li>That is why every pilot starts with a back-test on your own past seasons.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONNECTORS -->
+<section class="band" id="connectors">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <span class="eyebrow">Fits the systems you already run</span>
+      <h2>Reads your extracts. Writes your load files.</h2>
+      <p>Each source system is an editable mapping preset. Planners pick it on import; scheduled loads run from SFTP drop folders. Plans for a system of record go out only once locked.</p>
+    </div>
+    <div class="conn reveal">
+      <div class="card"><span class="k">In · out</span><h4>Oracle Retail RMS</h4><p>Store, item master, prices, UDAs and transactions in. Item-location ranging file out.</p></div>
+      <div class="card"><span class="k">In · out</span><h4>Blue Yonder / JDA</h4><p>Location, product and history flat files in. Assortment plan load with planned receipts out.</p></div>
+      <div class="card"><span class="k">In · out</span><h4>PLM</h4><p>Style-colour export in, with new colourways as placeholders. Carry-over, new and dropped decisions back out.</p></div>
+      <div class="card"><span class="k">In · out</span><h4>Excel and CSV</h4><p>CSV, TSV, pipe-delimited or Excel. Buy plan by cluster and store × style-colour plans out.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- EDITIONS -->
+<section class="band" id="editions">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <span class="eyebrow">Editions &amp; licensing</span>
+      <h2>Start on one laptop. Grow to the whole planning team.</h2>
+      <p>Same code in every edition. Licences are signed offline keys, so they verify on air-gapped installs. Without a key the product runs in evaluation mode.</p>
+    </div>
+    <div class="eds reveal">
+      <div class="ed">
+        <span class="eyebrow">Try it</span>
+        <h3>Evaluation</h3>
+        <div class="price">Free · no key needed</div>
+        <ul><li>3 users</li><li>Up to 50 stores</li><li>5 datasets</li><li>Full agent run, back-tests and exports</li></ul>
+        <a class="btn" data-enquire="Evaluation" href="#">Ask for the installer ↗</a>
+      </div>
+      <div class="ed feat">
+        <span class="eyebrow">Planner or small team</span>
+        <h3>Desktop</h3>
+        <div class="price">Licensed per seat · on request</div>
+        <ul><li>Windows 10/11 installer and macOS app (Apple silicon and Intel)</li><li>No admin rights needed</li><li>Data stays in the user's own app folder</li><li>Works fully offline</li></ul>
+        <a class="btn primary" data-enquire="Desktop" href="#">Request a licence ↗</a>
+      </div>
+      <div class="ed">
+        <span class="eyebrow">Planning department</span>
+        <h3>Server</h3>
+        <div class="price">Enterprise licence · on request</div>
+        <ul><li>On-prem Docker with PostgreSQL, run by your IT</li><li>Single sign-on (OIDC) with group-based roles</li><li>Scheduled imports and outbound load files</li><li>REST API with documentation</li></ul>
+        <a class="btn" data-enquire="Server / Enterprise" href="#">Talk to planetAI ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILOT -->
+<section class="band" id="pilot">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <span class="eyebrow">How a pilot runs</span>
+      <h2>Evidence on your data before a live season.</h2>
+    </div>
+    <div class="steps reveal">
+      <div class="step"><h4>Load your history</h4><p>Two or three past seasons from your own RMS, Blue Yonder or PLM extracts.</p></div>
+      <div class="step"><h4>Back-test</h4><p>Plan each season from the one before it, with real weekly sales for the early read.</p></div>
+      <div class="step"><h4>Agree the measure</h4><p>Usually net margin and residual stock at equal space, set with your team up front.</p></div>
+      <div class="step"><h4>Plan a live season</h4><p>Only then, with planners approving every recommendation.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="wrap reveal">
+    <span class="eyebrow">planetAI Range Studio</span>
+    <h2 style="margin-top:18px">Plan by <em>evidence</em>, not by habit.</h2>
+    <div class="ctas"><a class="btn primary" id="pilotBottom" href="#">Request a pilot ↗</a><a class="btn" href="#film">▶ Watch the film again</a></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Range Studio is premium software by planetAI LLP, part of <a href="index.html">World of AI</a>. This page sets no cookies and sends nothing anywhere; the film plays from this site.</span>
+    <span>© 2026 planetAI LLP</span>
+  </div>
+</footer>
+
+<script>
+/* ---------- Contact ---------- */
+const CONTACT="maheshwari1382@gmail.com";
+const mail=(what)=>`mailto:${CONTACT}?subject=${encodeURIComponent("Range Studio — "+what)}&body=${encodeURIComponent("Hello planetAI,\n\nWe'd like to discuss Range Studio ("+what+").\n\nRetailer:\nCategory / departments:\nNumber of stores:\nSource systems (RMS, Blue Yonder/JDA, PLM, Excel):\n\nThanks,")}`;
+["pilotTop","pilotBottom"].forEach(id=>document.getElementById(id).href=mail("pilot request"));
+document.querySelectorAll("[data-enquire]").forEach(a=>a.href=mail(a.dataset.enquire+" edition"));
+
+/* ---------- Theme (shared with the World of AI home page) ---------- */
+document.getElementById("themeBtn").addEventListener("click",()=>{
+  const t=document.documentElement.dataset.theme==="light"?"dark":"light";
+  document.documentElement.dataset.theme=t;try{localStorage.setItem("woa-theme",t);}catch(e){}
+});
+
+/* ---------- Agents ---------- */
+const AGENTS=[
+  {t:"Data Steward",d:"Validates attributes before anything is planned and keeps one-off special buys out of the rate of sale, so a clearance deal doesn't look like demand.",o:"A clean dataset with every exclusion explained.",log:"52 style-colours checked · 2 special buys excluded from rate of sale"},
+  {t:"Clustering",d:"Groups stores by how they actually sell (units per fixture, premium share, colour and fit mix) using k-means. Not by size, not by region.",o:"Store clusters with a profile for each, e.g. value-led, colour-forward, tailored.",log:"Stores grouped into 3 behavioural clusters"},
+  {t:"Strategy",d:"Computes rate of sale per cluster and the target number of options each cluster can carry, capped by fixture capacity.",o:"Target option counts per cluster.",log:"Target options set per cluster, capped by fixtures"},
+  {t:"Wedge Builder",d:"Fills each cluster's range in order: mandatory lines, then basics, new and carryover, while capping how much any one attribute can take.",o:"A range wedge per cluster that planners edit by tapping option tags.",log:"Range wedges filled: mandatory → basics → new → carryover"},
+  {t:"Demand Transference",d:"Models cannibalisation between similar options and the demand that moves across when a line is dropped, without double-counting customers already in a new line's forecast.",o:"Net demand per line after transfer.",log:"Cannibalisation and transferred demand applied"},
+  {t:"Buy & OTB",d:"Buys each line to the level where the margin lost on a stock-out balances the cost of a leftover unit (newsvendor), holds 30% of new lines back for the early read, and reconciles to open-to-buy.",o:"Buy quantities per line and cluster, reconciled to the sales plan.",log:"Buy plan R 3.61M · reconciled to open-to-buy"},
+  {t:"Exception",d:"Checks every business rule, proposes fixes as declarative actions, and re-diagnoses after each change until nothing critical is left.",o:"An exceptions list with proposed fixes and severity.",log:"0 critical exceptions · 5 recommendations await a decision"}
+];
+const SUP={t:"Supervisor",d:"Sequences the specialist agents, passes each one the previous agent's output, and enforces the autonomy policy you set. Anything critical is held for a person.",o:"A drafted plan with every recommendation queued for decision."};
+const grid=document.getElementById("agentGrid"),detail=document.getElementById("detail"),log=document.getElementById("log");
+grid.innerHTML=AGENTS.map((a,i)=>`<button class="agent" data-i="${i}"><span class="st"></span><span class="n">AGENT ${i+1}</span><span class="t">${a.t}</span></button>`).join("")+
+  `<button class="agent" data-i="sup" style="border-style:dashed"><span class="st"></span><span class="n">THEN</span><span class="t">Planner approves</span></button>`;
+function show(i){
+  const a=i==="sup"?{t:"Planner approves",d:"Approvers work through exceptions and approvals, then lock the working plan as the original plan. Planner overrides adjust attribute preferences for the next run, so the agents learn from your team.",o:"A locked plan, buy file and full audit trail."}:AGENTS[i];
+  grid.querySelectorAll(".agent").forEach(b=>b.classList.toggle("sel",b.dataset.i==String(i)));
+  detail.innerHTML=`<span class="n">${i==="sup"?"Final step":"Agent "+(i+1)+" of 7"}</span><h3>${a.t}</h3><p>${a.d}</p><div class="out"><span>Hands on</span><div>${a.o}</div></div>`;
+}
+grid.addEventListener("click",e=>{const b=e.target.closest(".agent");if(b)show(b.dataset.i==="sup"?"sup":+b.dataset.i);});
+show(0);
+let running=false;
+document.getElementById("runBtn").addEventListener("click",async()=>{
+  if(running)return;running=true;
+  const btns=[...grid.querySelectorAll(".agent")],sup=document.getElementById("supState");
+  btns.forEach(b=>b.classList.remove("run","done"));
+  log.innerHTML="<div><b>Supervisor</b> · plan started on sample dataset · policy: act with approval</div>";
+  sup.textContent="Running";sup.className="pill wait";
+  const fast=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  for(let i=0;i<AGENTS.length;i++){
+    btns[i].classList.add("run");show(i);
+    await new Promise(r=>setTimeout(r,fast?60:850));
+    btns[i].classList.replace("run","done");
+    log.insertAdjacentHTML("beforeend",`<div><b>${AGENTS[i].t}</b> · ${AGENTS[i].log}</div>`);log.scrollTop=log.scrollHeight;
+  }
+  btns[7].classList.add("run");show("sup");
+  log.insertAdjacentHTML("beforeend",`<div><b>Supervisor</b> · plan drafted · 52 options planned · waiting for the planner</div>`);log.scrollTop=log.scrollHeight;
+  sup.textContent="Awaiting approver";
+  running=false;
+});
+
+/* ---------- Autonomy policy ---------- */
+const ITEMS=[
+  {t:"Drop NP87 Rib tank from the colour-forward cluster",m:"Range · confidence 0.91 · R 12k",crit:false,conf:.91,val:12},
+  {t:"Chase NP25 Slouch sweat +260 units after week 3",m:"In-season · confidence 0.86 · R 48k",crit:false,conf:.86,val:48},
+  {t:"Release 472 reserve units on slow lines",m:"In-season · confidence 0.74 · R 31k",crit:false,conf:.74,val:31},
+  {t:"Add second fixture of basics to value-led stores",m:"Range · confidence 0.93 · R 145k",crit:false,conf:.93,val:145},
+  {t:"Buy exceeds open-to-buy in tailored cluster",m:"Exception · critical",crit:true,conf:.99,val:0}
+];
+const MODES={
+  advise:{t:"Advise only",d:"Agents recommend, people do everything. Nothing changes the plan until a planner applies it. The safest way to start a pilot."},
+  approve:{t:"Act with approval",d:"Agents prepare each change as a ready-to-apply action. An approver accepts or rejects it with one click, and every decision is audited."},
+  guard:{t:"Guardrailed autonomy",d:"Agents apply changes themselves, but only above a confidence floor (here 0.85) and below a value limit (here R 100k). Everything else, and every critical item, waits for a person."}
+};
+function setMode(m){
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===m));
+  document.getElementById("modeTitle").textContent=MODES[m].t;
+  document.getElementById("modeDesc").textContent=MODES[m].d;
+  document.getElementById("queue").innerHTML=ITEMS.map(it=>{
+    let cls="wait",lab="Waits for approver";
+    if(m==="advise"&&!it.crit){cls="info";lab="Advice only";}
+    if(m==="guard"&&!it.crit&&it.conf>=.85&&it.val<=100){cls="auto";lab="Applied by agent";}
+    if(it.crit)lab="Critical · person decides";
+    return `<div class="q-row"><div>${it.t}<small>${it.m}</small></div><span class="pill ${cls}">${lab}</span></div>`;
+  }).join("");
+}
+document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
+setMode("approve");
+
+/* ---------- Reveal ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");
+  e.target.querySelectorAll(".bar i").forEach(i=>i.style.width=i.dataset.w+"%");io.unobserve(e.target);}}),{threshold:.12});
+document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+const evBars=document.getElementById("bars");io.observe(evBars);
+</script>
+</body>
+</html>
