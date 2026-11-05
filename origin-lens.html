@@ -125,6 +125,8 @@ input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events
 
 .judge{display:flex;flex-direction:column;gap:10px;border:1px solid color-mix(in srgb,var(--gold) 40%,var(--line));border-radius:12px;padding:14px;background:color-mix(in srgb,var(--gold) 6%,var(--panel))}
 .judge .eyebrow{display:flex;align-items:center;gap:8px}
+.judge.model{border-color:color-mix(in srgb,var(--human) 40%,var(--line));background:color-mix(in srgb,var(--human) 6%,var(--panel))}
+.judge.model .eyebrow{color:var(--human)}
 .cues{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px;font-size:13.5px}
 .cues:empty{display:none}
 .cues li{display:flex;gap:9px;align-items:baseline}
@@ -228,7 +230,7 @@ footer{border-top:1px solid var(--line);background:var(--deep);padding-block:26p
       <div class="panel-h"><span class="eyebrow">The scale</span><span class="coord">33.9°S 18.4°E</span></div>
       <div class="spectrum-bar"></div>
       <div class="bands"><span><b>0–19</b>Likely human</span><span><b>20–39</b>Mostly human</span><span><b>40–59</b>Uncertain</span><span><b>60–79</b>AI-assisted</span><span><b>80–100</b>Likely AI</span></div>
-      <p class="note">Text and images are analysed in your browser. Nothing leaves the page unless you run the Claude check.</p>
+      <p class="note" id="privacy-note">Text and images are analysed in your browser. Nothing leaves the page unless you run the Claude check.</p>
     </div>
     <nav class="dial" aria-label="Mode">
       <a href="#text" id="tab-text" aria-selected="true"><span class="dot"></span>Text</a>
@@ -271,6 +273,11 @@ footer{border-top:1px solid var(--line);background:var(--deep);padding-block:26p
       </div>
       <span class="verdict" id="tx-verdict">–</span>
       <div class="scale"><div class="scale-bar"></div><div class="scale-lbl"><span>0 human</span><span>40</span><span>60</span><span>100 AI</span></div></div>
+      <div class="judge model" id="tx-model" hidden>
+        <span class="eyebrow">Open model check</span>
+        <div class="row"><button class="primary" id="tx-model-btn">Run the open model check</button><span class="muted" id="tx-model-st" style="font-size:13px"></span></div>
+        <p class="note">Free, no key needed. Sends the text to planetAI's detector on Hugging Face, where it is scored and discarded, never stored.</p>
+      </div>
       <div class="judge" id="tx-judge" hidden>
         <span class="eyebrow">Claude check</span>
         <div class="row"><button class="primary" id="tx-judge-btn">Ask Claude to judge the writing</button><span class="muted" id="tx-judge-st" style="font-size:13px"></span></div>
@@ -288,7 +295,7 @@ footer{border-top:1px solid var(--line);background:var(--deep);padding-block:26p
       <div class="panel-h"><span class="eyebrow">I · Specimen</span><span class="src" id="im-src">–</span></div>
       <label class="drop" id="drop" for="im-file">
         <b>Drop an image, paste one, or tap to choose</b>
-        <span class="muted" style="font-size:13px">JPEG, PNG or WebP. The file never leaves this page unless you run the Claude check.</span>
+        <span class="muted" style="font-size:13px" id="drop-note">JPEG, PNG or WebP. The file never leaves this page unless you run the Claude check.</span>
       </label>
       <input type="file" id="im-file" accept="image/*">
       <div class="row">
@@ -311,6 +318,11 @@ footer{border-top:1px solid var(--line);background:var(--deep);padding-block:26p
       </div>
       <span class="verdict" id="im-verdict">–</span>
       <div class="scale"><div class="scale-bar"></div><div class="scale-lbl"><span>0 human</span><span>40</span><span>60</span><span>100 AI</span></div></div>
+      <div class="judge model" id="im-model" hidden>
+        <span class="eyebrow">Open model check</span>
+        <div class="row"><button class="primary" id="im-model-btn">Run the open model check</button><span class="muted" id="im-model-st" style="font-size:13px"></span></div>
+        <p class="note">Free, no key needed. Sends the image, downsized and without metadata, to planetAI's detector on Hugging Face, where it is scored and discarded, never stored.</p>
+      </div>
       <div class="judge" id="im-judge" hidden>
         <span class="eyebrow">Claude check</span>
         <div class="row"><button class="primary" id="im-judge-btn">Ask Claude to inspect the content</button><span class="muted" id="im-judge-st" style="font-size:13px"></span></div>
@@ -338,10 +350,10 @@ footer{border-top:1px solid var(--line);background:var(--deep);padding-block:26p
         <div class="stagebox"><span class="num">2</span><div><h3>Normalise</h3><p>Text: rejoin PDF lines, drop page numbers, set headings apart, split into sentences and words. Image: read metadata sections, convert to luminance, cut a 32 px tile grid, take native-resolution patches.</p></div><div class="synth"><b>SynthID</b>Prepare media for the detector</div></div>
         <div class="stagebox"><span class="num">3</span><div><h3>Extract signals in parallel</h3><p>Independent detectors each return a 0–1 AI-likelihood with an explanation.</p>
           <div class="lanes">
-            <div class="lane"><b>Text lane</b><ul><li>Sentence-length rhythm</li><li>AI-typical phrase lexicon</li><li>Transition-word openers</li><li>Punctuation fingerprint (em dashes, "not only… but")</li><li>Word length and paragraph uniformity</li><li>Human markers (contractions, first person, casual tone)</li><li>Claude writing check: polish, cadence, generic framing; flags passages</li></ul></div>
-            <div class="lane"><b>Image lane</b><ul><li>Declared provenance: C2PA manifest, IPTC "trained algorithmic media", generator tags</li><li>Camera capture data in EXIF</li><li>Sensor-noise residual per tile</li><li>Spectral peaks from upsampling</li><li>Generator-native dimensions and camera-shaped frames</li><li>Claude vision check: anatomy, lettering, lighting, AI motifs</li></ul></div>
+            <div class="lane"><b>Text lane</b><ul><li>Sentence-length rhythm</li><li>AI-typical phrase lexicon</li><li>Transition-word openers</li><li>Punctuation fingerprint (em dashes, "not only… but")</li><li>Word length and paragraph uniformity</li><li>Human markers (contractions, first person, casual tone)</li><li>Open model check on Hugging Face: a RoBERTa detector scores the document and each sentence</li><li>Claude writing check: polish, cadence, generic framing; flags passages</li></ul></div>
+            <div class="lane"><b>Image lane</b><ul><li>Declared provenance: C2PA manifest, IPTC "trained algorithmic media", generator tags</li><li>Camera capture data in EXIF</li><li>Sensor-noise residual per tile</li><li>Spectral peaks from upsampling</li><li>Generator-native dimensions and camera-shaped frames</li><li>Open model check on Hugging Face: a ViT real-vs-AI classifier</li><li>Claude vision check: anatomy, lettering, lighting, AI motifs</li></ul></div>
           </div></div><div class="synth"><b>SynthID</b>Scan for the watermark</div></div>
-        <div class="stagebox"><span class="num">4</span><div><h3>Fuse and calibrate</h3><p>Weighted logistic fusion maps signals to 0–100. A declared AI provenance tag sets the score to 95 (80 for AI composites); camera exposure data scales it down. Pixel statistics alone are capped at 50. When the Claude check runs it carries 70% of the score.</p></div><div class="synth"><b>SynthID</b>Watermark detected or not</div></div>
+        <div class="stagebox"><span class="num">4</span><div><h3>Fuse and calibrate</h3><p>Weighted logistic fusion maps signals to 0–100. A declared AI provenance tag sets the score to 95 (80 for AI composites); camera exposure data scales it down. Pixel statistics alone are capped at 50. With the open model check, the model and the statistics share the score evenly. With the Claude check, Claude carries 70%, or 55% when the model check also ran (model 25%, statistics 20%).</p></div><div class="synth"><b>SynthID</b>Watermark detected or not</div></div>
         <div class="stagebox"><span class="num">5</span><div><h3>Localise</h3><p>Each sentence and image tile gets its own score, blended with the overall one and with the passages Claude flags. Their share answers "how much of this is AI".</p></div><div class="synth"><b>SynthID</b>Highlight the portions most likely watermarked</div></div>
         <div class="stagebox"><span class="num">6</span><div><h3>Report</h3><p>Score band, share flagged, confidence, signal breakdown, provenance record and a copyable plain-text report.</p></div><div class="synth"><b>SynthID</b>View results</div></div>
       </div>
@@ -509,16 +521,17 @@ function analyzeText(raw){
     {name:'Paragraph uniformity',val:fPara,detail:pCv===null?'fewer than 3 full paragraphs':`variation ${pCv.toFixed(2)}`,note:'Evenly sized paragraphs suggest templated structure.'},
     {name:'Human markers',val:human,dir:'human',detail:`${contr.toFixed(1)} contractions · ${fp.toFixed(1)} first-person per 100 words`,note:'Contractions, first-person detail and casual asides lower the score.'}
   ];
-  return {text,s0,items,conf,base,words:allW.length,total:body.length,judge:null};
+  return {text,s0,items,conf,base,words:allW.length,total:body.length,judge:null,model:null};
 }
 const normS=x=>x.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 function renderText(r){
-  const j=r.judge; const s=clamp(j?.7*j.p+.3*r.s0:r.s0); const score=Math.round(100*s);
+  const j=r.judge, mp=r.model?.p; const s=clamp(j?(mp!=null?.55*j.p+.25*mp+.2*r.s0:.7*j.p+.3*r.s0):(mp!=null?.5*mp+.5*r.s0:r.s0)); const score=Math.round(100*s);
   const keys=j?j.passages.map(p=>normS(p).slice(0,48)).filter(k=>k.length>=15):[];
   let flaggedW=0,flaggedS=0;
   const html=r.items.map(ps=>'<p>'+ps.map(it=>{
     if(it.head) return `<b>${it.body}</b>`;
     let sc=.45*s+.55*it.local;
+    if(it.mp!=null) sc=.5*sc+.5*it.mp;
     if(keys.length){const ns=normS(it.st); if(keys.some(k=>ns.startsWith(k)||ns.includes(k))) sc=Math.max(sc,.85);}
     if(sc>.5){flaggedW+=it.n;flaggedS++;}
     const a=sc>.35?Math.round(clamp((sc-.35)/.65)*55):0;
@@ -528,6 +541,7 @@ function renderText(r){
   const extent=Math.round(100*(j?.6*j.share+.4*hExt:hExt));
   const conf=j?((j.p<.2||j.p>.8)&&r.words>=150?'High':'Medium'):r.conf;
   const signals=[...r.base];
+  if(r.model) signals.unshift({name:'Open model check',val:r.model.p,detail:`${pct(r.model.p)}/100 · ${r.model.name}`,note:'An open-source detector trained on human and AI writing, run on planetAI\'s Hugging Face Space. Scores each sentence too, which sharpens the highlights. Trained on older models, so it is one signal, not the verdict.'});
   if(j) signals.unshift({name:'Writing check (Claude)',val:j.p,detail:`${pct(j.p)}/100 · ${j.verdict}`,note:'Claude read the writing for polish, cadence, generic framing and missing first-hand detail. Counts for 70% of the score. Passages it picked out are highlighted.'});
   Object.assign(r,{score,extent,conf,signals,flaggedS});
   gauge($('#tx-gauge'),score); $('#tx-score').textContent=score; $('#tx-extent').textContent=extent+'%';
@@ -541,8 +555,10 @@ function runText(srcLabel){
   txCtl?.abort();
   const r=analyzeText(v); r.src=$('#tx-src').textContent; last.text=r;
   $('#tx-judge-cues').innerHTML=''; $('#tx-judge-st').textContent=TXT_SAMPLE?'Not checked yet':(IN_VIEWER?'':'Needs an Anthropic API key'); $('#tx-judge-btn').disabled=false;
+  modelReset('tx');
   renderText(r);
   if(TXT_SAMPLE&&autoJudgeText) runTextJudge();
+  if(MODEL_ON&&autoModel.tx) runModelText();
 }
 function excerpt(t){ if(t.length<=24000) return {t,cut:false}; const m=Math.floor(t.length/2);
   return {t:t.slice(0,10000)+'\n[…]\n'+t.slice(m-3500,m+3500)+'\n[…]\n'+t.slice(-7000),cut:true}; }
@@ -639,7 +655,7 @@ function resetText(){
   gauge($('#tx-gauge'),null); ['#tx-score','#tx-extent','#tx-conf','#tx-sents'].forEach(id=>$(id).textContent='–');
   const v=$('#tx-verdict'); v.textContent='Waiting for text'; v.className='verdict';
   $('#tx-sigs').innerHTML=''; $('#tx-hl').innerHTML='<p class="muted">Paste text or open a document, then tap Analyse text to see which sentences carry the signal.</p>';
-  txCtl?.abort(); $('#tx-judge-cues').innerHTML=''; $('#tx-judge-st').textContent=''; $('#tx-judge-btn').disabled=false;
+  txCtl?.abort(); modelReset('tx'); $('#tx-judge-cues').innerHTML=''; $('#tx-judge-st').textContent=''; $('#tx-judge-btn').disabled=false;
   delete last.text;
 }
 $('#tx-file').onchange=e=>{const f=e.target.files[0];if(f)openDoc(f);e.target.value='';};
@@ -847,26 +863,35 @@ async function analyzeImage(file,label){
   if(!sp){const c=$('#spec').getContext('2d');c.fillStyle='#000';c.fillRect(0,0,256,256);}
   $('#im-src').textContent=label;
   judgeCtl?.abort();
-  const r={file,label,src:label,m,px,sNoCap,sCapped,fingerprint,declared,base,judge:null};
+  const r={file,label,src:label,m,px,sNoCap,sCapped,fingerprint,declared,base,judge:null,model:null};
   last.image=r;
   $('#im-judge-cues').innerHTML=''; $('#im-judge-st').textContent=SAMPLE?'Not checked yet':(IN_VIEWER?'':'Needs an Anthropic API key'); $('#im-judge-btn').disabled=false;
+  modelReset('im');
   renderImage(r);
   if(SAMPLE&&autoJudge) runJudge();
+  if(MODEL_ON&&autoModel.im) runModelImage();
 }
 function renderImage(r){
   const {m,px,declared,judge}=r;
-  const jScore=judge?.7*judge.p+.3*r.sNoCap:0;
+  const mp=r.model?.p;
   let s;
   if(declared==='full') s=.95;
-  else if(declared==='composite') s=Math.max(.8,jScore);
-  else if(judge){ s=jScore; if(m.camera) s*=.6; }
-  else { s=r.sCapped; if(m.camera) s*=.35; }
+  else{
+    let b;
+    if(judge) b=mp!=null?.55*judge.p+.25*mp+.2*r.sNoCap:.7*judge.p+.3*r.sNoCap;
+    else if(mp!=null) b=.5*mp+.5*r.sCapped;
+    else b=r.sCapped;
+    if(declared==='composite') b=Math.max(.8,b);
+    else if(m.camera) b*=judge?.6:.35;
+    s=b;
+  }
   s=clamp(s);
   const score=Math.round(100*s);
   const tileExt=px.tiles.filter(t=>.5*s+.5*t.ai>.55).length/px.tiles.length;
   const extent=declared==='full'?100:Math.round(100*(judge?.6*judge.share+.4*tileExt:tileExt));
   const conf=(declared||m.camera||(judge&&(judge.p<.2||judge.p>.8)))?'High':((judge||px.W0*px.H0>250000)?'Medium':'Low');
   const signals=[...r.base];
+  if(r.model) signals.unshift({name:'Open model check',val:r.model.p,detail:`${pct(r.model.p)}/100 · ${r.model.name}`,note:'An open-source image detector run on planetAI\'s Hugging Face Space. Trained on older generators, so newer AI images can slip past it; one signal, not the verdict.'});
   if(judge) signals.unshift({name:'Vision check (Claude)',val:judge.p,detail:`${pct(judge.p)}/100 · ${judge.verdict}`,note:'Claude looked at the content itself: anatomy, lettering, lighting, textures and typical AI motifs. Counts for 70% of the score unless a provenance tag decides it.'});
   else if(!r.fingerprint&&!declared) signals.unshift({name:'No generator fingerprint',val:0,dir:'human',detail:'score capped at 50',note:'No spectral peaks and no generator-native size, so pixel statistics alone cannot go above "uncertain".'+(SAMPLE?' Run the vision check to judge the content itself.':'')});
   Object.assign(r,{score,extent,conf,signals,s,full:declared==='full'});
@@ -1004,6 +1029,58 @@ if(!IN_VIEWER){
   if(!t) t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
   const ap=()=>{document.documentElement.dataset.theme=t;b.textContent='Theme: '+(t==='light'?'day':'night');};
   ap(); b.onclick=()=>{t=t==='light'?'dark':'light';try{localStorage.setItem('woa-theme',t);}catch(e){}ap();};
+}
+
+/* ---------- Open model check: planetAI's Hugging Face Space ---------- */
+// Set to the Space's direct URL, e.g. 'https://your-name-origin-lens-models.hf.space'. Empty hides the feature.
+const HF_SPACE='';
+const MODEL_ON=!!HF_SPACE&&!IN_VIEWER;
+const autoModel={tx:false,im:false}, modelCtl={tx:null,im:null};
+const MODEL_MSG={waking:'The model is waking up after a quiet spell. Try again in about a minute.',offline:'Could not reach the model. If it was asleep, try again in a minute.',too_big:'This is too large for the model check.',error:'The model check did not finish. Try again.'};
+async function callSpace(path,body,signal){
+  let res;
+  try{res=await fetch(HF_SPACE.replace(/\/+$/,'')+path,{method:'POST',signal,headers:{'content-type':'application/json'},body:JSON.stringify(body)});}
+  catch(e){throw {code:e?.name==='AbortError'?'cancelled':'offline'};}
+  if([502,503,504].includes(res.status)) throw {code:'waking'};
+  if(res.status===413) throw {code:'too_big'};
+  if(!res.ok) throw {code:'error'};
+  return res.json();
+}
+function modelReset(k){ if(!MODEL_ON) return; modelCtl[k]?.abort(); $('#'+k+'-model-st').textContent='Not checked yet'; $('#'+k+'-model-btn').disabled=false; }
+function modelBusy(k,on,msg){ $('#'+k+'-model-btn').disabled=on; $('#'+k+'-model-st').textContent=msg; }
+const shortName=n=>String(n||'open model').split('/').pop();
+async function runModelText(){
+  const r=last.text; if(!MODEL_ON||!r) return;
+  modelCtl.tx?.abort(); const ctl=modelCtl.tx=new AbortController();
+  modelBusy('tx',true,'Checking… the first check after a quiet spell can take a minute.');
+  const body=r.items.flat().filter(it=>!it.head);
+  try{
+    const d=await callSpace('/api/text',{text:r.text.slice(0,60000),sentences:body.slice(0,120).map(it=>it.st)},ctl.signal);
+    if(last.text!==r) return;
+    const sp=Array.isArray(d.sentences)?d.sentences:[];
+    body.forEach((it,i)=>{const v=sp[i];it.mp=typeof v==='number'?clamp(v):null;});
+    r.model={p:clamp(Number(d.ai_probability)||0),name:shortName(d.model)};
+    autoModel.tx=true; modelBusy('tx',false,'Checked · new text is checked automatically');
+    renderText(r);
+  }catch(e){ if(e?.code==='cancelled') return; modelBusy('tx',false,MODEL_MSG[e?.code]||MODEL_MSG.error); }
+}
+async function runModelImage(){
+  const r=last.image; if(!MODEL_ON||!r) return;
+  modelCtl.im?.abort(); const ctl=modelCtl.im=new AbortController();
+  modelBusy('im',true,'Checking… the first check after a quiet spell can take a minute.');
+  try{
+    const d=await callSpace('/api/image',{image:await toJpegB64(r.file)},ctl.signal);
+    if(last.image!==r) return;
+    r.model={p:clamp(Number(d.ai_probability)||0),name:shortName(d.model)};
+    autoModel.im=true; modelBusy('im',false,'Checked · new images are checked automatically');
+    renderImage(r);
+  }catch(e){ if(e?.code==='cancelled') return; modelBusy('im',false,MODEL_MSG[e?.code]||MODEL_MSG.error); }
+}
+if(MODEL_ON){
+  $('#tx-model').hidden=false; $('#im-model').hidden=false;
+  $('#tx-model-btn').onclick=runModelText; $('#im-model-btn').onclick=runModelImage;
+  $('#privacy-note').textContent='Text and images are analysed in your browser. Content leaves the page only when you run a model or Claude check, and is never stored.';
+  $('#drop-note').textContent='JPEG, PNG or WebP. The file stays on this page unless you run a model or Claude check.';
 }
 
 /* ---------- boot ---------- */
