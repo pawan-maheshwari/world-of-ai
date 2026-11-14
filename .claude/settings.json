@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tools/claude/peek.sh:*)",
+      "Bash(python3 tools/claude/codemap.py)",
+      "Bash(python3 tools/claude/check_html.py:*)",
+      "Bash(node --check:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(grep:*)",
+      "Bash(wc:*)"
+    ],
+    "deny": [
+      "Read(./media/**)"
+    ]
+  }
+}
