@@ -401,7 +401,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
       </svg>
       <div class="brand-txt">
         <b>GREEN&#8209;LLM</b>
-        <span class="eyebrow">Index &nbsp;·&nbsp; v1.7 &nbsp;·&nbsp; planetAI LLP</span>
+        <span class="eyebrow">Index &nbsp;·&nbsp; v1.8 &nbsp;·&nbsp; planetAI LLP</span>
       </div>
     </div>
     <span class="eyebrow">Field instrument for AI environmental accounting</span>
@@ -672,7 +672,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     </div>
     <div class="field">
       <label class="lbl" for="wfOut">Output tokens per task</label>
-      <div class="range-row"><input type="range" id="wfOut" min="50" max="4000" step="50" value="400"><span class="range-val" id="wfOutV">400</span></div>
+      <div class="range-row"><input type="range" id="wfOut" min="50" max="4000" step="10" value="400"><span class="range-val" id="wfOutV">400</span></div>
     </div>
     <div class="field">
       <label class="lbl" for="wfBase">Model you use today (the baseline)</label>
@@ -700,7 +700,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     </table>
   </div>
   <p class="note" id="wfNote"></p>
-  <p class="note"><b>Why the abatement figures are so large.</b> At realistic volumes the money saved by switching models outweighs the carbon saved by three to five orders of magnitude in dollar terms. That is not a rounding error — it is the central strategic fact on this page. No plausible carbon price will ever drive model selection, so <b>do not build the business case on carbon.</b> Build it on cost, and bank the emissions reduction as a consequence. Sustainability programmes that depend on a carbon price to justify themselves lose the budget argument; cost-reduction programmes that happen to cut emissions survive it.</p>
+  <p class="note"><b>Why the abatement figures are so large.</b> At realistic volumes the money saved by switching models outweighs the value of the carbon saved by two to three orders of magnitude. The reason is structural, not accidental: electricity is only about 0.1–0.2% of the list price of an API call — the rest recovers hardware, software and margin — and the carbon in that electricity, priced at about $185 a tonne, is worth roughly the same as the electricity itself. A carbon price at any level now in force or under serious discussion is therefore unlikely to drive model selection on its own, so <b>do not build the business case on carbon.</b> Build it on cost, and bank the emissions reduction as a consequence. Sustainability programmes that depend on a carbon price to justify themselves lose the budget argument; cost-reduction programmes that happen to cut emissions survive it.</p>
 
   <figure style="margin-top:26px">
     <span class="eyebrow">Figure F · Cost against carbon, with the efficient frontier</span>
@@ -726,7 +726,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     </div>
   </details>
 
-  <p class="note"><b>Two warnings before this drives a procurement decision.</b> First, list prices move constantly and the defaults here reflect published rates around August 2026 — verify every row against the provider's current rate card, and note that batch processing and prompt caching can each cut the cost column substantially without changing the carbon column much. Second, the capability tiers are a coarse judgement, not a benchmark result: the honest version of this table is one where you have run your own evaluation set and replaced the tier column with your own pass rates.</p>
+  <p class="note"><b>Two warnings before this drives a procurement decision.</b> First, list prices move constantly and the defaults here are published list rates retrieved on 6 September 2026 and will date — verify every row against the provider's current rate card, and note that batch processing and prompt caching can each cut the cost column substantially without changing the carbon column much. Second, the capability tiers are a coarse judgement, not a benchmark result: the honest version of this table is one where you have run your own evaluation set and replaced the tier column with your own pass rates.</p>
 </section>
 
 <section>
@@ -879,7 +879,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
   <div class="grid2">
     <div class="field">
       <label class="lbl" for="gGrow">g — AI workload volume growth, per year</label>
-      <div class="range-row"><input type="range" id="gGrow" min="10" max="250" step="5" value="130"><span class="range-val" id="gGrowV">130%</span></div>
+      <div class="range-row"><input type="range" id="gGrow" min="10" max="250" step="1" value="130"><span class="range-val" id="gGrowV">130%</span></div>
     </div>
     <div class="field">
       <label class="lbl" for="gEff">e — Energy efficiency gain per task, per year</label>
@@ -890,6 +890,12 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
       <div class="range-row"><input type="range" id="gClean" min="2" max="60" step="1" value="22"><span class="range-val" id="gCleanV">22%</span></div>
     </div>
   </div>
+
+  <div class="chips" id="eqPresets" style="margin-top:14px">
+    <button type="button" class="btn ghost" data-g="130" data-e="35" data-c="22">Author high-growth · g 130 · e 35 · c 22</button>
+    <button type="button" class="btn ghost" data-g="92" data-e="35" data-c="22">IEA-consistent · AI demand triples 2025–30 · g 92 · e 35 · c 22</button>
+  </div>
+  <p class="note" style="margin-top:8px">The 2026 starting values (about 155 TWh of AI data-centre demand, about 240 TWh of clean supply reaching data centres) and the 22% clean-supply growth rate are author estimates, not published figures. The model assumes clean supply serves AI load before other data-centre load.</p>
 
   <div class="pledge" style="margin-top:24px;align-items:flex-start">
     <div>
@@ -1054,11 +1060,12 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     <div class="body">
       <ul>
         <li><b>Energy is built from tokens, not from a flat per-query constant.</b> Each model class carries a decode coefficient in watt-hours per output token and a prefill coefficient per input token, set roughly thirty times lower because prefill batches efficiently while decode runs the whole model once per token.</li>
-        <li><b>Calibration.</b> The peer-reviewed benchmark is a median of 0.31 Wh per query (interquartile range 0.16–0.60 Wh) for frontier-scale models at about 300 output tokens, facility overhead included. At that same query shape this instrument gives roughly 0.19 Wh for the mid-tier class and 0.57 Wh for the frontier class, so the two classes sit either side of the published median and inside its range. Google’s own disclosure of 0.24 Wh for a median Gemini text prompt falls in the same band. The defaults in section 01 read higher than these figures on purpose: they carry 12K tokens of context and one re-prompt. Long-reasoning and agentic settings land above the published long-query median of about 3.9 Wh and should be read as high-side estimates. Published per-token measurements cluster at 0.0001–0.002 Wh, which brackets the decode coefficients from mid-tier upward; the small-model class sits just below that range, and prefill coefficients are set about thirty times lower by construction.</li>
+        <li><b>Calibration (corrected in v1.8).</b> The frontier decode coefficient is fitted to the peer-reviewed median of 0.31 Wh per query (interquartile range 0.16–0.60 Wh) for frontier-scale models (Oviedo et al., <i>Joule</i>, 2026), using a standard query of about 750 input and 270 output tokens at PUE 1.25. That gives 8.5 × 10⁻⁴ Wh per output token; every other class keeps its ratio to the frontier class, and prefill is decode ÷ 30. Extending the output fifteenfold, the chain predicts 4.33 Wh against the published long-query median of 3.91 Wh (+11%); if the input also grows fifteenfold, the overstatement rises to about 20%. Version 1.7 applied the median to the wrong class and overstated every coefficient by about 76%. Google’s full-stack figure of 0.24 Wh for a median Gemini Apps prompt (0.10 Wh counting accelerators alone) sits between this instrument’s mid-tier (≈0.10 Wh) and frontier (≈0.31 Wh) classes — a reminder that idle capacity and host energy, which Google counts, sit only partly inside a token-based chain. The defaults in section 01 read higher on purpose: they carry 12K tokens of context and one re-prompt.</li>
         <li><b>Reasoning models</b> add hidden thinking tokens to the decode count. <b>Agentic runs</b> multiply by sixteen internal model invocations, each re-reading the carried context — which is why context length hurts agents far more than it hurts chat.</li>
         <li><b>Retries</b> multiply the whole chain linearly — a failed answer costs full price.</li>
         <li><b>Facility</b> energy = IT energy × PUE. <b>Carbon</b> = facility kWh × grid intensity. <b>Water</b> = facility kWh × (on-site cooling coefficient + off-site generation coefficient scaled to grid carbon intensity).</li>
-        <li><b>Score</b> bands each dimension against the rubric in section 07 and sums to 100.</li>
+        <li><b>Score</b> bands each dimension against the rubric in section 07 and sums to 100. The weights are a stated judgement, not an estimate, and the score has not been validated against outcomes. The model recommendation in section 08 does not use it: it picks the lowest-carbon model that clears the quality bar and breaks ties on cost.</li>
+        <li><b>Known limits.</b> Carbon differs only between five size classes, so models in one class tie on carbon, and the class of a closed model is an inference, not a disclosure. Scaling all coefficients together never changes a recommendation. Perturbing each class independently across the published interquartile range changes at least one of the five archetype recommendations in about three draws in ten, mostly the agentic one. Moving one closed model up or down a class changes about one recommendation in twelve; moving one capability tier by a step, about one in seven.</li>
       </ul>
     </div>
   </details>
@@ -1067,7 +1074,8 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     <div class="body">
       <ul>
         <li>International Energy Agency — <i>Energy and AI</i> (2025) and <i>Key Questions on Energy and AI</i> (2026): data centre demand trajectory, grid mix, regional concentration.</li>
-        <li><i>Joule</i> (2026) — energy use of AI inference, efficiency pathways and test-time scaling: per-query medians and the effect of reasoning length.</li>
+        <li>Oviedo et al., <i>Joule</i> (2026) — energy use of AI inference, efficiency pathways and test-time scaling: per-query medians and the effect of reasoning length (calibration source).</li>
+        <li>Elsworth et al. (2025) — measuring the environmental impact of delivering AI at Google scale: full-stack against accelerator-only per-prompt energy.</li>
         <li>Benchmarking studies on energy, water and carbon footprint of LLM inference (2025–2026): cross-model comparisons and eco-efficiency ranking.</li>
         <li>Lawrence Berkeley National Laboratory and Carbon Brief: regional concentration and national share estimates.</li>
       </ul>
@@ -1080,7 +1088,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-6 5-6 13 0 18 6-5 6-13 0-18z" fill="#2E6F55"/><path d="M12 4.5v16" stroke="#EDEEE8" stroke-width="1.3"/></svg>
     <b>Developed by planetAI LLP</b> &nbsp;·&nbsp; <a href="index.html" style="color:inherit">World of AI home</a>
   </div>
-  GREEN-LLM Index v1.7 &nbsp;·&nbsp; Framework and instrument &nbsp;·&nbsp; Figures are modelled estimates with wide uncertainty &nbsp;·&nbsp; Verify against your own provider telemetry before publishing or reporting
+  GREEN-LLM Index v1.8 &nbsp;·&nbsp; Framework and instrument &nbsp;·&nbsp; Figures are modelled estimates with wide uncertainty &nbsp;·&nbsp; Verify against your own provider telemetry before publishing or reporting
 </footer>
 
 <div class="board-cta">
@@ -1131,12 +1139,14 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
   "use strict";
   // dec = Wh per output token, pre = Wh per input token, calls = model
   // invocations per user request, hid = hidden reasoning tokens per call
+  // v1.8: frontier decode fitted to the Joule (2026) median of 0.31 Wh/query = 8.5e-4 Wh/token;
+  // every class scaled by the same factor (0.85/1.5) and prefill = decode/30.
   var MODELS = {
-    nano:     { dec:8.0e-5, pre:2.4e-6, calls:1,  hid:0,    idx:0, name:'Small / distilled' },
-    mid:      { dec:5.0e-4, pre:1.5e-5, calls:1,  hid:0,    idx:1, name:'Mid-tier' },
-    frontier: { dec:1.5e-3, pre:4.5e-5, calls:1,  hid:0,    idx:2, name:'Frontier dense' },
-    reason:   { dec:1.5e-3, pre:4.5e-5, calls:1,  hid:4000, idx:3, name:'Frontier + reasoning' },
-    agent:    { dec:1.5e-3, pre:4.5e-5, calls:16, hid:800,  idx:4, name:'Agentic' }
+    nano:     { dec:4.53e-5, pre:1.51e-6, calls:1,  hid:0,    idx:0, name:'Small / distilled' },
+    mid:      { dec:2.83e-4, pre:9.44e-6, calls:1,  hid:0,    idx:1, name:'Mid-tier' },
+    frontier: { dec:8.5e-4,  pre:2.83e-5, calls:1,  hid:0,    idx:2, name:'Frontier dense' },
+    reason:   { dec:8.5e-4,  pre:2.83e-5, calls:1,  hid:4000, idx:3, name:'Frontier + reasoning' },
+    agent:    { dec:8.5e-4,  pre:2.83e-5, calls:16, hid:800,  idx:4, name:'Agentic' }
   };
   var GRADES = [
     { min:90, g:'A', c:'var(--b1)', label:'Regenerative',
@@ -1565,7 +1575,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     var rows = [
       ['Big-tech AI capital spending', 75, '+75% expected in 2026'],
       ['AI-focused data centre demand', 50, '+50% in 2025'],
-      ['Clean supply reaching data centres', 22, '+22% a year to 2030'],
+      ['Clean supply reaching data centres', 22, '+22% a year (author estimate)'],
       ['All data centre demand', 17, '+17% in 2025'],
       ['Global electricity demand', 3, '+3% in 2025'],
       ['Labs publishing full energy telemetry', 0, 'none']
@@ -1608,7 +1618,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
       $('eqYearLbl').textContent = 'No crossover';
       $('eqVerdict').innerHTML = '<b>Equilibrium holds.</b> Net demand grows at ' + (q.net*100).toFixed(0) +
         '% a year against clean supply growing at ' + (q.c*100).toFixed(0) +
-        '%. Clean generation keeps pace, marginal AI load never has to be met by fossil generation, and adoption can compound without an environmental ceiling. Note how narrow the settings are that produce this result.';
+        '%. Clean generation keeps pace and AI demand stays within the clean supply contracted for it, so adoption can compound without this particular ceiling — local water and grid limits still apply. Note how narrow the settings are that produce this result.';
     } else {
       var yr = q.cross;
       var runway = yr - Y0;
@@ -1620,7 +1630,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
           : 'Runway of roughly ' + runway.toFixed(1) + ' years.') +
         '</b> Net demand compounds at ' + (q.net*100).toFixed(0) + '% while clean supply reaching data centres grows at ' +
         (q.c*100).toFixed(0) + '% — a shortfall of ' + q.gapPP.toFixed(0) +
-        ' points a year. Past the crossover, every additional unit of AI work must be powered by whatever the local grid has spare, which is gas and coal. ' +
+        ' points a year. Past the crossover, every additional unit of AI work leans on whatever the local grid has spare, which on most grids today is gas and coal. ' +
         'Holding the line would need efficiency gains of <b>' + (q.needE*100).toFixed(0) +
         '% a year</b> against the <b>' + (q.e*100).toFixed(0) + '%</b> currently achieved, or workload growth capped at <b>' +
         (q.needG*100).toFixed(0) + '%</b> against the <b>' + (q.g*100).toFixed(0) + '%</b> assumed.';
@@ -1642,6 +1652,10 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
       dPath += (t?'L':'M')+px(t).toFixed(1)+' '+py(D0*Math.pow(1+q.net,t)).toFixed(1);
       sPath += (t?'L':'M')+px(t).toFixed(1)+' '+py(S0*Math.pow(1+q.c,t)).toFixed(1);
     }
+    if (950 <= maxV) {   // IEA central projection for ALL data centres in 2030 (Key Questions on Energy and AI, 2026)
+      g += '<line x1="'+L+'" y1="'+py(950)+'" x2="'+(W-R)+'" y2="'+py(950)+'" stroke="var(--ink-soft)" stroke-width="1.2" stroke-dasharray="2 4"/>'+
+           '<text class="node-u" x="'+(W-R-6)+'" y="'+(py(950)+13)+'" text-anchor="end">IEA 2030 projection, all data centres ≈ 950 TWh</text>';
+    }
     g += '<path d="'+sPath+'" fill="none" stroke="var(--b1)" stroke-width="3"/>';
     g += '<path d="'+dPath+'" fill="none" stroke="var(--b5)" stroke-width="3"/>';
     if (q.cross !== null && q.cross-Y0 >= 0 && q.cross-Y0 <= yrs){
@@ -1649,7 +1663,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
       g += '<line x1="'+cx+'" y1="'+T+'" x2="'+cx+'" y2="'+(T+ph)+'" stroke="var(--ink)" stroke-width="1.4" stroke-dasharray="4 4"/>'+
            '<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.6"/>'+
            '<text class="node-v" x="'+(cx+9)+'" y="'+(T+16)+'" font-size="12">CROSSOVER '+Math.round(q.cross)+'</text>'+
-           '<text class="node-u" x="'+(cx+9)+'" y="'+(T+29)+'">marginal load turns fossil</text>';
+           '<text class="node-u" x="'+(cx+9)+'" y="'+(T+29)+'">AI outgrows clean supply</text>';
     }
     g += '<text x="'+(W-R+8)+'" y="'+(py(sEnd)+4)+'" font-size="11" font-weight="700" fill="var(--b1)" font-family="Archivo,sans-serif">Clean supply</text>';
     g += '<text x="'+(W-R+8)+'" y="'+(py(dEnd)+4)+'" font-size="11" font-weight="700" fill="var(--b5)" font-family="Archivo,sans-serif">AI demand</text>';
@@ -1664,18 +1678,18 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
          : 'crossover in ' + Math.round(q.cross) + ', roughly ' + (q.cross-Y0).toFixed(1) + ' years of runway');
     $('eqNote').innerHTML = sustainable
       ? 'The curves never meet. Everything that follows in section 14 is then about local constraints — water, land, interconnection queues — which bind long before the global carbon arithmetic does.'
-      : 'The crossover is not a cliff and nothing breaks on that date. It is the year the marginal watt stops being clean — after which additional AI adoption is, at system level, an argument for keeping fossil plants running. The date moves years in either direction on assumptions nobody publishes, which is precisely the problem.';
+      : 'The crossover is not a cliff and nothing breaks on that date. It is the year AI demand outgrows the clean supply contracted for data centres, assuming that supply serves AI load first; after it, additional AI work leans on whatever the grid has spare. On many grids the marginal unit is already fossil at most hours, so this bounds attributional claims rather than marking the start of fossil use. The date is extremely sensitive: the high-growth default puts AI alone above the IEA 2030 projection for <i>all</i> data centres, while an IEA-consistent path (AI demand tripling 2025–2030) moves the crossover into the 2040s. Use the presets above to compare.';
   }
 
   // --- Model comparison ---------------------------------------------------
-  // Prices are published list rates around Aug 2026, USD per million tokens.
+  // Prices are published list rates retrieved 6 Sep 2026, USD per million tokens.
   // Size classes carry the decode/prefill coefficients used everywhere else.
   var CLASSES = {
-    nano:  { dec:8.0e-5, pre:2.4e-6 },
-    small: { dec:2.2e-4, pre:6.6e-6 },
-    mid:   { dec:5.0e-4, pre:1.5e-5 },
-    front: { dec:1.5e-3, pre:4.5e-5 },
-    frontP:{ dec:2.2e-3, pre:6.6e-5 }
+    nano:  { dec:4.53e-5, pre:1.51e-6 },
+    small: { dec:1.25e-4, pre:4.16e-6 },
+    mid:   { dec:2.83e-4, pre:9.44e-6 },
+    front: { dec:8.5e-4,  pre:2.83e-5 },
+    frontP:{ dec:1.25e-3, pre:4.16e-5 }
   };
   var CATALOG = [
     { n:'Llama 3.1 8B (hosted)', c:'nano',  pi:0.02, po:0.05, t:1 },
@@ -1766,7 +1780,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
 
     var eligible = rows.filter(function(r){ return !r.below; });
     var pool = eligible.length ? eligible : rows;
-    var greenest = pool.slice().sort(function(a,b){ return a.gTask - b.gTask; })[0];
+    var greenest = pool.slice().sort(function(a,b){ return (a.gTask - b.gTask) || (a.costTask - b.costTask); })[0];  // carbon ties (same size class) broken on cost
     var cheapest = pool.slice().sort(function(a,b){ return a.costTask - b.costTask; })[0];
     var bestScore= pool.slice().sort(function(a,b){ return b.score - a.score; })[0];
     var saveC = base.costYr - greenest.costYr, saveT = base.tYr - greenest.tYr;
@@ -1896,7 +1910,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     { k:'model choose pick best recommend selection compare switch llm',
       a:function(){ return 'For your current workflow the lowest-carbon option that clears the quality bar is <b>' + STATE.greenest + '</b>, and the cheapest is <b>' + STATE.cheapest + '</b>. Section 09 costs all twelve candidates on money and carbon together. The key rule: the greenest model is not the smallest, it is the smallest that clears the bar — a model that fails pays full price twice.'; } },
     { k:'abatement cost mac carbon price tonne business case justify budget',
-      a:function(){ return 'Marginal abatement cost is <code>(Δcost) ÷ (ΔtCO₂e avoided)</code>. Negative means the switch saves money and carbon at once. The important finding: at real volumes the money saved outweighs the carbon saved by three to five orders of magnitude in dollar terms — so <b>do not build the business case on carbon</b>. Build it on cost and bank the emissions cut as a consequence.'; } },
+      a:function(){ return 'Marginal abatement cost is <code>(Δcost) ÷ (ΔtCO₂e avoided)</code>. Negative means the switch saves money and carbon at once. The important finding: at real volumes the money saved outweighs the value of the carbon saved by two to three orders of magnitude — so <b>do not build the business case on carbon</b>. Build it on cost and bank the emissions cut as a consequence.'; } },
     { k:'equilibrium crossover sustain how long ceiling runway capacity',
       a:function(){ return 'Equilibrium holds while <code>(1+g)·(1−e) ≤ (1+c)</code> — workload growth, net of efficiency, must stay under clean supply growth. At your current settings the model gives <b>' + STATE.eq + '</b>. Section 12 lets you move all three variables and see the crossover date shift.'; } },
     { k:'reduce cut improve lower footprint actions suggestions optimise',
@@ -2000,7 +2014,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     '<div class="pg">' +
       '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:8pt;letter-spacing:1.6pt">GREEN-LLM INDEX · BOARD REPORT · ' + d + '</div>' +
       '<h1>Environmental position of our AI usage</h1>' +
-      '<p style="color:#4A5A52;margin:0 0 10pt">Prepared with the GREEN-LLM Index v1.7, developed by planetAI LLP. All figures are modelled estimates with wide error bars.</p>' +
+      '<p style="color:#4A5A52;margin:0 0 10pt">Prepared with the GREEN-LLM Index v1.8, developed by planetAI LLP. All figures are modelled estimates with wide error bars.</p>' +
       '<div class="hero"><div style="font-family:\'IBM Plex Mono\',monospace;font-size:8pt;letter-spacing:1.4pt">VERDANCY SCORE</div>' +
         '<div class="n">' + STATE.total + ' / 100 &nbsp; <span style="font-size:16pt">Grade ' + STATE.grade + '</span></div>' +
         '<div style="margin-top:5pt">' + STATE.quad + ' quadrant — ' + STATE.verdict + '</div></div>' +
@@ -2022,7 +2036,7 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
         ' tonnes CO₂e a year.</p>' +
       '<table><thead><tr><th>Model</th><th>$/1K tasks</th><th>kg CO₂e/1K</th><th>Annual $</th><th>Annual t</th></tr></thead><tbody>' +
         modelRows + '</tbody></table>' +
-      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.7 · Page 1 of 2</div>' +
+      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.8 · Page 1 of 2</div>' +
     '</div>' +
     '<div class="pg">' +
       '<h2>3 · How long the current rate can be sustained</h2>' +
@@ -2045,12 +2059,12 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
         ' a year against the current baseline. It is a deterministic search over the permitted configuration space, not a generative judgement — the same inputs always produce the same recommendation.</p>' : '') +
       '<h2>' + (STATE.agent ? '6' : '5') + ' · What the board should note</h2>' +
       '<ul style="margin:6pt 0 0;padding-left:16pt">' +
-        '<li>The money saved by right-sizing models exceeds the carbon saved by three to five orders of magnitude in dollar terms. The business case should be built on cost, with the emissions reduction banked as a consequence.</li>' +
+        '<li>The money saved by right-sizing models exceeds the value of the carbon saved by two to three orders of magnitude. The business case should be built on cost, with the emissions reduction banked as a consequence.</li>' +
         '<li>Siting decides more than usage. The same query emits roughly eighteen times more on a coal-heavy grid than a hydro-dominant one.</li>' +
         '<li>Agentic workloads are the dominant variable. One agent run can cost what a hundred chat queries cost, so step-count caps and budget kill-switches matter more than user policy.</li>' +
         '<li>No frontier lab publishes full per-model energy telemetry. Every figure in this report is an estimate, and improving that is a procurement lever the board can pull.</li>' +
       '</ul>' +
-      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.7 · Generated ' + d + ' · Modelled estimates, wide error bars · Page 2 of 2</div>' +
+      '<div class="foot">planetAI LLP · GREEN-LLM Index v1.8 · Generated ' + d + ' · Modelled estimates, wide error bars · Page 2 of 2</div>' +
     '</div>';
   }
 
@@ -2419,6 +2433,12 @@ footer{margin-top:44px;border-top:1.5px solid var(--ink);padding-top:14px;
     var el = $(id);
     el.addEventListener('input', renderEq);
     el.addEventListener('change', renderEq);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#eqPresets button'), function(b){
+    b.addEventListener('click', function(){
+      $('gGrow').value = b.getAttribute('data-g'); $('gEff').value = b.getAttribute('data-e'); $('gClean').value = b.getAttribute('data-c');
+      renderEq();
+    });
   });
   ['wf','wfVol','wfIn','wfOut','wfBase','wfCarbon'].forEach(function(id){
     var el = $(id);
