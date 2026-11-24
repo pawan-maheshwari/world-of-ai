@@ -259,7 +259,7 @@ footer a{color:var(--muted)}
     <div class="wrap">
       <div class="band-head">
         <h2>The release watch</h2>
-        <p>Every Monday at 09:00 IST a GitHub Actions job lists new models from OpenAI, Anthropic and Google, reads their release notes, runs the test packs within a call budget and publishes a fresh audit report.</p>
+        <p>Every day at 09:00 IST a GitHub Actions job reads the release notes of OpenAI, Anthropic and Google, flags any new model and posts it to the release desk. A full audit report is published every Monday and whenever something changes.</p>
       </div>
       <div class="watch-grid">
         <div class="wcard"><h3>Last watch run</h3><div class="big" id="wLast">–</div><p id="wNew">–</p></div>
@@ -421,7 +421,7 @@ function renderWatch(){
   const w = DATA.watch || {}, l = DATA.latest || {};
   document.getElementById("wLast").textContent = fmtDate(l.generatedAt || w.updated);
   const nm = (l.newModels || []).length;
-  document.getElementById("wNew").textContent = nm ? `${nm} new model${nm > 1 ? "s" : ""} found on the last run.` : "No new models on the last run. The next run is on Monday.";
+  document.getElementById("wNew").textContent = nm ? `${nm} new model${nm > 1 ? "s" : ""} found on the last run.` : "No new models on the last run. The watcher checks again tomorrow.";
   const models = w.models || [], by = {};
   models.forEach(m => (by[m.provider] = by[m.provider] || []).push(m.id));
   document.getElementById("wCount").textContent = models.length;
@@ -435,7 +435,8 @@ async function getJSON(path){ const r = await fetch(ASSAY.raw + path, { cache:"n
 async function loadLive(){
   const idx = await getJSON("scenarios/index.json");
   const files = idx.scenarios || [];
-  const scen = (await Promise.all(files.map(f => getJSON("scenarios/" + encodeURIComponent(f)).catch(() => null)))).filter(s => s && s.id);
+  /* Drafts have no checked claims yet: they appear on the release desk, not in the ledger. */
+  const scen = (await Promise.all(files.map(f => getJSON("scenarios/" + encodeURIComponent(f)).catch(() => null)))).filter(s => s && s.id && s.status !== "draft");
   if(!scen.length) throw new Error("empty ledger");
   const [watch, latest] = await Promise.all([ getJSON("watch/known-models.json").catch(() => SNAPSHOT.watch), getJSON("results/latest.json").catch(() => SNAPSHOT.latest) ]);
   return { scenarios: scen, watch, latest };
@@ -443,7 +444,7 @@ async function loadLive(){
 function setSource(live){
   document.getElementById("srcDot").className = "dot" + (live ? " live" : "");
   document.getElementById("srcText").textContent = live
-    ? "Live from the Assay repository · updated every Monday"
+    ? "Live from the Assay repository · checked daily"
     : "Showing the " + fmtDate(SNAPSHOT.latest.generatedAt) + " snapshot · live data unavailable";
 }
 
