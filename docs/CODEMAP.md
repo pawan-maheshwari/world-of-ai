@@ -9,12 +9,14 @@ Files with *long lines* contain inline base64/minified blobs — never print tho
 | File | Size | Lines | Long lines |
 |---|---|---|---|
 | `harmonia.html` | 219 KB | 2877 | 2 |
-| `green-llm.html` | 157 KB | 2448 |  |
-| `index.html` | 139 KB | 1245 | 3 |
+| `green-llm.html` | 160 KB | 2468 |  |
+| `index.html` | 143 KB | 1295 | 3 |
 | `origin-lens.html` | 85 KB | 1096 |  |
-| `assay.html` | 41 KB | 472 | 1 |
+| `assay.html` | 53 KB | 557 | 2 |
 | `range-studio.html` | 37 KB | 541 |  |
 | `spaces/origin-lens-models/app.py` | 5 KB | 144 |  |
+| `tools/claude/codemap.py` | 5 KB | 129 |  |
+| `tools/claude/check_html.py` | 2 KB | 65 |  |
 | `.github/workflows/deploy-origin-lens-space.yml` | 1 KB | 38 |  |
 
 ## Anchors per file
@@ -109,60 +111,62 @@ Files with *long lines* contain inline base64/minified blobs — never print tho
 - L833 h2 `If the world worked the way you do`
 - L860 h2 `In the race to adopt AI, are we missing the environment?`
 - L870 h2 `How far can the environment sustain this?`
-- L918 h2 `What holds the equilibrium`
-- L946 h2 `Suggestions to improve the environment`
-- L957 h2 `Predicted effects on the world environment`
-- L1051 h2 `How the numbers are derived`
-- L1129 script
-- L1134 data `MODELS`
-- L1141 data `GRADES`
-- L1273 data `ACTIONS`
-- L1443 data `TRAJ`
-- L1673 data `CLASSES`
-- L1680 data `CATALOG`
-- L1694 data `WORKFLOWS`
-- L1701 data `TIERNAME`
-- L1885 data `STATE`
-- L1923 data `STOP`
-- L2002 h2 `Environmental position of our AI usage`
-- L2007 h2 `1 · Current footprint`
-- L2017 h2 `2 · Model selection for ' + w.n.toLowerCase() + '`
-- L2028 h2 `3 · How long the current rate can be sustained`
-- L2039 h2 `4 · Committed actions`
-- L2042 h2 `5 · Agent recommendation`
-- L2058 data `GRIDS`
-- L2064 data `PUES`
-- L2066 data `COOLS`
-- L2193 data `SEV`
-- functions (49): $@1154, fmt@1155, clamp@1167, readInputs@1169, physics@1186, scoreG@1200, scoreR@1209, scoreE1@1214, scoreE2@1220, scoreN@1226, grade@1230, levers@1235, delta@1237, scenarios@1264, buildActions@1324, pledge@1339, renderLedger@1356, renderFlow@1380, renderCompare@1402, renderDots@1431, renderTraj@1448, px@1451, py@1452, line@1462, renderGridFig@1497, renderRebound@1519, px@1523, py@1526, equilibrium@1548, renderAsym@1564, renderEq@1593, px@1633, py@1634, scoreModel@1704, computeModels@1717, renderModels@1740, px@1828, py@1829, kbAnswer@1922, kbPush@1946, kbAsk@1955, initKB@1962, toggle@1969, buildBoard@1978, agentValidate@2068, add@2070, agentSearch@2113, runAgent@2172, render@2297
+- L924 h2 `What holds the equilibrium`
+- L952 h2 `Suggestions to improve the environment`
+- L963 h2 `Predicted effects on the world environment`
+- L1057 h2 `How the numbers are derived`
+- L1137 script
+- L1144 data `MODELS`
+- L1151 data `GRADES`
+- L1283 data `ACTIONS`
+- L1453 data `TRAJ`
+- L1687 data `CLASSES`
+- L1694 data `CATALOG`
+- L1708 data `WORKFLOWS`
+- L1715 data `TIERNAME`
+- L1899 data `STATE`
+- L1937 data `STOP`
+- L2016 h2 `Environmental position of our AI usage`
+- L2021 h2 `1 · Current footprint`
+- L2031 h2 `2 · Model selection for ' + w.n.toLowerCase() + '`
+- L2042 h2 `3 · How long the current rate can be sustained`
+- L2053 h2 `4 · Committed actions`
+- L2056 h2 `5 · Agent recommendation`
+- L2072 data `GRIDS`
+- L2078 data `PUES`
+- L2080 data `COOLS`
+- L2207 data `SEV`
+- functions (49): $@1164, fmt@1165, clamp@1177, readInputs@1179, physics@1196, scoreG@1210, scoreR@1219, scoreE1@1224, scoreE2@1230, scoreN@1236, grade@1240, levers@1245, delta@1247, scenarios@1274, buildActions@1334, pledge@1349, renderLedger@1366, renderFlow@1390, renderCompare@1412, renderDots@1441, renderTraj@1458, px@1461, py@1462, line@1472, renderGridFig@1507, renderRebound@1529, px@1533, py@1536, equilibrium@1558, renderAsym@1574, renderEq@1603, px@1643, py@1644, scoreModel@1718, computeModels@1731, renderModels@1754, px@1842, py@1843, kbAnswer@1936, kbPush@1960, kbAsk@1969, initKB@1976, toggle@1983, buildBoard@1992, agentValidate@2082, add@2084, agentSearch@2127, runAgent@2186, render@2311
 ### `index.html`
 - L11 style
-- L417 script
-- L420 section `nav`
-- L435 section `links`
-- L457 section `top`
-- L482 div# `panel`
-- L497 section `atlas`
-- L509 section `premium`
-- L548 section `horizon`
-- L560 section `about`
-- L564 h2 `A small studio drawing a bigger map of who gets to use AI.`
-- L627 section `mission`
-- L635 h2 `AI for every planet.`
-- L688 section `contact`
-- L771 div# `modalBack`
-- L779 div# `modalBody`
-- L783 script
-- L785 data `BEACONS`
-- L878 data `THEMES`
-- L1076 data `BOT_AV`
-- L1081 data `BOT_INTENTS`
-- L1103 data `BOT_FALLBACK`
-- L1150 data `SHARE_URL`
-- L1151 data `SHARE_TEXT`
-- L1178 data `COUNTER`
-- L1206 data `MODALS`
-- functions (34): renderRows@833, selectBeacon@855, PTS@893, ll@897, rot@901, slerp@907, resize@911, hudCoord@919, draw@931, loop@1002, pos@1017, animateTo@1037, onScroll@1054, setTheme@1063, hit@1077, botReply@1104, esc@1108, botScroll@1109, addMsg@1110, clearChips@1115, addChips@1116, typing@1122, botSend@1124, openBot@1137, closeBot@1144, copyLink@1152, done@1154, fb@1155, doShare@1158, fmtCount@1179, animateCount@1180, initVisitors@1185, openModal@1237, closeModal@1238
+- L423 script
+- L426 section `nav`
+- L441 section `links`
+- L464 section `top`
+- L489 div# `panel`
+- L504 section `atlas`
+- L516 section `premium`
+- L555 section `heritage`
+- L559 h2 `Keeping religious artifacts relevant in the age of AI.`
+- L591 section `horizon`
+- L603 section `about`
+- L607 h2 `A small studio drawing a bigger map of who gets to use AI.`
+- L670 section `mission`
+- L678 h2 `AI for every planet.`
+- L731 section `contact`
+- L815 div# `modalBack`
+- L823 div# `modalBody`
+- L827 script
+- L829 data `BEACONS`
+- L927 data `THEMES`
+- L1125 data `BOT_AV`
+- L1130 data `BOT_INTENTS`
+- L1153 data `BOT_FALLBACK`
+- L1200 data `SHARE_URL`
+- L1201 data `SHARE_TEXT`
+- L1228 data `COUNTER`
+- L1256 data `MODALS`
+- functions (34): renderRows@881, selectBeacon@904, PTS@942, ll@946, rot@950, slerp@956, resize@960, hudCoord@968, draw@980, loop@1051, pos@1066, animateTo@1086, onScroll@1103, setTheme@1112, hit@1126, botReply@1154, esc@1158, botScroll@1159, addMsg@1160, clearChips@1165, addChips@1166, typing@1172, botSend@1174, openBot@1187, closeBot@1194, copyLink@1202, done@1204, fb@1205, doShare@1208, fmtCount@1229, animateCount@1230, initVisitors@1235, openModal@1287, closeModal@1288
 ### `origin-lens.html`
 - L12 style
 - L209 style
@@ -200,21 +204,26 @@ Files with *long lines* contain inline base64/minified blobs — never print tho
 - functions (75): $@402, clamp@404, sig@405, css@406, escH@407, pct@408, show@413, band@420, pt@428, arc@429, gauge@430, barColor@440, renderSignals@441, setVerdict@446, toast@447, copyReport@448, reEsc@458, words@480, splitSent@481, cv@482, isHead@484, analyzeText@485, normS@528, renderText@529, runText@554, excerpt@565, runTextJudge@567, num@585, renderCuesTo@595, countWords@596, loadScript@604, cleanPdf@605, cap@607, head@608, extractText@622, openDoc@641, resetText@656, latin@672, parseExif@673, parseTiff@684, u16@686, u32@687, str@688, ifd@690, metaText@708, add@710, readMeta@739, fft@753, toGray@760, residual@761, spectrum@767, at@779, pixelAnalysis@796, drawOverlay@821, loadImg@827, analyzeImage@830, renderImage@876, runJudge@910, num@917, renderCues@927, li@928, makeSample@942, getKey@972, setKey@973, toJpegB64@974, useKey@1002, openKeybox@1012, siteSetup@1013, ap@1032, callSpace@1042, modelReset@1051, modelBusy@1052, shortName@1053, runModelText@1054, runModelImage@1069
 ### `assay.html`
 - L12 style
-- L169 h2 `Assay`
-- L189 section `ledger`
-- L192 h2 `The public ledger`
-- L200 section `scale`
-- L203 h2 `How a hallmark is struck`
-- L224 section `watch`
-- L227 h2 `The release watch`
-- L246 script
-- L248 data `ASSAY`
-- L255 data `SNAPSHOT`
-- L258 data `METRICS`
-- L263 data `VERDICTS`
-- L269 data `DIR_WORDS`
-- L330 data `DATA`
-- functions (20): delta@271, refVerdict@277, esc@294, phrase@295, fmtDate@301, stamp@303, bar@314, x@318, anchor@319, scoredClaims@332, renderTally@337, renderLedger@348, src@355, renderWatch@383, renderAll@394, getJSON@397, loadLive@398, setSource@406, sim@422, apply@438
+- L192 h2 `Assay`
+- L212 section `desk`
+- L215 h2 `Release desk`
+- L223 section `ledger`
+- L226 h2 `The public ledger`
+- L234 section `scale`
+- L237 h2 `How a hallmark is struck`
+- L258 section `watch`
+- L261 h2 `The release watch`
+- L280 script
+- L282 data `ASSAY`
+- L289 data `SNAPSHOT`
+- L292 data `DESK_SNAPSHOT`
+- L295 data `METRICS`
+- L300 data `VERDICTS`
+- L306 data `DIR_WORDS`
+- L367 data `DATA`
+- L505 data `DESK`
+- L506 data `PROVIDER`
+- functions (23): delta@308, refVerdict@314, esc@331, phrase@332, fmtDate@338, stamp@340, bar@351, x@355, anchor@356, scoredClaims@369, renderTally@374, renderLedger@385, src@392, renderWatch@420, renderAll@431, getJSON@434, loadLive@435, setSource@444, sim@460, apply@476, postCard@507, renderDesk@526, focusPost@533
 ### `range-studio.html`
 - L16 script
 - L17 style
@@ -241,3 +250,7 @@ Files with *long lines* contain inline base64/minified blobs — never print tho
 - L80 class `TextIn`
 - L85 class `ImageIn`
 - functions (7): ai_probability@49, as_lists@66, chunks@71, home@95, health@110, score_text@115, score_image@134
+### `tools/claude/codemap.py`
+- functions (4): tracked_files@47, human@59, scan@63, main@82
+### `tools/claude/check_html.py`
+- functions (1): check@16
