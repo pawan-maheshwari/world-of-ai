@@ -215,6 +215,12 @@
   .prem-ctas a.pri{background:#0D6B6A;border-color:#0D6B6A;color:#fff}
   .prem-ctas a:hover{border-color:var(--studio)}
   @media(max-width:940px){.prem-grid{grid-template-columns:1fr;gap:28px}}
+  #heritage .prem-copy h3 em{color:var(--gold)}
+  #heritage .prem-copy li::before{color:var(--gold)}
+  #heritage .prem-ctas a.pri{background:linear-gradient(90deg,#8A5A12,#B9852B);border-color:#B9852B}
+  #heritage .prem-ctas a:hover{border-color:var(--gold)}
+  #heritage .prem-film{transition:transform .5s var(--e),box-shadow .5s var(--e)}
+  #heritage .prem-film:hover{transform:translateY(-3px);box-shadow:0 36px 90px -30px rgba(232,184,92,.35)}
   .r-soon{margin-top:12px;font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--dim)}
 
   .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--e),transform .8s var(--e)}
@@ -439,6 +445,7 @@
     <a href="assay.html">Assay</a>
     <a href="origin-lens.html">Origin Lens</a>
     <a class="prem" href="range-studio.html">Range Studio</a>
+      <a href="#heritage">Heritage</a>
     <a href="#horizon">Horizon</a>
     <a href="#about">About</a>
     <a href="#mission">Mission</a>
@@ -541,6 +548,42 @@
       </div>
     </div>
     <div class="gaz" id="gazPremium"></div>
+  </div>
+</section>
+
+<!-- =============== SACRED HERITAGE × AI =============== -->
+<section class="band" id="heritage" style="padding-top:0">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <span class="eyebrow">Sacred heritage · living traditions</span>
+      <h2>Keeping religious artifacts relevant in the age of AI.</h2>
+      <p>Stotras, chants and sacred texts survived centuries by voice, palm leaf and print. A new generation meets them on a phone. We use the same craft behind our AI products to carry these texts forward faithfully: the original words untouched and credited, and the context people now ask for set around them. That means when to read each text, what it means, how to chant it and how it sounds.</p>
+    </div>
+    <div class="prem-grid reveal">
+      <div>
+        <a class="prem-film" href="stotra-sangraha.html" style="display:block" aria-label="Open Stotra Sangraha">
+          <img src="media/stotra-sangraha-poster.jpg" alt="Vishnu, Nataraja, Lalita and Hanuman, from the Stotra Sangraha reader" loading="lazy" style="display:block;width:100%;aspect-ratio:16/9;object-fit:cover" />
+        </a>
+        <div class="prem-cap">Stotra Sangraha · 12 hymns · full Devanagari text</div>
+      </div>
+      <div class="prem-copy">
+        <span class="tag">◆ Heritage × AI</span>
+        <h3>Stotra Sangraha. Twelve sacred hymns, <em>complete</em>, and when to turn to each.</h3>
+        <p>An interactive prayer book from Vishnu Sahasranama to Hanuman Chalisa, Aditya Hridaya and Lalita Sahasranama. Each hymn is set beside its deity, with its source, its purpose and its instruments.</p>
+        <ul>
+          <li>Full public-domain Devanagari text, with sources credited and no AI-written verses</li>
+          <li>When to read each hymn, its source and the best time to chant</li>
+          <li>Temple soundscapes generated live: damaru, shankha, veena, bansuri, bells</li>
+          <li>Auto-scroll reader with adjustable speed and text size, built for phones</li>
+          <li>Deity art and a living-sky backdrop that moves with the music</li>
+        </ul>
+        <div class="prem-ctas">
+          <a class="pri" href="stotra-sangraha.html">Open Stotra Sangraha →</a>
+          <a href="mailto:maheshwari1382@gmail.com?subject=Heritage%20%C3%97%20AI%20%E2%80%94%20collaboration">Suggest a text or collaborate ↗</a>
+        </div>
+      </div>
+    </div>
+    <div class="gaz" id="gazHeritage"></div>
   </div>
 </section>
 
@@ -710,6 +753,7 @@
         <a href="assay.html">Assay</a>
         <a href="origin-lens.html">Origin Lens</a>
         <a href="range-studio.html">Range Studio · Premium</a>
+        <a href="stotra-sangraha.html">Stotra Sangraha · Heritage</a>
         <a href="#horizon">On the horizon</a>
       </div>
       <div class="fc">
@@ -815,6 +859,10 @@ const BEACONS=[
    coord:"26.2\u00B0S 28.0\u00B0E",lat:-26.2,lon:28.0,accent:"var(--studio)",
    desc:"Premium agentic range planning for retailers \u2014 seven specialist agents cluster stores, build the range, set the buy and flag exceptions, then wait for a planner to approve. Back-tested on past seasons; runs on your own desktop or servers.",
    tags:["7 agents","Back-tested","Desktop & on-prem"],action:"Watch the film"},
+  {id:"stotra",name:"Stotra Sangraha",dom:"world-of-ai.co.in/stotra-sangraha \u00B7 heritage",url:"stotra-sangraha.html",status:"live",heritage:true,
+   coord:"25.3\u00B0N 83.0\u00B0E",lat:25.3,lon:83.0,accent:"var(--gold)",
+   desc:"Sacred heritage, carried forward \u2014 twelve Hindu stotras in full public-domain Devanagari, each with when to read it, its source, deity art, temple-instrument soundscapes and an auto-scrolling reader built for phones.",
+   tags:["12 hymns","Full Devanagari text","Temple soundscapes"],action:"Open the hymns"},
   {id:"arcade",name:"AI Games Arcade",dom:"Computational thinking · at play",url:"",status:"rising",
    coord:"51.0°N 100.0°W",lat:51,lon:-100,accent:"var(--ice)",
    desc:"Procedurally generated games that turn computational thinking into something kids actually want to play.",
@@ -847,8 +895,9 @@ function renderRows(target,list,startIdx){
     </div>`;
   }).join("");
 }
-renderRows("gazLive",BEACONS.filter(b=>b.status==="live"),1);
-renderRows("gazPremium",BEACONS.filter(b=>b.status==="premium"),BEACONS.filter(b=>b.status==="live").length+1);
+renderRows("gazLive",BEACONS.filter(b=>b.status==="live"&&!b.heritage),1);
+renderRows("gazPremium",BEACONS.filter(b=>b.status==="premium"),BEACONS.filter(b=>b.status==="live"&&!b.heritage).length+1);
+renderRows("gazHeritage",BEACONS.filter(b=>b.heritage),BEACONS.filter(b=>(b.status==="live"&&!b.heritage)||b.status==="premium").length+1);
 renderRows("gazHorizon",BEACONS.filter(b=>b.status==="rising"),BEACONS.filter(b=>b.status!=="rising").length+1);
 
 /* ---------------- BEACON PANEL ---------------- */
@@ -1091,6 +1140,7 @@ const BOT_INTENTS=[
   {k:["library","book","books","ebook","e-book","reading","hindi"],r:{t:"<b>AI Library</b> is coming soon \u{1F4DA} \u2014 a curated shelf of AI e-books and explainers in English and Hindi, free to explore.",c:["What else is coming?","What's live now?"]}},
   {k:["vitals","health","bmi","heart","ppg","fitness","wellness"],r:{t:"<b>AI BMI Vitals</b> is on the way \u2764\uFE0F \u2014 a privacy-first health companion with camera-based heart-rate sensing, BMI insight and a GenAI wellness chat, all on-device.",c:["What else is coming?","What's live now?"]}},
   {k:["range studio","range","studio","premium","retail","retailer","assortment","merchandise","merchandising","range planning","buying","otb","open to buy","planner","enterprise","licence","license","pilot"],r:{t:"<b>Range Studio</b> is our premium software for retailers \u2014 a supervisor and seven specialist agents cluster stores by how they sell, build the range, set the buy against open-to-buy and flag exceptions, then wait for a planner to approve. It back-tests on past seasons first, connects to Oracle RMS, Blue Yonder/JDA, PLM and Excel, and runs on your own desktop or servers. <a href='range-studio.html'>Watch the launch film \u2192</a>",c:["Pricing","What's live now?","Contact"]}},
+  {k:["stotra","stotras","sangraha","stotra sangraha","heritage","religious","religion","sacred","scripture","hymn","hymns","chant","chanting","mantra","prayer","devotional","vishnu sahasranama","hanuman chalisa","lalita sahasranama","aditya hridaya","shiva tandav","durga kavach","rudrashtakam","sanskrit","devanagari"],r:{t:"<b>Stotra Sangraha</b> is our heritage project for keeping religious artifacts relevant in the age of AI \u2014 twelve Hindu stotras in full public-domain Devanagari, each with when to read it, its source, deity art, temple-instrument soundscapes and an auto-scrolling reader for phones. <a href='stotra-sangraha.html'>Open the hymns \u2192</a>",c:["What's live now?","Contact"]}},
   {k:["price","pricing","cost","fee","much","rupee","pay","paid","money","charge"],r:{t:"Pricing is built to stay accessible. AIShorts, AI University's core, the GREEN\u2011LLM Index, HARMONIA, Assay and Origin Lens are <b>free</b>, no login walls. DISHA's full 5-D assessment is <b>\u20B92,499</b> (the market charges \u20B910,000+). For schools, licenses run \u20B9250\u2013300 per student. <b>Range Studio</b>, our premium retail software, is licensed per seat or as an enterprise server licence, priced on request, with a free evaluation mode.",c:["What is DISHA?","Contact"]}},
   {k:["free"],r:{t:"Plenty is free: AIShorts daily news, AI University's core lessons, the GREEN\u2011LLM Index, HARMONIA, Assay's public ledger, Origin Lens, and DISHA's basic exploration \u2014 all with no login walls. Only DISHA's full 5-D report is paid, at \u20B92,499.",c:["What is DISHA?","What's live now?"]}},
   {k:["coming","next","horizon","roadmap","future","soon","else","rising"],r:{t:"Three beacons are rising on the horizon: <b>AI Games Arcade</b> (learn by play), <b>AI Library</b> (e-books in English + Hindi), and <b>AI BMI Vitals</b> (on-device health). Each grows stronger as the DISHA audience does.",c:["AI Games Arcade","AI Library","AI BMI Vitals"]}},
